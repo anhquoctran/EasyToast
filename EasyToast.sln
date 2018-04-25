@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2037
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyToast", "EasyToast\EasyToast.csproj", "{6BFDF3BB-AC34-492E-AB4D-21C824FEFF81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyToastDemo", "EasyToastDemo\EasyToastDemo.csproj", "{9CBB7559-F014-4AA8-91B0-DA4CB6DA9BFE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6BFDF3BB-AC34-492E-AB4D-21C824FEFF81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BFDF3BB-AC34-492E-AB4D-21C824FEFF81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BFDF3BB-AC34-492E-AB4D-21C824FEFF81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BFDF3BB-AC34-492E-AB4D-21C824FEFF81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CBB7559-F014-4AA8-91B0-DA4CB6DA9BFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CBB7559-F014-4AA8-91B0-DA4CB6DA9BFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CBB7559-F014-4AA8-91B0-DA4CB6DA9BFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CBB7559-F014-4AA8-91B0-DA4CB6DA9BFE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EA20E58B-D6A2-412A-ACA4-ED9D88A4BCD5}
+	EndGlobalSection
+EndGlobal
