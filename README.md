@@ -40,6 +40,6 @@ Toast.Build(this, "Hello, I am Toast!").Show();
 ```
 If you have image thumbnail, put it on Toast like this:  
 ```csharp
-var image = Image.FromFile("D:\thumbnail.jpg");
+var image = Image.FromFile("D:\\thumbnail.jpg");
 Toast.Build(this, "Hello, I am Toast!", image).Show();
 ```
