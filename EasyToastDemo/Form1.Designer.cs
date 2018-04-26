@@ -46,19 +46,25 @@
 			this.numofToasts = new System.Windows.Forms.NumericUpDown();
 			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
-			this.button4 = new System.Windows.Forms.Button();
-			this.button3 = new System.Windows.Forms.Button();
+			this.btnBottom = new System.Windows.Forms.Button();
+			this.btnTopRight = new System.Windows.Forms.Button();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox6 = new System.Windows.Forms.GroupBox();
 			this.btnToastWithAnimation = new System.Windows.Forms.Button();
 			this.txtAnimation = new System.Windows.Forms.TextBox();
-			this.radioButton2 = new System.Windows.Forms.RadioButton();
-			this.radioButton1 = new System.Windows.Forms.RadioButton();
+			this.rSlide = new System.Windows.Forms.RadioButton();
+			this.rFade = new System.Windows.Forms.RadioButton();
 			this.groupBox7 = new System.Windows.Forms.GroupBox();
+			this.rchTextWatch = new System.Windows.Forms.RichTextBox();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.timer2 = new System.Windows.Forms.Timer(this.components);
+			this.groupBox8 = new System.Windows.Forms.GroupBox();
+			this.btnCustomDuration = new System.Windows.Forms.Button();
+			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.radioButton1 = new System.Windows.Forms.RadioButton();
+			this.radioButton2 = new System.Windows.Forms.RadioButton();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -68,6 +74,8 @@
 			this.groupBox5.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.groupBox6.SuspendLayout();
+			this.groupBox7.SuspendLayout();
+			this.groupBox8.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// btnShowToastDemo
@@ -93,7 +101,7 @@
 			// txtText
 			// 
 			this.txtText.Location = new System.Drawing.Point(6, 19);
-			this.txtText.MaxLength = 64;
+			this.txtText.MaxLength = 512;
 			this.txtText.Name = "txtText";
 			this.txtText.Size = new System.Drawing.Size(226, 20);
 			this.txtText.TabIndex = 2;
@@ -170,7 +178,7 @@
 			// txttextImage
 			// 
 			this.txttextImage.Location = new System.Drawing.Point(6, 19);
-			this.txttextImage.MaxLength = 64;
+			this.txttextImage.MaxLength = 512;
 			this.txttextImage.Name = "txttextImage";
 			this.txttextImage.Size = new System.Drawing.Size(226, 20);
 			this.txttextImage.TabIndex = 2;
@@ -252,8 +260,8 @@
 			// 
 			// groupBox5
 			// 
-			this.groupBox5.Controls.Add(this.button4);
-			this.groupBox5.Controls.Add(this.button3);
+			this.groupBox5.Controls.Add(this.btnBottom);
+			this.groupBox5.Controls.Add(this.btnTopRight);
 			this.groupBox5.Location = new System.Drawing.Point(256, 127);
 			this.groupBox5.Name = "groupBox5";
 			this.groupBox5.Size = new System.Drawing.Size(225, 51);
@@ -261,23 +269,25 @@
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Position";
 			// 
-			// button4
+			// btnBottom
 			// 
-			this.button4.Location = new System.Drawing.Point(87, 19);
-			this.button4.Name = "button4";
-			this.button4.Size = new System.Drawing.Size(75, 23);
-			this.button4.TabIndex = 3;
-			this.button4.Text = "Bottom Right";
-			this.button4.UseVisualStyleBackColor = true;
+			this.btnBottom.Location = new System.Drawing.Point(87, 19);
+			this.btnBottom.Name = "btnBottom";
+			this.btnBottom.Size = new System.Drawing.Size(75, 23);
+			this.btnBottom.TabIndex = 3;
+			this.btnBottom.Text = "Bottom Right";
+			this.btnBottom.UseVisualStyleBackColor = true;
+			this.btnBottom.Click += new System.EventHandler(this.btnBottom_Click);
 			// 
-			// button3
+			// btnTopRight
 			// 
-			this.button3.Location = new System.Drawing.Point(6, 19);
-			this.button3.Name = "button3";
-			this.button3.Size = new System.Drawing.Size(75, 23);
-			this.button3.TabIndex = 2;
-			this.button3.Text = "Top Right";
-			this.button3.UseVisualStyleBackColor = true;
+			this.btnTopRight.Location = new System.Drawing.Point(6, 19);
+			this.btnTopRight.Name = "btnTopRight";
+			this.btnTopRight.Size = new System.Drawing.Size(75, 23);
+			this.btnTopRight.TabIndex = 2;
+			this.btnTopRight.Text = "Top Right";
+			this.btnTopRight.UseVisualStyleBackColor = true;
+			this.btnTopRight.Click += new System.EventHandler(this.btnTopRight_Click);
 			// 
 			// menuStrip1
 			// 
@@ -308,8 +318,8 @@
 			// 
 			this.groupBox6.Controls.Add(this.btnToastWithAnimation);
 			this.groupBox6.Controls.Add(this.txtAnimation);
-			this.groupBox6.Controls.Add(this.radioButton2);
-			this.groupBox6.Controls.Add(this.radioButton1);
+			this.groupBox6.Controls.Add(this.rSlide);
+			this.groupBox6.Controls.Add(this.rFade);
 			this.groupBox6.Location = new System.Drawing.Point(256, 184);
 			this.groupBox6.Name = "groupBox6";
 			this.groupBox6.Size = new System.Drawing.Size(226, 104);
@@ -325,52 +335,119 @@
 			this.btnToastWithAnimation.TabIndex = 4;
 			this.btnToastWithAnimation.Text = "Display Toast with custom animation";
 			this.btnToastWithAnimation.UseVisualStyleBackColor = true;
+			this.btnToastWithAnimation.Click += new System.EventHandler(this.btnToastWithAnimation_Click);
 			// 
 			// txtAnimation
 			// 
 			this.txtAnimation.Location = new System.Drawing.Point(6, 42);
-			this.txtAnimation.MaxLength = 64;
+			this.txtAnimation.MaxLength = 512;
 			this.txtAnimation.Name = "txtAnimation";
 			this.txtAnimation.Size = new System.Drawing.Size(213, 20);
 			this.txtAnimation.TabIndex = 3;
 			this.txtAnimation.Text = "Hello, I am Toast!";
 			// 
-			// radioButton2
+			// rSlide
 			// 
-			this.radioButton2.AutoSize = true;
-			this.radioButton2.Location = new System.Drawing.Point(107, 19);
-			this.radioButton2.Name = "radioButton2";
-			this.radioButton2.Size = new System.Drawing.Size(48, 17);
-			this.radioButton2.TabIndex = 1;
-			this.radioButton2.Text = "Slide";
-			this.radioButton2.UseVisualStyleBackColor = true;
+			this.rSlide.AutoSize = true;
+			this.rSlide.Location = new System.Drawing.Point(107, 19);
+			this.rSlide.Name = "rSlide";
+			this.rSlide.Size = new System.Drawing.Size(48, 17);
+			this.rSlide.TabIndex = 1;
+			this.rSlide.Text = "Slide";
+			this.rSlide.UseVisualStyleBackColor = true;
+			// 
+			// rFade
+			// 
+			this.rFade.AutoSize = true;
+			this.rFade.Checked = true;
+			this.rFade.Location = new System.Drawing.Point(9, 19);
+			this.rFade.Name = "rFade";
+			this.rFade.Size = new System.Drawing.Size(92, 17);
+			this.rFade.TabIndex = 0;
+			this.rFade.TabStop = true;
+			this.rFade.Text = "Fade (Default)";
+			this.rFade.UseVisualStyleBackColor = true;
+			// 
+			// groupBox7
+			// 
+			this.groupBox7.Controls.Add(this.rchTextWatch);
+			this.groupBox7.Location = new System.Drawing.Point(12, 411);
+			this.groupBox7.Name = "groupBox7";
+			this.groupBox7.Size = new System.Drawing.Size(877, 148);
+			this.groupBox7.TabIndex = 10;
+			this.groupBox7.TabStop = false;
+			this.groupBox7.Text = "Toast Collection Live Watch";
+			// 
+			// rchTextWatch
+			// 
+			this.rchTextWatch.BackColor = System.Drawing.Color.White;
+			this.rchTextWatch.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.rchTextWatch.Location = new System.Drawing.Point(3, 16);
+			this.rchTextWatch.Name = "rchTextWatch";
+			this.rchTextWatch.ReadOnly = true;
+			this.rchTextWatch.Size = new System.Drawing.Size(871, 129);
+			this.rchTextWatch.TabIndex = 0;
+			this.rchTextWatch.Text = "";
+			// 
+			// groupBox8
+			// 
+			this.groupBox8.Controls.Add(this.btnCustomDuration);
+			this.groupBox8.Controls.Add(this.textBox1);
+			this.groupBox8.Controls.Add(this.radioButton1);
+			this.groupBox8.Controls.Add(this.radioButton2);
+			this.groupBox8.Location = new System.Drawing.Point(256, 294);
+			this.groupBox8.Name = "groupBox8";
+			this.groupBox8.Size = new System.Drawing.Size(226, 111);
+			this.groupBox8.TabIndex = 11;
+			this.groupBox8.TabStop = false;
+			this.groupBox8.Text = "Duration";
+			// 
+			// btnCustomDuration
+			// 
+			this.btnCustomDuration.Location = new System.Drawing.Point(6, 75);
+			this.btnCustomDuration.Name = "btnCustomDuration";
+			this.btnCustomDuration.Size = new System.Drawing.Size(213, 30);
+			this.btnCustomDuration.TabIndex = 4;
+			this.btnCustomDuration.Text = "Display Toast with custom duration";
+			this.btnCustomDuration.UseVisualStyleBackColor = true;
+			// 
+			// textBox1
+			// 
+			this.textBox1.Location = new System.Drawing.Point(6, 42);
+			this.textBox1.MaxLength = 512;
+			this.textBox1.Name = "textBox1";
+			this.textBox1.Size = new System.Drawing.Size(213, 20);
+			this.textBox1.TabIndex = 3;
+			this.textBox1.Text = "Hello, I am Toast!";
 			// 
 			// radioButton1
 			// 
 			this.radioButton1.AutoSize = true;
-			this.radioButton1.Checked = true;
-			this.radioButton1.Location = new System.Drawing.Point(9, 19);
+			this.radioButton1.Location = new System.Drawing.Point(64, 19);
 			this.radioButton1.Name = "radioButton1";
-			this.radioButton1.Size = new System.Drawing.Size(92, 17);
-			this.radioButton1.TabIndex = 0;
-			this.radioButton1.TabStop = true;
-			this.radioButton1.Text = "Fade (Default)";
+			this.radioButton1.Size = new System.Drawing.Size(50, 17);
+			this.radioButton1.TabIndex = 1;
+			this.radioButton1.Text = "Short";
 			this.radioButton1.UseVisualStyleBackColor = true;
 			// 
-			// groupBox7
+			// radioButton2
 			// 
-			this.groupBox7.Location = new System.Drawing.Point(487, 27);
-			this.groupBox7.Name = "groupBox7";
-			this.groupBox7.Size = new System.Drawing.Size(402, 384);
-			this.groupBox7.TabIndex = 10;
-			this.groupBox7.TabStop = false;
-			this.groupBox7.Text = "Toast Builder";
+			this.radioButton2.AutoSize = true;
+			this.radioButton2.Checked = true;
+			this.radioButton2.Location = new System.Drawing.Point(9, 19);
+			this.radioButton2.Name = "radioButton2";
+			this.radioButton2.Size = new System.Drawing.Size(49, 17);
+			this.radioButton2.TabIndex = 0;
+			this.radioButton2.TabStop = true;
+			this.radioButton2.Text = "Long";
+			this.radioButton2.UseVisualStyleBackColor = true;
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(901, 423);
+			this.ClientSize = new System.Drawing.Size(901, 571);
+			this.Controls.Add(this.groupBox8);
 			this.Controls.Add(this.groupBox7);
 			this.Controls.Add(this.groupBox6);
 			this.Controls.Add(this.groupBox5);
@@ -401,6 +478,9 @@
 			this.menuStrip1.PerformLayout();
 			this.groupBox6.ResumeLayout(false);
 			this.groupBox6.PerformLayout();
+			this.groupBox7.ResumeLayout(false);
+			this.groupBox8.ResumeLayout(false);
+			this.groupBox8.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -424,20 +504,26 @@
 		private System.Windows.Forms.NumericUpDown numofToasts;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.GroupBox groupBox5;
-		private System.Windows.Forms.Button button4;
-		private System.Windows.Forms.Button button3;
+		private System.Windows.Forms.Button btnBottom;
+		private System.Windows.Forms.Button btnTopRight;
 		private System.Windows.Forms.MenuStrip menuStrip1;
 		private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem1;
 		private System.Windows.Forms.GroupBox groupBox6;
 		private System.Windows.Forms.Button btnToastWithAnimation;
 		private System.Windows.Forms.TextBox txtAnimation;
-		private System.Windows.Forms.RadioButton radioButton2;
-		private System.Windows.Forms.RadioButton radioButton1;
+		private System.Windows.Forms.RadioButton rSlide;
+		private System.Windows.Forms.RadioButton rFade;
 		private System.Windows.Forms.GroupBox groupBox7;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Timer timer1;
 		private System.Windows.Forms.Timer timer2;
+		private System.Windows.Forms.RichTextBox rchTextWatch;
+		private System.Windows.Forms.GroupBox groupBox8;
+		private System.Windows.Forms.Button btnCustomDuration;
+		private System.Windows.Forms.TextBox textBox1;
+		private System.Windows.Forms.RadioButton radioButton1;
+		private System.Windows.Forms.RadioButton radioButton2;
 	}
 }
 
