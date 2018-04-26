@@ -7,6 +7,10 @@ EasyToast allows you to build, custom and display push notification like Windows
 ### Some demo:
 
 ## Installation:
+#### Prerequisites:
+- .NET Framework 4.0 or later
+- Visual Studio 2015 or later (to build from source)
+- Windows Forms Application only
 
 #### Via NuGet:
 
