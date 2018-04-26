@@ -21,8 +21,25 @@ namespace EasyToastDemo
 		{
 			InitializeComponent();
 			BringToFront();
-			
 			numofToasts.Maximum = ToastManager.MAX_TOASTS_ALLOWED;
+			ToastManager.ToastCollection.ToastRemoved += ToastCollection_ToastRemoved;
+			ToastManager.ToastCollection.ToastAdded += ToastCollection_ToastAdded;
+			ToastManager.ToastCollection.CollectionTruncated += ToastCollection_CollectionTruncated;
+		}
+
+		private void ToastCollection_CollectionTruncated(object sender, EventArgs e)
+		{
+			rchTextWatch.AppendText("Toast collection is empty\r\n");
+		}
+
+		private void ToastCollection_ToastAdded(object sender, ToastChangedEventArgs e)
+		{
+			rchTextWatch.AppendText($"Toast with ID {e.Toast.Guid} has been displayed\r\n");
+		}
+
+		private void ToastCollection_ToastRemoved(object sender, ToastChangedEventArgs e)
+		{
+			rchTextWatch.AppendText($"Toast with ID {e.Toast.Guid} has been destroyed\r\n");
 		}
 
 		private async void BtnShowToastDemo_Click(object sender, EventArgs e)
@@ -71,6 +88,7 @@ namespace EasyToastDemo
 					{
 						MessageBox.Show(
 							"An image that you provided is not valid required size for Toast popup component! Please using image with MINIMUM SIZE 64x64 pixels!", "Invalid Image", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						picThumbnail.Image = null;
 					}
 				}
 				else
@@ -86,9 +104,7 @@ namespace EasyToastDemo
 			if (image == null) return false;
 			try
 			{
-				if (image.Width >= 64 && image.Height >= 64)
-					return true;
-				return false;
+				return image.Width >=80 || image.Height >= 80;
 			}
 			catch (Exception)
 			{
@@ -120,7 +136,14 @@ namespace EasyToastDemo
 				txttextImage.Text = "Hello! I'm Toast! :)";
 			}
 
-			Toast.Build(this, txttextImage.Text, picThumbnail.Image).Show();
+			var toast = Toast.Build(this, txttextImage.Text, picThumbnail.Image);
+			toast.OnClick += Toast_OnClick;
+			toast.Show();
+		}
+
+		private void Toast_OnClick(object sender, EventArgs e)
+		{
+			rchTextWatch.AppendText("Toast clicked\r\n");
 		}
 
 		private void Form1_Click(object sender, EventArgs e)
@@ -132,8 +155,23 @@ namespace EasyToastDemo
 		{
 			for (var i = 1; i <= (int)numofToasts.Value; i++)
 			{
-				Toast.Build(this, $"This is Toast {i}", Duration.LENGTH_LONG, Animation.SLIDE).Show();
+				Toast.Build(this, $"This is Toast {i}").Show();
 			}
+		}
+
+		private void btnToastWithAnimation_Click(object sender, EventArgs e)
+		{
+			Toast.Build(this, string.IsNullOrEmpty(txtAnimation.Text) ? "Hello, I am Toast!" : txtAnimation.Text, rFade.Checked ? Animation.FADE : Animation.SLIDE).Show();
+		}
+
+		private void btnTopRight_Click(object sender, EventArgs e)
+		{
+			
+		}
+
+		private void btnBottom_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }
