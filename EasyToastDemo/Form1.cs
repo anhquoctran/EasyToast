@@ -21,32 +21,36 @@ namespace EasyToastDemo
 		{
 			InitializeComponent();
 			BringToFront();
-			numofToasts.Maximum = ToastManager.MAX_TOASTS_ALLOWED;
+			numofToasts.Maximum = (decimal)(ToastManager.MAX_TOASTS_ALLOWED/2.0);
 			ToastManager.ToastCollection.ToastRemoved += ToastCollection_ToastRemoved;
 			ToastManager.ToastCollection.ToastAdded += ToastCollection_ToastAdded;
 			ToastManager.ToastCollection.CollectionTruncated += ToastCollection_CollectionTruncated;
+			
 		}
 
 		private void ToastCollection_CollectionTruncated(object sender, EventArgs e)
 		{
 			rchTextWatch.AppendText("Toast collection is empty\r\n");
+			rchTextWatch.ScrollToCaret();
 		}
 
 		private void ToastCollection_ToastAdded(object sender, ToastChangedEventArgs e)
 		{
 			rchTextWatch.AppendText($"Toast with ID {e.Toast.Guid} has been displayed\r\n");
+			rchTextWatch.ScrollToCaret();
 		}
 
 		private void ToastCollection_ToastRemoved(object sender, ToastChangedEventArgs e)
 		{
 			rchTextWatch.AppendText($"Toast with ID {e.Toast.Guid} has been destroyed\r\n");
+			rchTextWatch.ScrollToCaret();
 		}
 
 		private async void BtnShowToastDemo_Click(object sender, EventArgs e)
 		{
 			if (!_isDisplayedSimple1)
 			{
-				Toast.Build(this, "Hello, I am Toast!", Duration.LENGTH_SHORT, Animation.FADE).Show();
+				Toast.Build(this, "Hello, I am Toast!").Show();
 				_isDisplayedSimple1 = true;
 				await Task.Delay(1000);
 				_isDisplayedSimple1 = false;

@@ -148,11 +148,6 @@ namespace System.UI.Widget
 					_counter = 3;
 					break;
 			}
-
-			if (!_hasImageSet)
-			{
-				picImage.Image = Properties.Resources.info_icon;
-			}
 			
 			if (!_isMuted)
 			{
