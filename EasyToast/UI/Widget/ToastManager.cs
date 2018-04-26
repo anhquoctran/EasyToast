@@ -34,7 +34,7 @@ namespace System.UI.Widget
 		internal static void AddToCollection()
 		{
 			if (ToastCollection.Count >= MAX_TOASTS_ALLOWED) return;
-			if (string.IsNullOrEmpty(Toast.Text))
+			if (string.IsNullOrEmpty(Toast.Caption))
 			{
 				throw new ArgumentException("Text property is required to display Toast");
 			}
@@ -44,7 +44,7 @@ namespace System.UI.Widget
 			Toast.FrmToast.Toast = Toast;
 			Toast.FrmToast.Duration = Toast.Duration;
 			Toast.FrmToast.Animation = Toast.Animation;
-			Toast.FrmToast.Caption = Toast.Text;
+			Toast.FrmToast.Caption = Toast.Caption;
 			Toast.FrmToast.Thumbnails = Toast.Thumbnail;
 			Toast.FrmToast.Theme = Toast.ThemeStyle;
 
