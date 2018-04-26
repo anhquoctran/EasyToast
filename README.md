@@ -1,5 +1,5 @@
 # EasyToast v1.0
-A simple Toast library for Windows Forms
+A simple Toast Nofification library for Windows Forms
 
 EasyToast allows you to build, custom and display push notification like Windows 8/8.1/10 Toast Notification in Windows Forms Application. It's highly configurable with set of built-in options like positions, image, duration and many others. It's extendable, it gives you possibility to create custom and interactive notifications in simply manner.
 
@@ -37,4 +37,9 @@ using System.UI.Widget;
 And then, get started to build a simplest toast popup, all in one line only:
 ```csharp
 Toast.Build(this, "Hello, I am Toast!").Show();
+```
+If you have image thumbnail, put it on Toast like this:  
+```csharp
+var image = Image.FromFile("D:\thumbnail.jpg");
+Toast.Build(this, "Hello, I am Toast!", image).Show();
 ```
