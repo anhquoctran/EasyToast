@@ -43,3 +43,6 @@ If you have image thumbnail, puts it on Toast like this:
 var image = Image.FromFile("D:\\thumbnail.jpg");
 Toast.Build(this, "Hello, I am Toast!", image).Show();
 ```
+***Warning:***
+- If you need thumbnail best for display, I highly recommended minmum size of image is 80x80, square rectangle.  
+- Only JPEG and PNG format are supported
