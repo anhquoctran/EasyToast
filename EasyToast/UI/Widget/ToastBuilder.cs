@@ -30,7 +30,7 @@ namespace System.UI.Widget
 		/// <returns></returns>
 		public static Toast SetText(this Toast toast, string text)
 		{
-			toast.Text = text;
+			toast.Caption = text;
 			return toast;
 		}
 
