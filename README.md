@@ -16,7 +16,7 @@ Install-Package EasyToast
 ```
 #### Via direct download:
 You can download latest stable release from [here](https://github.com/anhquoctran/EasyToast/releases).
-#### Install from Source code:
+#### Build from Source code:
 You need Visual Studio 2015 or later to build source code to `dll` file.  
 First, clone this source code or download from Git:
 ```
@@ -24,3 +24,13 @@ git clone https://github.com/anhquoctran/EasyToast.git
 ```
 Open Solution that you cloned in Visual Studio. After cloned or downloaded, open project in Visual Studio and restore NuGet packages if needed then build it.  
 After build. all you need is `dll` file in `/bin/Release` or `bin/Debug` folders.
+
+## Usage:
+First, you need add our namespace `System.UI.Widget`
+```csharp
+using System.UI.Widget;
+```
+And then, get started to build a simplest toast popup, all in one line only:
+```csharp
+Toast.Build(this, "Hello, I am Toast!").Show();
+```
