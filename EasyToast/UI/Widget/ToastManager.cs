@@ -15,7 +15,7 @@ namespace System.UI.Widget
 	/// </summary>
 	public static class ToastManager
 	{
-		public const byte MAX_TOASTS_ALLOWED = 3;
+		public const byte MAX_TOASTS_ALLOWED = 6;
 		private static ToastCollection _privateCollection = new ToastCollection();
 		internal static Toast Toast;
 
@@ -81,7 +81,7 @@ namespace System.UI.Widget
 							Toast.FrmToast.Left = rightmost.WorkingArea.Right - Toast.FrmToast.Width - Toast.GetHorizontalMargin();
 							Toast.FrmToast.Top = rightmost.WorkingArea.Top + Toast.GetVerticalMargin();
 						}
-						else
+						else if(enumerable.Count < 3)
 						{
 							Toast.FrmToast.Left = rightmost.WorkingArea.Right - Toast.FrmToast.Width - Toast.GetHorizontalMargin();
 							Toast.FrmToast.Top = rightmost.WorkingArea.Top + enumerable.Count * Toast.FrmToast.Height + enumerable.Count* Toast.GetVerticalMargin() + Toast.GetVerticalMargin();
@@ -107,7 +107,7 @@ namespace System.UI.Widget
 							Toast.FrmToast.Location = new Point(workingArea.Right - Toast.FrmToast.Size.Width - Toast.GetHorizontalMargin(),
 								workingArea.Bottom - Toast.FrmToast.Size.Height - Toast.GetVerticalMargin());
 							}
-						else
+						else if(enumerable.Count < 3)
 						{
 							Toast.FrmToast.Location = new Point(workingArea.Right - Toast.FrmToast.Size.Width - Toast.GetHorizontalMargin(),
 								workingArea.Bottom - Toast.FrmToast.Size.Height - Toast.FrmToast.Size.Height * ToastCollection.Count - Toast.GetVerticalMargin() * ToastCollection.Count - Toast.GetVerticalMargin());

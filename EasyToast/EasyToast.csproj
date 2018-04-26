@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
+    <None Include="Resources\broken-EXE-file-association.jpg" />
     <None Include="Resources\info_icon.png" />
     <None Include="Resources\Antu_paint-none.png" />
   </ItemGroup>
