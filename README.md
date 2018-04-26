@@ -22,4 +22,5 @@ First, clone this source code or download from Git:
 ```
 git clone https://github.com/anhquoctran/EasyToast.git
 ```
-Open Solution that you cloned in Visual Studio.
+Open Solution that you cloned in Visual Studio. After cloned or downloaded, open project in Visual Studio and restore NuGet packages if needed then build it.  
+After build. all you need is `dll` file in `/bin/Release` or `bin/Debug` folders.
