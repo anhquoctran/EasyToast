@@ -97,7 +97,6 @@
 			// 
 			this.textContainer.Panel1.BackColor = System.Drawing.Color.Transparent;
 			this.textContainer.Panel1.Controls.Add(this.btnClose);
-			this.textContainer.Panel1MinSize = 30;
 			// 
 			// textContainer.Panel2
 			// 
@@ -131,7 +130,6 @@
 			this.lblCaption.ForeColor = System.Drawing.Color.Gainsboro;
 			this.lblCaption.Location = new System.Drawing.Point(0, 0);
 			this.lblCaption.Name = "lblCaption";
-			this.lblCaption.Padding = new System.Windows.Forms.Padding(5, 8, 5, 5);
 			this.lblCaption.Size = new System.Drawing.Size(301, 79);
 			this.lblCaption.TabIndex = 0;
 			this.lblCaption.Text = "@caption";

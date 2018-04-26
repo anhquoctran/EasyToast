@@ -60,6 +60,7 @@ namespace System.UI.Widget
 			_verticalMargin = 10;
 			
 			var workingArea = Screen.GetWorkingArea(this);
+
             Location = new Point(workingArea.Right - Size.Width - _horizontalMargin,
 				workingArea.Bottom - Size.Height - _verticalMargin);
         }
