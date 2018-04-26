@@ -30,6 +30,7 @@ Open Solution that you cloned in Visual Studio. After cloned or downloaded, open
 After build. all you need is `dll` file in `/bin/Release` or `bin/Debug` folders.
 
 ## Usage:
+#### Basic usage
 First, you need add our namespace `System.UI.Widget`
 ```csharp
 using System.UI.Widget;
@@ -44,5 +45,5 @@ var image = Image.FromFile("D:\\thumbnail.jpg");
 Toast.Build(this, "Hello, I am Toast!", image).Show();
 ```
 ***Warning:***
-- If you need thumbnail best for display, I highly recommended minmum size of image is 80x80, square rectangle.  
+- If you want to thumbnail best fixed for display, I highly recommended minmum size of image is 80x80, square rectangle.  
 - Only JPEG and PNG format are supported
