@@ -38,7 +38,7 @@ And then, get started to build a simplest toast popup, all in one line only:
 ```csharp
 Toast.Build(this, "Hello, I am Toast!").Show();
 ```
-If you have image thumbnail, put it on Toast like this:  
+If you have image thumbnail, puts it on Toast like this:  
 ```csharp
 var image = Image.FromFile("D:\\thumbnail.jpg");
 Toast.Build(this, "Hello, I am Toast!", image).Show();
