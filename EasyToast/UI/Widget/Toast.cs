@@ -28,10 +28,16 @@ namespace System.UI.Widget
 		public string Guid { get; }
 
 		/// <summary>
-		/// Gets or sets text of Toast
+		/// Gets or sets caption of Toast
 		/// </summary>
 		[DefaultValue("")]
-		internal string Text { get; set; } = string.Empty;
+		internal string Caption { get; set; } = string.Empty;
+
+		/// <summary>
+		/// Gets or sets description of Toast
+		/// </summary>
+		[DefaultValue("")]
+		internal string Description { get; set; } = string.Empty;
 
 		[DefaultValue(Duration.LENGTH_SHORT)]
 		internal Duration Duration { get; set; } = Duration.LENGTH_SHORT;
@@ -40,7 +46,7 @@ namespace System.UI.Widget
 		internal bool IsMuted { get; set; }
 
 		[DefaultValue(Animation.FADE)]
-		internal Animation Animation { get; set; } = Animation.FADE;
+		internal Animation Animation { get; private set; } = Animation.FADE;
 
 		internal Image Thumbnail { get; set; }
 
@@ -163,7 +169,24 @@ namespace System.UI.Widget
 		{
 			var toast = new Toast(window)
 			{
-				Text = text,
+				Caption = text,
+			};
+			return toast;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="window"></param>
+		/// <param name="caption"></param>
+		/// <param name="description"></param>
+		/// <returns></returns>
+		public static Toast Build(IWin32Window window, string caption, string description)
+		{
+			var toast = new Toast(window)
+			{
+				Caption = caption,
+				Description = description
 			};
 			return toast;
 		}
@@ -181,7 +204,7 @@ namespace System.UI.Widget
 		{
 			var toast = new Toast(window)
 			{
-				Text = text,
+				Caption = text,
 				Duration = duration,
 				Animation = animation
 			};
@@ -193,16 +216,18 @@ namespace System.UI.Widget
 		/// Build Toast with custom duration length.
 		/// </summary>
 		/// <param name="window">Containter form. Usually MainForm.</param>
-		/// <param name="text">Text to display. Required not null or empty.</param>
+		/// <param name="caption">Text to display. Required not null or empty.</param>
+		/// <param name="description">Description</param>
 		/// <param name="duration">How long to display. SHORT is 2 seconds and LONG is 3 seconds.</param>
 		/// <returns>Toast has been create but not yet display. Use Show() or ShowAsync() to display it.</returns>
 		[MustUseReturnValue("Toast has been create but not yet display. Use Show() to display it.")]
-		public static Toast Build(IWin32Window window, string text, Duration duration)
+		public static Toast Build(IWin32Window window, string caption, string description, Duration duration)
 		{
 			var toast = new Toast(window)
 			{
-				Text = text,
-				Duration = duration
+				Caption = caption,
+				Duration = duration,
+				Description = description
 			};
 
 			return toast;
@@ -222,7 +247,7 @@ namespace System.UI.Widget
 		{
 			var toast = new Toast(window)
 			{
-				Text = text,
+				Caption = text,
 				Animation = animation,
 				Duration = duration,
 				IsMuted = muting
@@ -243,7 +268,7 @@ namespace System.UI.Widget
 		{
 			var toast = new Toast(window)
 			{
-				Text = text,
+				Caption = text,
 				Animation = animation
 			};
 
@@ -262,7 +287,7 @@ namespace System.UI.Widget
 		{
 			var toast = new Toast(window)
 			{
-				Text = text,
+				Caption = text,
 				IsMuted = muting
 			};
 
@@ -283,7 +308,7 @@ namespace System.UI.Widget
 		{
 			var toast = new Toast(window)
 			{
-				Text = text,
+				Caption = text,
 				Thumbnail = thumbnail,
 				Duration = duration,
 				Animation = animation
@@ -307,7 +332,7 @@ namespace System.UI.Widget
 		{
 			var toast = new Toast(window)
 			{
-				Text = text,
+				Caption = text,
 				Thumbnail = thumbnail,
 				Duration = duration,
 				Animation = animation,
@@ -328,7 +353,7 @@ namespace System.UI.Widget
 		{
 			var toast = new Toast(window)
 			{
-				Text = text,
+				Caption = text,
 				Thumbnail = thumbnail
 			};
 			return toast;
@@ -347,7 +372,7 @@ namespace System.UI.Widget
 		{
 			var toast = new Toast(window)
 			{
-				Text = text,
+				Caption = text,
 				Thumbnail = thumbnail,
 				Duration = duration
 			};
