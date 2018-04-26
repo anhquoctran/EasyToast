@@ -10,7 +10,7 @@ EasyToast allows you to build, custom and display push notification like Windows
 
 #### Via NuGet:
 
-NuGet Package Manager Console
+You can install from `NuGet Package Manager Console`. In this case, all dependencies will be installed automatically.
 ```
 Install-Package EasyToast
 ```
