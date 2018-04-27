@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Properties;
+using System.UI;
 
 namespace System.UI.Widget
 {
 	internal partial class FrmToast : Form
 	{
-		private bool _hasImageSet;
 
 		private readonly int _horizontalMargin;
 
@@ -91,7 +91,11 @@ namespace System.UI.Widget
 		internal string Caption
 		{
 			get => lblCaption.Text;
-			set => lblCaption.Text = value;
+			set
+			{
+				if (lblCaption.InvokeRequired) lblCaption.SetPropertyThreadSafe(() => lblCaption.Text, value);
+				else lblCaption.Text = value;
+			}
 		}
 
 		internal Image Thumbnails
@@ -99,12 +103,12 @@ namespace System.UI.Widget
 			get => picImage.Image;
 			set
 			{
-				picImage.Image = value;
+				if (picImage.InvokeRequired)
+					picImage.SetPropertyThreadSafe(() => picImage.Image, value);
+				else
+					picImage.Image = value;
+
 				Invalidate();
-				if (value != null)
-				{
-					_hasImageSet = true;
-				}
 				
 			} 
 		}
@@ -294,6 +298,7 @@ namespace System.UI.Widget
 
 		private void LblCaption_Click(object sender, EventArgs e)
 		{
+			FrmToast_Click(this, e);
 			switch (CloseStyle)
 			{
 				case CloseStye.ClickEntire:
@@ -308,6 +313,7 @@ namespace System.UI.Widget
 
 		private void MainContainer_Panel2_Click(object sender, EventArgs e)
 		{
+			FrmToast_Click(this, e);
 			switch (CloseStyle)
 			{
 				case CloseStye.ClickEntire:
@@ -322,6 +328,7 @@ namespace System.UI.Widget
 
 		private void MainContainer_Panel1_Click(object sender, EventArgs e)
 		{
+			FrmToast_Click(this, e);
 			switch (CloseStyle)
 			{
 				case CloseStye.ClickEntire:
@@ -336,6 +343,7 @@ namespace System.UI.Widget
 
 		private void PicImage_Click(object sender, EventArgs e)
 		{
+			FrmToast_Click(this, e);
 			switch (CloseStyle)
 			{
 				case CloseStye.ClickEntire:
@@ -385,6 +393,26 @@ namespace System.UI.Widget
 		private void btnClose_Click(object sender, EventArgs e)
 		{
 			Close();
+		}
+
+		private void textContainer_Panel2_Click(object sender, EventArgs e)
+		{
+			FrmToast_Click(this, e);
+		}
+
+		private void lblDescription_Click(object sender, EventArgs e)
+		{
+			FrmToast_Click(this, e);
+		}
+
+		private void picAppOwnerIcon_Click(object sender, EventArgs e)
+		{
+			FrmToast_Click(this, e);
+		}
+
+		private void textContainer_Panel1_Click(object sender, EventArgs e)
+		{
+			FrmToast_Click(this, e);
 		}
 	}
 }

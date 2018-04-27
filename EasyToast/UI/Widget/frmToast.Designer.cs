@@ -100,6 +100,7 @@
 			// 
 			this.textContainer.Panel1.BackColor = System.Drawing.Color.Transparent;
 			this.textContainer.Panel1.Controls.Add(this.btnClose);
+			this.textContainer.Panel1.Click += new System.EventHandler(this.textContainer_Panel1_Click);
 			// 
 			// textContainer.Panel2
 			// 
@@ -107,6 +108,7 @@
 			this.textContainer.Panel2.Controls.Add(this.picAppOwnerIcon);
 			this.textContainer.Panel2.Controls.Add(this.lblDescription);
 			this.textContainer.Panel2.Controls.Add(this.lblCaption);
+			this.textContainer.Panel2.Click += new System.EventHandler(this.textContainer_Panel2_Click);
 			this.textContainer.Size = new System.Drawing.Size(393, 132);
 			this.textContainer.SplitterDistance = 30;
 			this.textContainer.SplitterWidth = 1;
@@ -131,12 +133,13 @@
 			this.picAppOwnerIcon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.picAppOwnerIcon.BackColor = System.Drawing.Color.DimGray;
 			this.picAppOwnerIcon.Image = global::System.Properties.Resources.exe_icon;
-			this.picAppOwnerIcon.Location = new System.Drawing.Point(361, 69);
+			this.picAppOwnerIcon.Location = new System.Drawing.Point(361, 81);
 			this.picAppOwnerIcon.Name = "picAppOwnerIcon";
 			this.picAppOwnerIcon.Size = new System.Drawing.Size(20, 20);
 			this.picAppOwnerIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.picAppOwnerIcon.TabIndex = 2;
 			this.picAppOwnerIcon.TabStop = false;
+			this.picAppOwnerIcon.Click += new System.EventHandler(this.picAppOwnerIcon_Click);
 			// 
 			// lblDescription
 			// 
@@ -149,11 +152,12 @@
 			this.lblDescription.ForeColor = System.Drawing.Color.DarkGray;
 			this.lblDescription.Location = new System.Drawing.Point(0, 22);
 			this.lblDescription.Name = "lblDescription";
-			this.lblDescription.Size = new System.Drawing.Size(381, 44);
+			this.lblDescription.Size = new System.Drawing.Size(381, 56);
 			this.lblDescription.TabIndex = 1;
 			this.lblDescription.Text = "@description @description @description @description @description @description @de" +
     "scription @description @description @description @description @description @desc" +
     "ription @description @description ";
+			this.lblDescription.Click += new System.EventHandler(this.lblDescription_Click);
 			// 
 			// lblCaption
 			// 
