@@ -53,7 +53,7 @@ Toast.Build(this, "Hello, I am Toast!", image).Show();
 - If you want to thumbnail best fixed for display, I highly recommended minmum size of image is 80x80, square rectangle.  
 - Only JPEG and PNG format are supported  
 
-**Note:** `this` in this case is your Form, where Toast has been created. Example: MainForm,...  
+**Note:** `this` in this case is instance of `System.Windows.Forms`, where Toast will be created. Example: MainForm,...  
 #### More features
 ##### Duration
 You can specific duration by using `Duration` enum. There are two values of this enum.  
