@@ -1,4 +1,4 @@
-# EasyToast v1.0
+# EasyToast
 A simple Toast Nofification library for Windows Forms
 
 **EasyToast** allows you to build, custom and display push notification like Windows 8/8.1/10 Toast Notification in Windows Forms Application. It's highly configurable with set of built-in options like positions, image, duration and many others. It's extendable, it gives you possibility to create custom and interactive notifications in simply manner.
