@@ -6,15 +6,13 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Properties;
+using System.Enums;
 
 namespace System.UI.Widget
 {
 	internal partial class FrmToast : Form
 	{
-		private bool _hasImageSet;
-
-		private readonly int _horizontalMargin;
+        private readonly int _horizontalMargin;
 
 		private readonly int _verticalMargin;
 
@@ -61,9 +59,9 @@ namespace System.UI.Widget
 			
 			var workingArea = Screen.GetWorkingArea(this);
 
-            Location = new Point(workingArea.Right - Size.Width - _horizontalMargin,
+			Location = new Point(workingArea.Right - Size.Width - _horizontalMargin,
 				workingArea.Bottom - Size.Height - _verticalMargin);
-        }
+		}
 
 		internal Toast Toast
 		{
@@ -91,7 +89,15 @@ namespace System.UI.Widget
 		internal string Caption
 		{
 			get => lblCaption.Text;
-			set => lblCaption.Text = value;
+			set => lblCaption.Text = value?.Trim() ?? string.Empty;
+		}
+
+		[DefaultValue("")]
+		internal string Description
+        {
+			get => lblDescription.Text;
+			set => lblCaption.Text = value?.Trim() ?? string.Empty;
+
 		}
 
 		internal Image Thumbnails
@@ -103,13 +109,15 @@ namespace System.UI.Widget
 				Invalidate();
 				if (value != null)
 				{
-					_hasImageSet = true;
+					HasImage = true;
 				}
 				
 			} 
 		}
 
-		[DefaultValue(false)]
+        public bool HasImage { get; private set; }
+
+        [DefaultValue(false)]
 		internal bool IsMuted
 		{
 			get => _isMuted;
@@ -261,7 +269,7 @@ namespace System.UI.Widget
 		{
 			
 			_shown = true;
-            tmrClose.Start();
+			tmrClose.Start();
 		}
 
 		private void FrmToast_FormClosing(object sender, FormClosingEventArgs e)
@@ -270,10 +278,10 @@ namespace System.UI.Widget
 			{
 				case Animation.FADE:
 					AnimateWindow(Handle, 250, AW_BLEND | AW_HIDE);
-                    break;
+					break;
 				case Animation.SLIDE:
 					AnimateWindow(Handle, 250, AW_SLIDE | AW_HOR_POSITIVE | AW_HIDE);
-                    break;
+					break;
 			}
 		}
 
@@ -382,7 +390,7 @@ namespace System.UI.Widget
 			ToastManager.ToastCollection.Remove(_toast);
 		}
 
-		private void btnClose_Click(object sender, EventArgs e)
+		private void BtnClose_Click(object sender, EventArgs e)
 		{
 			Close();
 		}

@@ -10,7 +10,7 @@ A simple Toast Nofification library for Windows Forms
 #### Prerequisites:
 - .NET Framework 4.0 or later
 - Visual Studio 2015 or later (to build from source)
-- Windows Forms Application only
+- Only Windows Forms Application is supported
 
 #### Via NuGet:
 
@@ -31,7 +31,7 @@ Open Solution that you cloned in Visual Studio. After cloned or downloaded, open
 After build. all you need is `EasyToast.dll` file in `/bin/Release` or `bin/Debug` folders.
 
 ## Usage:
-#### Basic usage
+### Basic usage
 First, you need add our namespace `System.UI.Widget`
 ```csharp
 using System.UI.Widget;
@@ -54,6 +54,22 @@ Toast.Build(this, "Hello, I am Toast!", image).Show();
 - Only JPEG and PNG format are supported  
 
 **Note:** `this` in this case is instance of `System.Windows.Forms`, where Toast will be created. Example: MainForm,...  
+
+### ToastBuilder
+We also provided `ToastBuilder` to create a Toast more powerful, chaining is supported.
+```csharp
+private void CreateWithBuilder()
+{
+  var toast = new ToastBuilder(this) //<-- 'this' is your Form instance
+    .SetCaption("Hello! I am Toast")
+    .SetDescription("This is demo")
+    .SetDuration(Duration.LENGTH_SHORT)
+    .SetMuting(false)
+    .Build();
+
+  toast.Show();
+}
+```
 #### More features
 ##### Duration
 You can specific duration by using `Duration` enum. There are two values of this enum.  
@@ -64,15 +80,15 @@ Default `Duration` value if you don't set is `LENGTH_SHORT`
 Toast.Build(this, "Hello, I am Toast!", Duration.LENGTH_LONG).Show();
 ```
 ##### Animation
-Like `Duration`, `Animation` also have two values `Animation.FADE` and `Animation.SLIDE`.  
-Default `Animation` value if you don't set is `FADE`  
+Like `Duration`, `Animation` also have two values: `Fading` and `Sliding`.  
+Default is `Fading` value if you don't set is `Fading`  
 **Example:**
 ```csharp
 Toast.Build(this, "Hello, I am Toast!", Animation.SLIDE).Show();
 ```
 ##### Theme
-Our provided 8 predefined-themes. You can also adding your custom theme.  
-There is 8 predefined-themes (built-in themes):  
+We provided 8 predefined-themes. You can also adding your custom theme.  
+There are 8 built-in themes:  
 - Dark
 - Light
 - PrimaryLight
@@ -88,6 +104,6 @@ There is 8 predefined-themes (built-in themes):
 ```csharp
 Toast.Build(this, "Hello, I am Toast!", Theme.Light).Show();
 ```
-#### More examples and documentation available in [wiki](https://github.com) and our [Officical Docummenation](https://google.com).
+#### More examples and documentation available in [wiki](https://github.com) and our [Officical Docummenation](/docs/html/index.html).
 ## License
 EasyToast is licensed under the [GNU General Public License v3 (GPL-3)](http://www.gnu.org/copyleft/gpl.html).
