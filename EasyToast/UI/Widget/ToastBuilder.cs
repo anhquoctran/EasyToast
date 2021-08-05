@@ -1,61 +1,80 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using System.Drawing;
 using System.Windows.Forms;
+using System.Enums;
 
 namespace System.UI.Widget
 {
 	/// <summary>
 	/// Make your own custom Toast Notification by the Builder
 	/// </summary>
-	public static class ToastBuilder
+	public class ToastBuilder
 	{
-		/// <summary>
-		/// Create an empty Toast
-		/// </summary>
-		/// <param name="window"></param>
-		/// <returns></returns>
-		public static Toast Create(IWin32Window window)
+		private readonly Toast _toast;
+
+		public ToastBuilder(IWin32Window window)
 		{
-			return new Toast(window);
+			_toast = new Toast(window);
 		}
 
 		/// <summary>
-		/// Set text for toast
+		/// Set caption for toast
 		/// </summary>
 		/// <param name="toast">toast</param>
 		/// <param name="text">Text data to display</param>
 		/// <returns></returns>
-		public static Toast SetText(this Toast toast, string text)
+		public ToastBuilder SetCaption(string caption)
 		{
-			toast.Caption = text;
-			return toast;
+			_toast.Caption = caption;
+			return this;
 		}
 
 		/// <summary>
-		/// 
+		/// Set description for Toast
+		/// </summary>
+		/// <param name="description"></param>
+		/// <returns></returns>
+		public ToastBuilder SetDescription(string description)
+		{
+			_toast.Description = description?.Trim() ?? string.Empty;
+			return this;
+		}
+
+		/// <summary>
+		/// Set duration time of Toast
 		/// </summary>
 		/// <param name="toast"></param>
 		/// <param name="duration"></param>
 		/// <returns></returns>
-		public static Toast SetDuration(this Toast toast, Duration duration)
+		public ToastBuilder SetDuration(Duration duration)
 		{
-			toast.Duration = duration;
-			return toast;
+			_toast.Duration = duration;
+			return this;
 		}
 
-		public static Toast SetMuting(this Toast toast, bool muting)
+		/// <summary>
+		/// Set muting mode for Toast
+		/// </summary>
+		/// <param name="muting"></param>
+		/// <returns></returns>
+		public ToastBuilder SetMuting(bool muting = false)
 		{
-			toast.IsMuted = muting;
-			return toast;
+			_toast.IsMuted = muting;
+			return this;
 		}
 
-		public static Toast SetThumbnail(this Toast toast, Image image)
+		public ToastBuilder SetThumbnail(Image image)
 		{
-			toast.Thumbnail = image;
-			return toast;
+			_toast.Thumbnail = image;
+			return this;
+		}
+
+		/// <summary>
+		/// Build the final toast
+		/// </summary>
+		/// <returns></returns>
+		public Toast Build()
+		{
+			return _toast;
 		}
 	}
 }

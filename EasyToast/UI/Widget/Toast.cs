@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using JetBrains.Annotations;
+using System.Enums;
 
 namespace System.UI.Widget
 {
@@ -31,7 +31,7 @@ namespace System.UI.Widget
 		/// Gets or sets caption of Toast
 		/// </summary>
 		[DefaultValue("")]
-		internal string Caption { get; set; } = string.Empty;
+		public string Caption { get; internal set; } = string.Empty;
 
 		/// <summary>
 		/// Gets or sets description of Toast
@@ -39,6 +39,9 @@ namespace System.UI.Widget
 		[DefaultValue("")]
 		internal string Description { get; set; } = string.Empty;
 
+		/// <summary>
+		/// Gets or sets timeout duration of Toas
+		/// </summary>
 		[DefaultValue(Duration.LENGTH_SHORT)]
 		internal Duration Duration { get; set; } = Duration.LENGTH_SHORT;
 
@@ -132,7 +135,7 @@ namespace System.UI.Widget
 		private void InternalDisplayToast(bool async = false)
 		{
 			FrmToast.IsAsync = async;
-			ToastManager.Toast = this;
+			ToastManager.CurrentToast = this;
 			FrmToast.Click += FrmToast_Click;
 			FrmToast.MouseHover += FrmToast_MouseHover;
 			FrmToast.FormClosed += FrmToast_FormClosed;
@@ -164,12 +167,12 @@ namespace System.UI.Widget
 		/// <param name="window">Containter form. Usually MainForm.</param>
 		/// <param name="text">Text to display. Required not null or empty.</param>
 		/// <returns>Toast has been create but not yet display. Use Show() to display it.</returns>
-		[MustUseReturnValue("Toast has been create but not yet display. Use Show() to display it.")]
-		public static Toast Build(IWin32Window window, string text)
+		public static Toast Build(IWin32Window window, string caption)
 		{
 			var toast = new Toast(window)
 			{
-				Caption = text,
+				Caption = caption,
+				Description = string.Empty
 			};
 			return toast;
 		}
@@ -195,16 +198,15 @@ namespace System.UI.Widget
 		/// Build a Toast with custom duration and animation.
 		/// </summary>
 		/// <param name="window">Containter form. Usually MainForm.</param>
-		/// <param name="text">Text to display. Required not null or empty.</param>
+		/// <param name="caption">Text to display. Required not null or empty.</param>
 		/// <param name="duration">How long to display. SHORT is 2 seconds and LONG is 3 seconds.</param>
 		/// <param name="animation">Toast transition animation style. Use both fading and sliding animation style.</param>
 		/// <returns>Toast has been create but not yet display. Use Show() or ShowAsync() to display it.</returns>
-		[MustUseReturnValue("Toast has been create but not yet display. Use Show() to display it.")]
-		public static Toast Build(IWin32Window window, string text, Duration duration, Animation animation)
+		public static Toast Build(IWin32Window window, string caption, Duration duration, Animation animation)
 		{
 			var toast = new Toast(window)
 			{
-				Caption = text,
+				Caption = caption,
 				Duration = duration,
 				Animation = animation
 			};
@@ -220,7 +222,6 @@ namespace System.UI.Widget
 		/// <param name="description">Description</param>
 		/// <param name="duration">How long to display. SHORT is 2 seconds and LONG is 3 seconds.</param>
 		/// <returns>Toast has been create but not yet display. Use Show() or ShowAsync() to display it.</returns>
-		[MustUseReturnValue("Toast has been create but not yet display. Use Show() to display it.")]
 		public static Toast Build(IWin32Window window, string caption, string description, Duration duration)
 		{
 			var toast = new Toast(window)
@@ -237,17 +238,16 @@ namespace System.UI.Widget
 		/// Build a Toast with custom animation, duration, sound
 		/// </summary>
 		/// <param name="window">Containter form. Usually MainForm.</param>
-		/// <param name="text">Text to display. Required not null or empty.</param>
+		/// <param name="caption">Text to display. Required not null or empty.</param>
 		/// <param name="duration">How long to display. SHORT is 2 seconds and LONG is 3 seconds.</param>
 		/// <param name="animation">Toast transition animation style. Use both fading and sliding animation style.</param>
 		/// <param name="muting">Set sound state. Muting or not. Sound using Windows 10 default notification sound</param>
 		/// <returns>Toast has been create but not yet display. Use Show() or ShowAsync() to display it.</returns>
-		[MustUseReturnValue("Toast has been create but not yet display. Use Show() to display it.")]
-		public static Toast Build(IWin32Window window, string text, Animation animation, Duration duration, bool muting)
+		public static Toast Build(IWin32Window window, string caption, Animation animation, Duration duration, bool muting)
 		{
 			var toast = new Toast(window)
 			{
-				Caption = text,
+				Caption = caption,
 				Animation = animation,
 				Duration = duration,
 				IsMuted = muting
@@ -260,15 +260,14 @@ namespace System.UI.Widget
 		/// Build a Toast with custom animation
 		/// </summary>
 		/// <param name="window">Containter form. Usually MainForm.</param>
-		/// <param name="text">Text to display. Required not null or empty.</param>
+		/// <param name="caption">Text to display. Required not null or empty.</param>
 		/// <param name="animation">Toast transition animation style. Use both fading and sliding animation style.</param>
 		/// <returns>Toast has been create but not yet display. Use Show() or ShowAsync() to display it.</returns>
-		[MustUseReturnValue("Toast has been create but not yet display. Use Show() to display it.")]
-		public static Toast Build(IWin32Window window, string text, Animation animation)
+		public static Toast Build(IWin32Window window, string caption, Animation animation)
 		{
 			var toast = new Toast(window)
 			{
-				Caption = text,
+				Caption = caption,
 				Animation = animation
 			};
 
@@ -279,15 +278,14 @@ namespace System.UI.Widget
 		/// Build a simple Toast with specific sound status
 		/// </summary>
 		/// <param name="window">Containter form. Usually MainForm.</param>
-		/// <param name="text">Text to display. Required not null or empty.</param>
+		/// <param name="caption">Text to display. Required not null or empty.</param>
 		/// <param name="muting">Set sound state. Muting or not. Sound using Windows 10 default notification sound</param>
 		/// <returns>Toast has been create but not yet display. Use Show() or ShowAsync() to display it.</returns>
-		[MustUseReturnValue("Toast has been create but not yet display. Use Show() to display it.")]
-		public static Toast Build(IWin32Window window, string text, bool muting)
+		public static Toast Build(IWin32Window window, string caption, bool muting)
 		{
 			var toast = new Toast(window)
 			{
-				Caption = text,
+				Caption = caption,
 				IsMuted = muting
 			};
 
@@ -298,17 +296,16 @@ namespace System.UI.Widget
 		/// Build a Toast with text and thumbnails and custom duration, animation
 		/// </summary>
 		/// <param name="window">Containter form. Usually MainForm.</param>
-		/// <param name="text">Text to display. Required not null or empty.</param>
+		/// <param name="caption">Text to display. Required not null or empty.</param>
 		/// <param name="thumbnail">Thumbnail image to display in Toast. Required image have MINIMUM SIZE 64x64 pixels for best display</param>
 		/// <param name="duration">How long to display. SHORT is 2 seconds and LONG is 3 seconds.</param>
 		/// <param name="animation">Toast transition animation style. Use both fading and sliding animation style.</param>
 		/// <returns>Toast has been create but not yet display. Use Show() to display it</returns>
-		[MustUseReturnValue("Toast has been create but not yet display. Use Show() to display it.")]
-		public static Toast Build(IWin32Window window, string text, Image thumbnail, Duration duration, Animation animation)
+		public static Toast Build(IWin32Window window, string caption, Image thumbnail, Duration duration, Animation animation)
 		{
 			var toast = new Toast(window)
 			{
-				Caption = text,
+				Caption = caption,
 				Thumbnail = thumbnail,
 				Duration = duration,
 				Animation = animation
@@ -320,19 +317,18 @@ namespace System.UI.Widget
 		/// Build a simple Toast with thumbnail and custom duration, animation and sound
 		/// </summary>
 		/// <param name="window">Containter form. Usually MainForm.</param>
-		/// <param name="text">Text to display. Required not null or empty.</param>
+		/// <param name="caption">Text to display. Required not null or empty.</param>
 		/// <param name="thumbnail">Thumbnail image to display in Toast. Required image have MINIMUM SIZE 64x64 pixels for best display</param>
 		/// <param name="duration">How long to display. SHORT is 2 seconds and LONG is 3 seconds.</param>
 		/// <param name="animation">Toast transition animation style. Use both fading and sliding animation style.</param>
 		/// <param name="muting"></param>
 		/// <returns>Toast has been create but not yet display. Use Show() to display it</returns>
-		[MustUseReturnValue("Toast has been create but not yet display. Use Show() to display it.")]
-		public static Toast Build(IWin32Window window, string text, Image thumbnail, Duration duration,
+		public static Toast Build(IWin32Window window, string caption, Image thumbnail, Duration duration,
 			Animation animation, bool muting)
 		{
 			var toast = new Toast(window)
 			{
-				Caption = text,
+				Caption = caption,
 				Thumbnail = thumbnail,
 				Duration = duration,
 				Animation = animation,
@@ -348,12 +344,11 @@ namespace System.UI.Widget
 		/// <param name="text">Text to display. Required not null or empty.</param>
 		/// <param name="thumbnail">Thumbnail image to display in Toast. Required image have MINIMUM SIZE 64x64 pixels for best display</param>
 		/// <returns></returns>
-		[MustUseReturnValue("Toast has been create but not yet display. Use Show() to display it.")]
-		public static Toast Build(IWin32Window window, string text, Image thumbnail)
+		public static Toast Build(IWin32Window window, string caption, Image thumbnail)
 		{
 			var toast = new Toast(window)
 			{
-				Caption = text,
+				Caption = caption,
 				Thumbnail = thumbnail
 			};
 			return toast;
@@ -363,16 +358,15 @@ namespace System.UI.Widget
 		/// Build a simple Toast with thumbnail and custom duration
 		/// </summary>
 		/// <param name="window">Containter form. Usually MainForm.</param>
-		/// <param name="text">Text to display. Required not null or empty.</param>
+		/// <param name="caption">Text to display. Required not null or empty.</param>
 		/// <param name="thumbnail">Thumbnail image to display in Toast. Required image have MINIMUM SIZE 64x64 pixels for best display</param>
 		/// <param name="duration">How long to display. SHORT is 2 seconds and LONG is 3 seconds.</param>
 		/// <returns></returns>
-		[MustUseReturnValue("Toast has been create but not yet display. Use Show() to display it.")]
-		public static Toast Build(IWin32Window window, string text, Image thumbnail, Duration duration)
+		public static Toast Build(IWin32Window window, string caption, Image thumbnail, Duration duration)
 		{
 			var toast = new Toast(window)
 			{
-				Caption = text,
+				Caption = caption,
 				Thumbnail = thumbnail,
 				Duration = duration
 			};
@@ -397,63 +391,4 @@ namespace System.UI.Widget
 
 		#endregion
 	}
-
-	#region Enums
-
-	/// <summary>
-	/// Duration definition. Short is 2 seconds, long is 3 seconds
-	/// </summary>
-	public enum Duration
-	{
-		LENGTH_SHORT = 0,
-		LENGTH_LONG = 1
-	}
-
-	/// <summary>
-	/// Animation to display Toast
-	/// </summary>
-	public enum Animation
-	{
-		FADE = 1,
-        SLIDE = 0
-	}
-
-	/// <summary>
-	/// Location of Toast. Only top right and bottom right supported
-	/// </summary>
-	public enum Position
-	{
-		TopRight,
-		BottomRight
-	}
-
-	/// <summary>
-	/// Way to closing Toast
-	/// </summary>
-	public enum CloseStye
-	{
-		ClickEntire,
-		Button,
-		ButtonAndClickEntire
-	}
-
-	/// <summary>
-	/// Color scheme for Toast
-	/// </summary>
-	public enum Theme
-	{
-		Dark,
-		Light,
-		PrimaryLight,
-		SuccessLight,
-		WarningLight,
-		ErrorLight,
-		PrimaryDark,
-		SuccessDark,
-		WarningDark,
-		ErrorDark,
-		Custom
-	}
-
-	#endregion
 }

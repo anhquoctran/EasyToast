@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.UI.Widget;
+using System.Enums;
 
 namespace EasyToastDemo
 {
@@ -46,7 +47,7 @@ namespace EasyToastDemo
 		{
 			if (!_isDisplayedSimple1)
 			{
-				Toast.Build(this, "Hello, I am Toast!").Show();
+				Toast.Build(this, "Hello, I am Toast!", "").Show();
 				_isDisplayedSimple1 = true;
 				await Task.Delay(1000);
 				_isDisplayedSimple1 = false;
@@ -54,12 +55,12 @@ namespace EasyToastDemo
 			
 		}
 
-		private void btnSimpeWithCustomText_Click(object sender, EventArgs e)
+		private void BtnSimpeWithCustomText_Click(object sender, EventArgs e)
 		{
 			if (!_isDisplayedSimple2)
 			{
 				Toast.Build(this, string.IsNullOrEmpty(txtText.Text) ? "Hello, I am Toast!" : txtText.Text).Show();
-				_isDisplayedSimple2 = true;
+				_isDisplayedSimple2 = !_isDisplayedSimple2;
 			}
 			
 		}
@@ -151,7 +152,7 @@ namespace EasyToastDemo
 			
 		}
 
-		private void btnDisplayMultiple_Click(object sender, EventArgs e)
+		private void BtnDisplayMultiple_Click(object sender, EventArgs e)
 		{
 			for (var i = 1; i <= (int)numofToasts.Value; i++)
 			{
@@ -159,19 +160,36 @@ namespace EasyToastDemo
 			}
 		}
 
-		private void btnToastWithAnimation_Click(object sender, EventArgs e)
+		private void BtnToastWithAnimation_Click(object sender, EventArgs e)
 		{
 			Toast.Build(this, string.IsNullOrEmpty(txtAnimation.Text) ? "Hello, I am Toast!" : txtAnimation.Text, rFade.Checked ? Animation.FADE : Animation.SLIDE).Show();
 		}
 
-		private void btnTopRight_Click(object sender, EventArgs e)
+		private void BtnTopRight_Click(object sender, EventArgs e)
 		{
 			
 		}
 
-		private void btnBottom_Click(object sender, EventArgs e)
+		private void BtnBottom_Click(object sender, EventArgs e)
 		{
 
+		}
+
+		private void Form1_Load(object sender, EventArgs e)
+		{
+			cbBuiltinThemes.DataSource = Enum.GetValues(typeof(Theme));
+		}
+
+		private void CreateWithBuilder()
+		{
+			var toast = new ToastBuilder(this)
+				.SetCaption("Hello! I am Toast")
+				.SetDescription("This is demo")
+				.SetDuration(Duration.LENGTH_SHORT)
+				.SetMuting(false)
+				.Build();
+
+			toast.Show();
 		}
 	}
 }

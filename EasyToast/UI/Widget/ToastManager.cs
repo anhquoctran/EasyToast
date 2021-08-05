@@ -1,11 +1,8 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Enums;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace System.UI.Widget
@@ -17,7 +14,7 @@ namespace System.UI.Widget
 	{
 		public const byte MAX_TOASTS_ALLOWED = 6;
 		private static ToastCollection _privateCollection = new ToastCollection();
-		internal static Toast Toast;
+		internal static Toast CurrentToast;
 
 		/// <summary>
 		/// Get all toasts displaying
@@ -34,24 +31,25 @@ namespace System.UI.Widget
 		internal static void AddToCollection()
 		{
 			if (ToastCollection.Count >= MAX_TOASTS_ALLOWED) return;
-			if (string.IsNullOrEmpty(Toast.Caption))
+			if (string.IsNullOrEmpty(CurrentToast.Caption))
 			{
 				throw new ArgumentException("Text property is required to display Toast");
 			}
 
-			Toast.FrmToast.CloseStyle = Toast.CloseStyle;
-			Toast.FrmToast.IsMuted = Toast.IsMuted;
-			Toast.FrmToast.Toast = Toast;
-			Toast.FrmToast.Duration = Toast.Duration;
-			Toast.FrmToast.Animation = Toast.Animation;
-			Toast.FrmToast.Caption = Toast.Caption;
-			Toast.FrmToast.Thumbnails = Toast.Thumbnail;
-			Toast.FrmToast.Theme = Toast.ThemeStyle;
+			CurrentToast.FrmToast.CloseStyle = CurrentToast.CloseStyle;
+			CurrentToast.FrmToast.IsMuted = CurrentToast.IsMuted;
+			CurrentToast.FrmToast.Toast = CurrentToast;
+			CurrentToast.FrmToast.Duration = CurrentToast.Duration;
+			CurrentToast.FrmToast.Animation = CurrentToast.Animation;
+			CurrentToast.FrmToast.Description = CurrentToast.Description;
+			CurrentToast.FrmToast.Caption = CurrentToast.Caption;
+			CurrentToast.FrmToast.Thumbnails = CurrentToast.Thumbnail;
+			CurrentToast.FrmToast.Theme = CurrentToast.ThemeStyle;
 
-			SetLocation(Toast.Position);
+			SetLocation(CurrentToast.Position);
 
-			_privateCollection.Add(Toast);
-			Toast.FrmToast.Show(Toast.Window);
+			_privateCollection.Add(CurrentToast);
+			CurrentToast.FrmToast.Show(Toast.Window);
 
 		}
 
@@ -69,8 +67,8 @@ namespace System.UI.Widget
 
 					if (ToastCollection.Count == 0)
 					{
-						Toast.FrmToast.Left = rightmost.WorkingArea.Right - Toast.FrmToast.Width - Toast.GetHorizontalMargin();
-						Toast.FrmToast.Top = rightmost.WorkingArea.Top + Toast.GetVerticalMargin();
+						CurrentToast.FrmToast.Left = rightmost.WorkingArea.Right - CurrentToast.FrmToast.Width - CurrentToast.GetHorizontalMargin();
+						CurrentToast.FrmToast.Top = rightmost.WorkingArea.Top + CurrentToast.GetVerticalMargin();
 					}
 					else
 					{
@@ -78,24 +76,24 @@ namespace System.UI.Widget
 						var enumerable = collection as List<Toast> ?? collection.ToList();
 						if (enumerable.Count == 0)
 						{
-							Toast.FrmToast.Left = rightmost.WorkingArea.Right - Toast.FrmToast.Width - Toast.GetHorizontalMargin();
-							Toast.FrmToast.Top = rightmost.WorkingArea.Top + Toast.GetVerticalMargin();
+							CurrentToast.FrmToast.Left = rightmost.WorkingArea.Right - CurrentToast.FrmToast.Width - CurrentToast.GetHorizontalMargin();
+							CurrentToast.FrmToast.Top = rightmost.WorkingArea.Top + CurrentToast.GetVerticalMargin();
 						}
 						else if(enumerable.Count < 3)
 						{
-							Toast.FrmToast.Left = rightmost.WorkingArea.Right - Toast.FrmToast.Width - Toast.GetHorizontalMargin();
-							Toast.FrmToast.Top = rightmost.WorkingArea.Top + enumerable.Count * Toast.FrmToast.Height + enumerable.Count* Toast.GetVerticalMargin() + Toast.GetVerticalMargin();
+							CurrentToast.FrmToast.Left = rightmost.WorkingArea.Right - CurrentToast.FrmToast.Width - CurrentToast.GetHorizontalMargin();
+							CurrentToast.FrmToast.Top = rightmost.WorkingArea.Top + enumerable.Count * CurrentToast.FrmToast.Height + enumerable.Count* CurrentToast.GetVerticalMargin() + CurrentToast.GetVerticalMargin();
 						}
 					}
 					
 					break;
 				case Position.BottomRight:
 				{
-					var workingArea = Screen.GetWorkingArea(Toast.FrmToast);
+					var workingArea = Screen.GetWorkingArea(CurrentToast.FrmToast);
 					if (ToastCollection.Count == 0)
 					{
-						Toast.FrmToast.Location = new Point(workingArea.Right - Toast.FrmToast.Size.Width - Toast.GetHorizontalMargin(),
-							workingArea.Bottom - Toast.FrmToast.Size.Height - Toast.GetVerticalMargin());
+						CurrentToast.FrmToast.Location = new Point(workingArea.Right - CurrentToast.FrmToast.Size.Width - CurrentToast.GetHorizontalMargin(),
+							workingArea.Bottom - CurrentToast.FrmToast.Size.Height - CurrentToast.GetVerticalMargin());
 					}
 					else
 					{
@@ -104,13 +102,13 @@ namespace System.UI.Widget
 
 						if (enumerable.Count == 0)
 						{
-							Toast.FrmToast.Location = new Point(workingArea.Right - Toast.FrmToast.Size.Width - Toast.GetHorizontalMargin(),
-								workingArea.Bottom - Toast.FrmToast.Size.Height - Toast.GetVerticalMargin());
+							CurrentToast.FrmToast.Location = new Point(workingArea.Right - CurrentToast.FrmToast.Size.Width - CurrentToast.GetHorizontalMargin(),
+								workingArea.Bottom - CurrentToast.FrmToast.Size.Height - CurrentToast.GetVerticalMargin());
 							}
 						else if(enumerable.Count < 3)
 						{
-							Toast.FrmToast.Location = new Point(workingArea.Right - Toast.FrmToast.Size.Width - Toast.GetHorizontalMargin(),
-								workingArea.Bottom - Toast.FrmToast.Size.Height - Toast.FrmToast.Size.Height * ToastCollection.Count - Toast.GetVerticalMargin() * ToastCollection.Count - Toast.GetVerticalMargin());
+							CurrentToast.FrmToast.Location = new Point(workingArea.Right - CurrentToast.FrmToast.Size.Width - CurrentToast.GetHorizontalMargin(),
+								workingArea.Bottom - CurrentToast.FrmToast.Size.Height - CurrentToast.FrmToast.Size.Height * ToastCollection.Count - CurrentToast.GetVerticalMargin() * ToastCollection.Count - CurrentToast.GetVerticalMargin());
 						}	
 					}
 				}
