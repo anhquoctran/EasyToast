@@ -138,7 +138,8 @@ namespace System.UI.Widget
 		{
 			if (other != null)
 			{
-				_privateList = other._privateList;
+				_privateList = new List<Toast>(other._privateList);
+				_privateList.Capacity = ToastManager.MAX_TOASTS_ALLOWED;
 			}
 		}
 

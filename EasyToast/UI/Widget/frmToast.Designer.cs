@@ -62,15 +62,15 @@
             // mainContainer.Panel1
             // 
             this.mainContainer.Panel1.Controls.Add(this.picImage);
-            this.mainContainer.Panel1.Click += new System.EventHandler(this.MainContainer_Panel1_Click);
+            this.mainContainer.Panel1.Click += new System.EventHandler(this.ToastContentClick);
             this.mainContainer.Panel1MinSize = 110;
             // 
             // mainContainer.Panel2
             // 
             this.mainContainer.Panel2.BackColor = System.Drawing.Color.Transparent;
             this.mainContainer.Panel2.Controls.Add(this.textContainer);
-            this.mainContainer.Panel2.Click += new System.EventHandler(this.MainContainer_Panel2_Click);
-            this.mainContainer.Size = new System.Drawing.Size(504, 132);
+            this.mainContainer.Panel2.Click += new System.EventHandler(this.ToastContentClick);
+            this.mainContainer.Size = new System.Drawing.Size(406, 110);
             this.mainContainer.SplitterDistance = 110;
             this.mainContainer.SplitterWidth = 1;
             this.mainContainer.TabIndex = 0;
@@ -81,11 +81,11 @@
             this.picImage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picImage.Location = new System.Drawing.Point(0, 0);
             this.picImage.Name = "picImage";
-            this.picImage.Size = new System.Drawing.Size(110, 132);
+            this.picImage.Size = new System.Drawing.Size(110, 110);
             this.picImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picImage.TabIndex = 0;
             this.picImage.TabStop = false;
-            this.picImage.Click += new System.EventHandler(this.PicImage_Click);
+            this.picImage.Click += new System.EventHandler(this.ToastContentClick);
             // 
             // textContainer
             // 
@@ -100,14 +100,14 @@
             // 
             this.textContainer.Panel1.BackColor = System.Drawing.Color.Transparent;
             this.textContainer.Panel1.Controls.Add(this.btnClose);
+            this.textContainer.Panel1.Controls.Add(this.lblCaption);
             // 
             // textContainer.Panel2
             // 
             this.textContainer.Panel2.BackColor = System.Drawing.Color.Transparent;
             this.textContainer.Panel2.Controls.Add(this.picAppOwnerIcon);
             this.textContainer.Panel2.Controls.Add(this.lblDescription);
-            this.textContainer.Panel2.Controls.Add(this.lblCaption);
-            this.textContainer.Size = new System.Drawing.Size(393, 132);
+            this.textContainer.Size = new System.Drawing.Size(295, 110);
             this.textContainer.SplitterDistance = 30;
             this.textContainer.SplitterWidth = 1;
             this.textContainer.TabIndex = 1;
@@ -118,7 +118,7 @@
             this.btnClose.FlatAppearance.BorderSize = 0;
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClose.Font = new System.Drawing.Font("Arial Rounded MT Bold", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.Location = new System.Drawing.Point(364, 2);
+            this.btnClose.Location = new System.Drawing.Point(266, 2);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(28, 25);
             this.btnClose.TabIndex = 1;
@@ -131,7 +131,7 @@
             this.picAppOwnerIcon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.picAppOwnerIcon.BackColor = System.Drawing.Color.DimGray;
             this.picAppOwnerIcon.Image = global::System.Properties.Resources.exe_icon;
-            this.picAppOwnerIcon.Location = new System.Drawing.Point(361, 72);
+            this.picAppOwnerIcon.Location = new System.Drawing.Point(267, 55);
             this.picAppOwnerIcon.Name = "picAppOwnerIcon";
             this.picAppOwnerIcon.Size = new System.Drawing.Size(20, 20);
             this.picAppOwnerIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -147,9 +147,10 @@
             this.lblDescription.BackColor = System.Drawing.Color.Transparent;
             this.lblDescription.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
             this.lblDescription.ForeColor = System.Drawing.Color.DarkGray;
-            this.lblDescription.Location = new System.Drawing.Point(0, 22);
+            this.lblDescription.Location = new System.Drawing.Point(0, 0);
             this.lblDescription.Name = "lblDescription";
-            this.lblDescription.Size = new System.Drawing.Size(381, 47);
+            this.lblDescription.Padding = new System.Windows.Forms.Padding(2);
+            this.lblDescription.Size = new System.Drawing.Size(292, 52);
             this.lblDescription.TabIndex = 1;
             this.lblDescription.Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec suscipit, diam qui" +
     "s sollicitudin pulvinar, diam tortor aliquam purus, eu vestibulum magna libero v" +
@@ -163,12 +164,13 @@
             this.lblCaption.BackColor = System.Drawing.Color.Transparent;
             this.lblCaption.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
             this.lblCaption.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblCaption.Location = new System.Drawing.Point(0, 0);
+            this.lblCaption.Location = new System.Drawing.Point(3, 0);
             this.lblCaption.Name = "lblCaption";
-            this.lblCaption.Size = new System.Drawing.Size(393, 22);
+            this.lblCaption.Size = new System.Drawing.Size(257, 27);
             this.lblCaption.TabIndex = 0;
             this.lblCaption.Text = "@caption";
-            this.lblCaption.Click += new System.EventHandler(this.LblCaption_Click);
+            this.lblCaption.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblCaption.Click += new System.EventHandler(this.ToastContentClick);
             // 
             // tmrClose
             // 
@@ -181,7 +183,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.ClientSize = new System.Drawing.Size(504, 132);
+            this.ClientSize = new System.Drawing.Size(406, 110);
             this.ControlBox = false;
             this.Controls.Add(this.mainContainer);
             this.DoubleBuffered = true;
@@ -198,7 +200,7 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmToast_FormClosed);
             this.Load += new System.EventHandler(this.FrmToast_Load);
             this.Shown += new System.EventHandler(this.FrmToast_Shown);
-            this.Click += new System.EventHandler(this.FrmToast_Click);
+            this.Click += new System.EventHandler(this.ToastContentClick);
             this.mainContainer.Panel1.ResumeLayout(false);
             this.mainContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();

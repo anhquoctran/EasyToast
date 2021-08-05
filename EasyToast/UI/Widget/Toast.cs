@@ -62,6 +62,8 @@ namespace System.UI.Widget
 		[DefaultValue(CloseStye.ButtonAndClickEntire)]
 		internal CloseStye CloseStyle { get; set; } = CloseStye.ButtonAndClickEntire;
 
+		internal ColorScheme CustomThem { get; set; }
+
 		#endregion
 
 		#region Constructors

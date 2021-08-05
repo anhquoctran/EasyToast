@@ -1,7 +1,7 @@
 # EasyToast
 A simple Toast Nofification library for Windows Forms
 
-**EasyToast** allows you to build, custom and display push notification like Windows 8/8.1/10 Toast Notification in Windows Forms Application. It's highly configurable with set of built-in options like positions, image, duration and many others. It's extendable, it gives you possibility to create custom and interactive notifications in simply manner.
+**EasyToast** allows you to build, custom and display toast notification like Windows 8/8.1/10 Toast Notification in Windows Forms Application. It's highly configurable with set of built-in options like positions, image, duration and many others. It's extendable, it gives you possibility to create custom and interactive notifications in simply manner.
 
 ## Demo
 ### Some demo:
@@ -85,6 +85,14 @@ Default is `Fading` value if you don't set is `Fading`
 **Example:**
 ```csharp
 Toast.Build(this, "Hello, I am Toast!", Animation.SLIDE).Show();
+```
+##### Async supports
+Toast also supported asynchronous for displaying the toast without blocking your code
+```csharp
+private async void DisplayToastAsync() 
+{
+  await Toast.Build(this, "Hello! I am Toast!", Duration.LENGTH_SHORT).ShowAsync();
+}
 ```
 ##### Theme
 We provided 8 predefined-themes. You can also adding your custom theme.  

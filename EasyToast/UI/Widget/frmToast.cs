@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Enums;
+using System.Threading;
 
 namespace System.UI.Widget
 {
@@ -41,6 +42,8 @@ namespace System.UI.Widget
 		private Duration _duration;
 
 		private Toast _toast;
+
+		internal CancellationToken CancellationToken { get; set; }
 
 		public bool IsAsync = false;
 
@@ -267,7 +270,6 @@ namespace System.UI.Widget
 
 		private void FrmToast_Shown(object sender, EventArgs e)
 		{
-			
 			_shown = true;
 			tmrClose.Start();
 		}
@@ -285,65 +287,8 @@ namespace System.UI.Widget
 			}
 		}
 
-		private void FrmToast_Click(object sender, EventArgs e)
-		{
-			switch (CloseStyle)
-			{
-				case CloseStye.ClickEntire:
-				
-				case CloseStye.ButtonAndClickEntire:
-					Close();
-					break;
-				case CloseStye.Button:
-					return;
-			}
-			
-		}
-
-		private void LblCaption_Click(object sender, EventArgs e)
-		{
-			switch (CloseStyle)
-			{
-				case CloseStye.ClickEntire:
-
-				case CloseStye.ButtonAndClickEntire:
-					Close();
-					break;
-				case CloseStye.Button:
-					return;
-			}
-		}
-
-		private void MainContainer_Panel2_Click(object sender, EventArgs e)
-		{
-			switch (CloseStyle)
-			{
-				case CloseStye.ClickEntire:
-
-				case CloseStye.ButtonAndClickEntire:
-					Close();
-					break;
-				case CloseStye.Button:
-					return;
-			}
-		}
-
-		private void MainContainer_Panel1_Click(object sender, EventArgs e)
-		{
-			switch (CloseStyle)
-			{
-				case CloseStye.ClickEntire:
-
-				case CloseStye.ButtonAndClickEntire:
-					Close();
-					break;
-				case CloseStye.Button:
-					return;
-			}
-		}
-
-		private void PicImage_Click(object sender, EventArgs e)
-		{
+		private void ToastContentClick(object sender, EventArgs e)
+        {
 			switch (CloseStyle)
 			{
 				case CloseStye.ClickEntire:
