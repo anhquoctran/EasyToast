@@ -120,8 +120,11 @@ namespace EasyToastDemo
 			var bytes = File.ReadAllBytes(path);
 			var png = new byte[] { 137, 80, 78, 71 };
 			var jpeg = new byte[] { 255, 216, 255, 224 };
+			var jpg = new byte[] { 255, 216, 255, 226 };
 
-			return png.SequenceEqual(bytes.Take(png.Length)) || jpeg.SequenceEqual(bytes.Take(jpeg.Length));
+			return png.SequenceEqual(bytes.Take(png.Length)) || 
+				jpg.SequenceEqual(bytes.Take(jpg.Length)) || 
+				jpeg.SequenceEqual(bytes.Take(jpeg.Length));
 		}
 
 		private void BtnToastTextImage_Click(object sender, EventArgs e)
