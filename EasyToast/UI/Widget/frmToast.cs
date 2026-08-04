@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -134,7 +134,7 @@ namespace System.UI.Widget
 		{
 			if (IsAsync)
 			{
-				await TaskEx.Yield();
+				await Task.Yield();
 			}
 
 			switch (CloseStyle)
@@ -314,7 +314,7 @@ namespace System.UI.Widget
 			Opacity = 0;
 			while (Opacity < 1.0)
 			{
-				await TaskEx.Delay(3);
+				await Task.Delay(3);
 				Opacity += 0.05;
 			}
 			Opacity = 1;
