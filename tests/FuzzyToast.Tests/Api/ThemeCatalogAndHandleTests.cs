@@ -108,8 +108,8 @@ public class ThemeCatalogAndHandleTests
 			new ImmediateUiMarshaler(),
 			(opts, handle) => new FakeToastView(handle));
 
-		Assert.Equal(1000, mgr.Options.ResolveDurationMs(Duration.Short));
-		Assert.Equal(2000, mgr.Options.ResolveDurationMs(Duration.Long));
+		Assert.Equal(1000, mgr.Options.ResolveDurationMs(new ToastOptions { Caption = "x", Duration = Duration.Short }));
+		Assert.Equal(2000, mgr.Options.ResolveDurationMs(new ToastOptions { Caption = "x", Duration = Duration.Long }));
 
 		mgr.Show(new ToastOptions { Caption = "1" });
 		mgr.Show(new ToastOptions { Caption = "2" });
@@ -280,8 +280,9 @@ public class ThemeCatalogAndHandleTests
 		var m = o.ToLayoutMetrics();
 		Assert.Equal(400, m.ToastWidth);
 		Assert.Equal(100, m.ToastHeight);
-		Assert.Equal(o.ResolveDurationMs(Duration.LENGTH_SHORT), o.ShortDurationMs);
-		Assert.Equal(o.ResolveDurationMs(Duration.LENGTH_LONG), o.LongDurationMs);
+		Assert.Equal(o.ResolveDurationMs(new ToastOptions { Caption = "x", Duration = Duration.LENGTH_SHORT }), o.ShortDurationMs);
+		Assert.Equal(o.ResolveDurationMs(new ToastOptions { Caption = "x", Duration = Duration.LENGTH_LONG }), o.LongDurationMs);
+		Assert.Equal(o.ResolveDurationMs(new ToastOptions { Caption = "x", EnableInput = true }), o.InputDurationMs);
 	}
 
 	[Fact]

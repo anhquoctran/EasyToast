@@ -24,6 +24,12 @@ public sealed class Toast
 	private bool _ownsThumbnail;
 	private object? _tag;
 	private readonly Dictionary<string, object?> _metadata = new(StringComparer.Ordinal);
+	private bool _enableInput;
+	private string _inputPlaceholder = string.Empty;
+	private string _inputDefaultText = string.Empty;
+	private string _submitButtonText = "OK";
+	private bool _allowEmptySubmit;
+	private int? _durationMs;
 	private ToastHandle? _handle;
 
 	private Toast(Control owner)
@@ -100,6 +106,9 @@ public sealed class Toast
 
 	/// <summary>Pointer hover. Args include Tag + Metadata.</summary>
 	public event EventHandler<ToastInteractionEventArgs>? OnHover;
+
+	/// <summary>User submitted text from an inputable toast (<see cref="EnableInput"/>).</summary>
+	public event EventHandler<ToastSubmittedEventArgs>? OnSubmit;
 
 	public event EventHandler? OnClosed;
 
@@ -205,6 +214,44 @@ public sealed class Toast
 	/// <summary>Alias of <see cref="SetMetadata(IEnumerable{KeyValuePair{string, object?}})"/>.</summary>
 	public Toast SetExtData(IEnumerable<KeyValuePair<string, object?>> entries) => SetMetadata(entries);
 
+	/// <summary>
+	/// Enable quick-input mode: text box + submit button.
+	/// Uses a longer default wait (<see cref="Duration.Input"/> / manager <c>InputDurationMs</c>, ~30s).
+	/// </summary>
+	public Toast EnableInput(
+		string? placeholder = null,
+		string? defaultText = null,
+		string submitButtonText = "OK",
+		bool allowEmptySubmit = false)
+	{
+		_enableInput = true;
+		_inputPlaceholder = placeholder?.Trim() ?? string.Empty;
+		_inputDefaultText = defaultText ?? string.Empty;
+		_submitButtonText = string.IsNullOrWhiteSpace(submitButtonText) ? "OK" : submitButtonText.Trim();
+		_allowEmptySubmit = allowEmptySubmit;
+		if (_duration is not Duration.Input && _durationMs is null)
+			_duration = Duration.Input;
+		return this;
+	}
+
+	/// <summary>Disable or enable input mode without changing other input settings.</summary>
+	public Toast SetInputable(bool enabled = true)
+	{
+		_enableInput = enabled;
+		if (enabled && _duration is not Duration.Input && _durationMs is null)
+			_duration = Duration.Input;
+		return this;
+	}
+
+	/// <summary>Override auto-dismiss duration in milliseconds (useful for long input waits).</summary>
+	public Toast SetDurationMs(int milliseconds)
+	{
+		if (milliseconds < 1)
+			throw new ArgumentOutOfRangeException(nameof(milliseconds));
+		_durationMs = milliseconds;
+		return this;
+	}
+
 	#endregion
 
 	/// <summary>Display the toast (Android-style <c>show()</c>).</summary>
@@ -236,6 +283,7 @@ public sealed class Toast
 	{
 		handle.Clicked += (_, e) => OnClick?.Invoke(this, e);
 		handle.Hovered += (_, e) => OnHover?.Invoke(this, e);
+		handle.Submitted += (_, e) => OnSubmit?.Invoke(this, e);
 		handle.Dismissed += (_, e) => OnClosed?.Invoke(this, e);
 	}
 
@@ -253,7 +301,13 @@ public sealed class Toast
 		Thumbnail = _thumbnail,
 		OwnsThumbnail = _ownsThumbnail,
 		Tag = _tag,
-		Metadata = ToastOptions.FreezeMetadata(_metadata)
+		Metadata = ToastOptions.FreezeMetadata(_metadata),
+		EnableInput = _enableInput,
+		InputPlaceholder = _inputPlaceholder,
+		InputDefaultText = _inputDefaultText,
+		SubmitButtonText = _submitButtonText,
+		AllowEmptySubmit = _allowEmptySubmit,
+		DurationMs = _durationMs
 	};
 
 	private static Control RequireControl(IWin32Window window)
