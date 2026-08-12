@@ -14,6 +14,15 @@ public partial class Form1 : Form
 	private ToastManager _toasts = null!;
 	private bool _busy;
 
+	// Inputable toast (v3) demo controls — created at runtime to avoid fragile designer churn.
+	private GroupBox _grpInputable = null!;
+	private TextBox _txtInputCaption = null!;
+	private TextBox _txtInputPlaceholder = null!;
+	private TextBox _txtSubmitLabel = null!;
+	private Button _btnShowInputable = null!;
+	private CheckBox _chkAllowEmpty = null!;
+	private Label _lblInputHint = null!;
+
 	/// <summary>Fixed client size for the absolute-positioned designer layout.</summary>
 	private static readonly Size DesignClientSize = new(901, 571);
 
@@ -30,7 +39,80 @@ public partial class Form1 : Form
 		FormBorderStyle = FormBorderStyle.FixedSingle;
 		MaximizeBox = false;
 		StartPosition = FormStartPosition.CenterScreen;
-		Text = "FuzzyToast Demo";
+		Text = "FuzzyToast Demo v3";
+		BuildInputableDemoSection();
+	}
+
+	/// <summary>Adds the v3 Inputable toast panel (caption, placeholder, submit, show button).</summary>
+	private void BuildInputableDemoSection()
+	{
+		_grpInputable = new GroupBox
+		{
+			Text = "Inputable toast (v3)",
+			Location = new Point(488, 300),
+			Size = new Size(399, 105),
+			TabIndex = 14
+		};
+
+		_lblInputHint = new Label
+		{
+			AutoSize = false,
+			Location = new Point(10, 18),
+			Size = new Size(380, 16),
+			ForeColor = Color.DimGray,
+			Font = new Font("Segoe UI", 8F),
+			Text = "Text box + Send · waits ~60s · Enter submits · Esc closes"
+		};
+
+		_txtInputCaption = new TextBox
+		{
+			Location = new Point(10, 38),
+			Size = new Size(150, 23),
+			Text = "Quick reply",
+			MaxLength = 200
+		};
+
+		_txtInputPlaceholder = new TextBox
+		{
+			Location = new Point(166, 38),
+			Size = new Size(140, 23),
+			Text = "Your message…",
+			MaxLength = 200
+		};
+
+		_txtSubmitLabel = new TextBox
+		{
+			Location = new Point(312, 38),
+			Size = new Size(76, 23),
+			Text = "Send",
+			MaxLength = 32
+		};
+
+		_chkAllowEmpty = new CheckBox
+		{
+			AutoSize = true,
+			Location = new Point(10, 70),
+			Text = "Allow empty",
+			Checked = false
+		};
+
+		_btnShowInputable = new Button
+		{
+			Location = new Point(166, 66),
+			Size = new Size(222, 28),
+			Text = "Show inputable toast",
+			UseVisualStyleBackColor = true
+		};
+		_btnShowInputable.Click += BtnShowInputable_Click;
+
+		_grpInputable.Controls.Add(_lblInputHint);
+		_grpInputable.Controls.Add(_txtInputCaption);
+		_grpInputable.Controls.Add(_txtInputPlaceholder);
+		_grpInputable.Controls.Add(_txtSubmitLabel);
+		_grpInputable.Controls.Add(_chkAllowEmpty);
+		_grpInputable.Controls.Add(_btnShowInputable);
+		Controls.Add(_grpInputable);
+		_grpInputable.BringToFront();
 	}
 
 	private void Form1_Load(object? sender, EventArgs e)
@@ -99,7 +181,10 @@ public partial class Form1 : Form
 		radioButton1.Text = "Short";
 		radioButton2.Checked = true;
 
-		Log("Demo ready — FuzzyToast v2 · Windows Forms · .NET 8+");
+		// Inputable manager defaults (long wait while typing)
+		// Already created above; InputDurationMs default is 30s — demos often override with SetDurationMs.
+
+		Log("Demo ready — FuzzyToast v3 · inputable toast enabled · .NET 8+ WinForms");
 	}
 
 	protected override void OnFormClosed(FormClosedEventArgs e)
@@ -230,26 +315,43 @@ public partial class Form1 : Form
 		}
 	}
 
-	/// <summary>v3 inputable toast demo — text box + Submit, long wait (~30s).</summary>
+	private void BtnShowInputable_Click(object? sender, EventArgs e) => ShowInputableToastDemo();
+
+	/// <summary>v3 inputable toast — text box + Submit, long wait (default 60s in this demo).</summary>
 	private void ShowInputableToastDemo()
 	{
 		try
 		{
-			var toast = Toast.Build(this, "Quick input", "Type and press Send or Enter")
+			var caption = string.IsNullOrWhiteSpace(_txtInputCaption.Text)
+				? "Quick reply"
+				: _txtInputCaption.Text.Trim();
+			var placeholder = _txtInputPlaceholder.Text?.Trim() ?? "Your message…";
+			var submit = string.IsNullOrWhiteSpace(_txtSubmitLabel.Text)
+				? "Send"
+				: _txtSubmitLabel.Text.Trim();
+
+			var toast = Toast.Build(this, caption, "Type below, then Send or press Enter")
 				.SetTheme(SelectedTheme)
 				.SetMuting(true)
-				.EnableInput(placeholder: "Your reply…", submitButtonText: "Send")
+				.EnableInput(
+					placeholder: placeholder,
+					defaultText: string.Empty,
+					submitButtonText: submit,
+					allowEmptySubmit: _chkAllowEmpty.Checked)
 				.SetDurationMs(60_000)
-				.SetExtData("action", "quick-input");
+				.SetCloseStyle(CloseStyle.Button)
+				.SetExtData("action", "quick-input")
+				.SetMetadata("demo", "inputable-v3")
+				.SetTag(new DemoPayload(Id: 3001, Kind: "inputable"));
 
 			toast.OnSubmit += (_, e) =>
 			{
-				Log($"SUBMIT text=\"{e.InputText}\" meta action={e.GetMetadata<string>("action")}");
-				MessageBox.Show(this, $"You entered:\n{e.InputText}", "Inputable toast",
-					MessageBoxButtons.OK, MessageBoxIcon.Information);
+				Log($"SUBMIT id={ShortId(e.ToastId)} text=\"{e.InputText}\" empty={e.IsEmpty}");
+				Log($"  tag={e.Tag} action={e.GetMetadata<string>("action")} demo={e.GetMetadata<string>("demo")}");
 			};
-			toast.OnClosed += (_, _) => Log("Inputable toast closed");
+			toast.OnClosed += (_, _) => Log("Inputable toast closed (submit, Esc, close, or timeout)");
 			toast.Show();
+			Log($"Inputable toast shown (wait 60s) · placeholder=\"{placeholder}\" · submit=\"{submit}\"");
 		}
 		catch (Exception ex)
 		{
@@ -441,18 +543,18 @@ public partial class Form1 : Form
 
 	private void About_Click(object? sender, EventArgs e)
 	{
-		// Also used as a shortcut to demo inputable toast (Help → About).
-		var result = MessageBox.Show(this,
+		MessageBox.Show(this,
 			"FuzzyToast Demo v3\n\n" +
-			"Windows Forms toast library for Windows 10/11.\n" +
-			"API: Toast.Build(this, \"…\").Show()\n" +
-			"New: EnableInput() — text box + Submit\n\n" +
-			"Show an inputable toast now?",
-			"About / Input demo",
-			MessageBoxButtons.YesNo,
+			"Windows Forms toast library for Windows 10/11 · .NET 8+\n\n" +
+			"API:\n" +
+			"  Toast.Build(this, \"…\").Show()\n" +
+			"  .EnableInput() — text box + Submit (v3)\n" +
+			"  .SetTag / .SetExtData — data on click/submit\n\n" +
+			"Use the panel \"Inputable toast (v3)\" on the form to try input.\n\n" +
+			"MIT License",
+			"About FuzzyToast Demo",
+			MessageBoxButtons.OK,
 			MessageBoxIcon.Information);
-		if (result == DialogResult.Yes)
-			ShowInputableToastDemo();
 	}
 
 	private void Form1_Click(object? sender, EventArgs e)
