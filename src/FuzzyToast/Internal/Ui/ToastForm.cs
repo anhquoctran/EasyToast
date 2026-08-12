@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Drawing;
 using System.Media;
 using System.Runtime.InteropServices;
@@ -6,7 +5,7 @@ using System.Windows.Forms;
 
 namespace FuzzyToast.Internal;
 
-/// <summary>WinForms toast surface: touchable layout, hover-pause, no focus steal.</summary>
+/// <summary>WinForms toast surface: touchable layout, optional input+submit, hover-pause.</summary>
 internal sealed partial class ToastForm : Form, IToastView
 {
 	private const int AwSlide = 0x40000;
@@ -30,6 +29,13 @@ internal sealed partial class ToastForm : Form, IToastView
 	private bool _closedRaised;
 	private bool _disposed;
 	private bool _closing;
+	private bool _inputMode;
+	private bool _allowEmptySubmit;
+	private bool _activateForInput;
+
+	private Panel? _inputPanel;
+	private TextBox? _txtInput;
+	private Button? _btnSubmit;
 
 	[DllImport("user32.dll", SetLastError = true)]
 	private static extern bool AnimateWindow(IntPtr hwnd, int time, int flags);
@@ -38,7 +44,6 @@ internal sealed partial class ToastForm : Form, IToastView
 	{
 		_handle = handle;
 		InitializeComponent();
-		// Crisp rendering on Windows 10/11 high-DPI displays
 		SetStyle(
 			ControlStyles.AllPaintingInWmPaint |
 			ControlStyles.OptimizedDoubleBuffer |
@@ -55,6 +60,7 @@ internal sealed partial class ToastForm : Form, IToastView
 	public event EventHandler? ToastClosed;
 	public event EventHandler? Clicked;
 	public event EventHandler? Hovered;
+	public event EventHandler<string>? Submitted;
 
 	event EventHandler? IToastView.Closed
 	{
@@ -62,15 +68,17 @@ internal sealed partial class ToastForm : Form, IToastView
 		remove => ToastClosed -= value;
 	}
 
-	protected override bool ShowWithoutActivation => true;
+	/// <summary>Inputable toasts must activate so the user can type.</summary>
+	protected override bool ShowWithoutActivation => !_activateForInput;
 
 	protected override CreateParams CreateParams
 	{
 		get
 		{
 			var cp = base.CreateParams;
-			// No activation (don't steal keyboard focus), tool window (no taskbar/Alt-Tab clutter), topmost.
-			cp.ExStyle |= WsExNoActivate | WsExToolWindow | WsExTopMost;
+			cp.ExStyle |= WsExToolWindow | WsExTopMost;
+			if (!_activateForInput)
+				cp.ExStyle |= WsExNoActivate;
 			return cp;
 		}
 	}
@@ -79,10 +87,13 @@ internal sealed partial class ToastForm : Form, IToastView
 	{
 		_animation = options.Animation;
 		_closeStyle = options.CloseStyle;
-		_pauseOnHover = pauseOnHover;
+		_pauseOnHover = pauseOnHover && !options.EnableInput; // keep timer running while typing; long duration instead
 		_playSound = playSound;
 		_ownsThumbnail = options.OwnsThumbnail;
 		_thumbnail = options.Thumbnail;
+		_inputMode = options.EnableInput;
+		_allowEmptySubmit = options.AllowEmptySubmit;
+		_activateForInput = options.EnableInput;
 
 		lblCaption.Text = options.Caption?.Trim() ?? string.Empty;
 		lblDescription.Text = options.Description?.Trim() ?? string.Empty;
@@ -94,11 +105,33 @@ internal sealed partial class ToastForm : Form, IToastView
 		switch (options.CloseStyle)
 		{
 			case CloseStyle.ClickEntire:
-				btnClose.Visible = false;
+				btnClose.Visible = !options.EnableInput; // keep close for input mode always useful
+				if (options.EnableInput)
+					btnClose.Visible = true;
 				break;
 			default:
 				btnClose.Visible = true;
 				break;
+		}
+
+		if (options.EnableInput)
+		{
+			// Body click should not dismiss input toasts (would lose typed text).
+			_closeStyle = CloseStyle.Button;
+			EnsureInputUi();
+			if (_inputPanel is not null && _txtInput is not null && _btnSubmit is not null)
+			{
+				_inputPanel.Visible = true;
+				_txtInput.PlaceholderText = options.InputPlaceholder ?? string.Empty;
+				_txtInput.Text = options.InputDefaultText ?? string.Empty;
+				_btnSubmit.Text = string.IsNullOrWhiteSpace(options.SubmitButtonText)
+					? "OK"
+					: options.SubmitButtonText;
+			}
+		}
+		else if (_inputPanel is not null)
+		{
+			_inputPanel.Visible = false;
 		}
 
 		ApplyScheme(scheme);
@@ -109,15 +142,14 @@ internal sealed partial class ToastForm : Form, IToastView
 
 	public void SetBounds(Rectangle bounds)
 	{
-		// Bounds are already DPI-scaled by ToastManager (device pixels / WinForms coordinates).
 		StartPosition = FormStartPosition.Manual;
 		Location = bounds.Location;
 		ClientSize = bounds.Size;
+		LayoutInputPanel();
 	}
 
 	public new void Show(IWin32Window? owner)
 	{
-		// Owner links Z-order without activating the toast (ShowWithoutActivation + WS_EX_NOACTIVATE).
 		if (owner is Control control)
 		{
 			if (!control.IsDisposed && !control.IsHandleCreated)
@@ -125,6 +157,16 @@ internal sealed partial class ToastForm : Form, IToastView
 			if (!control.IsDisposed)
 			{
 				base.Show(control);
+				if (_activateForInput && _txtInput is not null)
+				{
+					try
+					{
+						Activate();
+						_txtInput.Focus();
+						_txtInput.SelectAll();
+					}
+					catch { /* ignore focus failures */ }
+				}
 				return;
 			}
 		}
@@ -160,6 +202,66 @@ internal sealed partial class ToastForm : Form, IToastView
 		}
 	}
 
+	private void EnsureInputUi()
+	{
+		if (_inputPanel is not null)
+			return;
+
+		_inputPanel = new Panel
+		{
+			Name = "inputPanel",
+			Height = 40,
+			Dock = DockStyle.Bottom,
+			Padding = new Padding(8, 0, 8, 8),
+			BackColor = Color.Transparent
+		};
+
+		_txtInput = new TextBox
+		{
+			Name = "txtInput",
+			Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point),
+			BorderStyle = BorderStyle.FixedSingle,
+			// leave room for submit button
+		};
+		_txtInput.KeyDown += TxtInput_KeyDown;
+		_txtInput.GotFocus += (_, _) => PauseTimerForInput();
+		_txtInput.Click += (_, _) => { /* don't bubble as toast content click */ };
+
+		_btnSubmit = new Button
+		{
+			Name = "btnSubmit",
+			Text = "OK",
+			Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point),
+			FlatStyle = FlatStyle.Flat,
+			Cursor = Cursors.Hand,
+			Size = new Size(72, 28),
+			TabIndex = 2
+		};
+		_btnSubmit.FlatAppearance.BorderSize = 0;
+		_btnSubmit.Click += BtnSubmit_Click;
+
+		_inputPanel.Controls.Add(_txtInput);
+		_inputPanel.Controls.Add(_btnSubmit);
+		// Add to form (above fill dock of mainContainer — dock bottom first works if added after)
+		Controls.Add(_inputPanel);
+		_inputPanel.BringToFront();
+		LayoutInputPanel();
+	}
+
+	private void LayoutInputPanel()
+	{
+		if (_inputPanel is null || _txtInput is null || _btnSubmit is null || !_inputPanel.Visible)
+			return;
+
+		var pad = 8;
+		var btnW = Math.Max(64, _btnSubmit.Width);
+		var h = 28;
+		_btnSubmit.Size = new Size(btnW, h);
+		_btnSubmit.Location = new Point(_inputPanel.ClientSize.Width - pad - btnW, pad);
+		_txtInput.Location = new Point(pad, pad);
+		_txtInput.Size = new Size(Math.Max(40, _btnSubmit.Left - pad - 6), h);
+	}
+
 	private void ApplyScheme(ColorScheme scheme)
 	{
 		var fg = scheme.Foreground;
@@ -171,6 +273,25 @@ internal sealed partial class ToastForm : Form, IToastView
 		BackColor = bg;
 		btnClose.FlatAppearance.BorderColor = bg;
 		btnClose.FlatAppearance.MouseOverBackColor = Color.FromArgb(40, fg.R, fg.G, fg.B);
+
+		if (_btnSubmit is not null)
+		{
+			_btnSubmit.BackColor = Color.FromArgb(
+				Math.Min(255, bg.R + 40),
+				Math.Min(255, bg.G + 40),
+				Math.Min(255, bg.B + 40));
+			_btnSubmit.ForeColor = fg;
+			_btnSubmit.FlatAppearance.BorderColor = bg;
+		}
+
+		if (_txtInput is not null)
+		{
+			_txtInput.BackColor = Color.FromArgb(
+				Math.Min(255, bg.R + 20),
+				Math.Min(255, bg.G + 20),
+				Math.Min(255, bg.B + 20));
+			_txtInput.ForeColor = fg;
+		}
 	}
 
 	private void ToastForm_Load(object? sender, EventArgs e)
@@ -180,7 +301,6 @@ internal sealed partial class ToastForm : Form, IToastView
 
 		try
 		{
-			// FADE/SLIDE are aliases of Fade/Slide (same enum values).
 			if (_animation is Animation.Fade)
 				_ = FadeInAsync();
 			else
@@ -188,9 +308,10 @@ internal sealed partial class ToastForm : Form, IToastView
 		}
 		catch
 		{
-			// Animation is best-effort (RDP, locked session, etc.)
 			try { Opacity = 1; } catch { /* ignore */ }
 		}
+
+		LayoutInputPanel();
 	}
 
 	private void ToastForm_Shown(object? sender, EventArgs e)
@@ -200,13 +321,22 @@ internal sealed partial class ToastForm : Form, IToastView
 		tmrClose.Interval = _timerState.StartOrResume();
 		_armedAtTick = Environment.TickCount64;
 		tmrClose.Start();
+
+		if (_activateForInput && _txtInput is not null)
+		{
+			try
+			{
+				_txtInput.Focus();
+				_txtInput.SelectAll();
+			}
+			catch { /* ignore */ }
+		}
 	}
 
 	private void ToastForm_FormClosing(object? sender, FormClosingEventArgs e)
 	{
 		tmrClose.Stop();
 		_closing = true;
-		// AnimateWindow can fail on some RDP/session scenarios — never block close.
 		try
 		{
 			if (!IsHandleCreated)
@@ -218,7 +348,7 @@ internal sealed partial class ToastForm : Form, IToastView
 		}
 		catch
 		{
-			// ignore animation failures on Windows 10/11 edge cases
+			// ignore
 		}
 	}
 
@@ -237,8 +367,64 @@ internal sealed partial class ToastForm : Form, IToastView
 
 	private void BtnClose_Click(object? sender, EventArgs e) => BeginDismiss();
 
+	private void BtnSubmit_Click(object? sender, EventArgs e) => TrySubmit();
+
+	private void TxtInput_KeyDown(object? sender, KeyEventArgs e)
+	{
+		if (e.KeyCode == Keys.Enter)
+		{
+			e.SuppressKeyPress = true;
+			e.Handled = true;
+			TrySubmit();
+		}
+		else if (e.KeyCode == Keys.Escape)
+		{
+			e.SuppressKeyPress = true;
+			e.Handled = true;
+			BeginDismiss();
+		}
+	}
+
+	private void TrySubmit()
+	{
+		if (!_inputMode || _txtInput is null)
+			return;
+
+		var text = _txtInput.Text ?? string.Empty;
+		if (!_allowEmptySubmit && string.IsNullOrWhiteSpace(text))
+		{
+			_txtInput.Focus();
+			return;
+		}
+
+		try
+		{
+			Submitted?.Invoke(this, text);
+		}
+		catch
+		{
+			/* ignore */
+		}
+
+		BeginDismiss();
+	}
+
+	private void PauseTimerForInput()
+	{
+		if (_timerState is null)
+			return;
+		var elapsed = (int)Math.Min(int.MaxValue, Environment.TickCount64 - _armedAtTick);
+		tmrClose.Stop();
+		_timerState.Pause(elapsed);
+		// Resume with remaining when leave focus — keep long remaining for input
+		_armedAtTick = Environment.TickCount64;
+	}
+
 	private void ToastContentClick(object? sender, EventArgs e)
 	{
+		if (_inputMode)
+			return; // never dismiss by body click when typing
+
 		Clicked?.Invoke(this, EventArgs.Empty);
 		if (_closeStyle is CloseStyle.ClickEntire or CloseStyle.ButtonAndClickEntire)
 			BeginDismiss();
@@ -262,9 +448,19 @@ internal sealed partial class ToastForm : Form, IToastView
 		if (ClientRectangle.Contains(PointToClient(MousePosition)))
 			return;
 
+		// If input focused, keep paused
+		if (_inputMode && _txtInput is { Focused: true })
+			return;
+
 		tmrClose.Interval = _timerState.Resume();
 		_armedAtTick = Environment.TickCount64;
 		tmrClose.Start();
+	}
+
+	protected override void OnResize(EventArgs e)
+	{
+		base.OnResize(e);
+		LayoutInputPanel();
 	}
 
 	private async Task FadeInAsync()
@@ -290,21 +486,18 @@ internal sealed partial class ToastForm : Form, IToastView
 
 	private void TryPlaySound()
 	{
-		// Sound is best-effort; failures must never break toast display (locked-down Win10/11, no audio device).
 		try
 		{
 			var stream = Properties.Resources.notificationSound;
 			if (stream is null)
 				return;
 
-			// UnmanagedMemoryStream from resources may not seek; copy for SoundPlayer.
 			using var copy = new MemoryStream();
 			stream.Position = 0;
 			stream.CopyTo(copy);
 			copy.Position = 0;
 			var player = new SoundPlayer(copy);
-			player.Play(); // async; do not Dispose player immediately (would cut off sound)
-			// Keep stream alive until GC; SoundPlayer holds the stream reference.
+			player.Play();
 			GC.KeepAlive(player);
 		}
 		catch

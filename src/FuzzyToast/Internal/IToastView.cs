@@ -14,4 +14,7 @@ internal interface IToastView : IDisposable
 	event EventHandler? Closed;
 	event EventHandler? Clicked;
 	event EventHandler? Hovered;
+
+	/// <summary>Raised with the user's input text when Submit/Enter is used on an inputable toast.</summary>
+	event EventHandler<string>? Submitted;
 }

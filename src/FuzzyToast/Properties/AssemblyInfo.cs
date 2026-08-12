@@ -13,8 +13,8 @@ using System.Runtime.Versioning;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("6bfdf3bb-ac34-492e-ab4d-21c824feff81")]
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyVersion("3.0.0.0")]
+[assembly: AssemblyFileVersion("3.0.0.0")]
 // Desktop Windows only. Supported hosts: Windows 10 and Windows 11 with .NET 8+ WinForms.
 [assembly: SupportedOSPlatform("windows")]
 [assembly: InternalsVisibleTo("FuzzyToast.Tests")]

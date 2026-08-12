@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.0.0
+
+### Added
+
+- **Inputable toast**: `EnableInput()` / `SetInputable()` with text box + Submit button
+- `OnSubmit` / `ToastHandle.Submitted` with `ToastSubmittedEventArgs.InputText`
+- `Duration.Input` / `LENGTH_INPUT` and `SetDurationMs(int)` for long wait while typing
+- `ToastManagerOptions.InputDurationMs` (default 30s) and taller layout for input row
+- Enter submits, Escape dismisses; optional `allowEmptySubmit`
+
+### Notes
+
+- Inputable toasts take keyboard focus (unlike normal toasts which avoid activation)
+- Package version **3.0.0**
+
 ## 2.0.0
 
 ### Breaking

@@ -39,7 +39,13 @@ public sealed class ToastHandle : IDisposable
 	/// <summary>Raised when the pointer hovers the toast. Args include tag/metadata.</summary>
 	public event EventHandler<ToastInteractionEventArgs>? Hovered;
 
+	/// <summary>Raised when the user submits input on an inputable toast (before dismiss).</summary>
+	public event EventHandler<ToastSubmittedEventArgs>? Submitted;
+
 	public event EventHandler? Dismissed;
+
+	/// <summary>Last submitted text (if any).</summary>
+	public string? SubmittedText { get; private set; }
 
 	public void Dismiss()
 	{
@@ -92,6 +98,22 @@ public sealed class ToastHandle : IDisposable
 		try
 		{
 			Hovered?.Invoke(this, new ToastInteractionEventArgs(this));
+		}
+		catch
+		{
+			/* host errors ignored */
+		}
+	}
+
+	internal void RaiseSubmitted(string inputText)
+	{
+		if (_state != ToastHandleState.Visible)
+			return;
+
+		SubmittedText = inputText ?? string.Empty;
+		try
+		{
+			Submitted?.Invoke(this, new ToastSubmittedEventArgs(this, SubmittedText));
 		}
 		catch
 		{

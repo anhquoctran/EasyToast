@@ -107,6 +107,29 @@ toast.Show();
 `Toast.Build` uses a shared per-form manager under the hood (layout, stacking, capacity).  
 Advanced hosts can still use `ToastManager` + `Create()` explicitly if they need custom options/events.
 
+### Inputable toast (v3)
+
+Quick text input with Submit (or Enter). Wait is long by default (~30s, configurable):
+
+```csharp
+var toast = Toast.Build(this, "Quick reply", "Type a short note")
+    .EnableInput(placeholder: "Your message…", submitButtonText: "Send")
+    .SetDurationMs(60_000)   // optional override (ms)
+    .SetExtData("action", "reply");
+
+toast.OnSubmit += (_, e) =>
+{
+    var text = e.InputText;           // user text
+    var action = e.GetMetadata<string>("action");
+    // …
+};
+toast.Show();
+```
+
+- `Duration.Input` / `LENGTH_INPUT` → uses `ToastManagerOptions.InputDurationMs` (default **30000**)
+- Escape closes without submit; empty submit blocked unless `allowEmptySubmit: true`
+- Input toasts activate focus so the user can type immediately
+
 ## Features
 
 | Feature | Notes |

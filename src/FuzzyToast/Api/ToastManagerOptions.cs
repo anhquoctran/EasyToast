@@ -10,6 +10,13 @@ public sealed class ToastManagerOptions
 	public ToastOverflowPolicy OverflowPolicy { get; init; } = ToastOverflowPolicy.DropNewest;
 	public int ShortDurationMs { get; init; } = 2000;
 	public int LongDurationMs { get; init; } = 3000;
+
+	/// <summary>Default wait while an inputable toast is open (user typing). Default 30 seconds.</summary>
+	public int InputDurationMs { get; init; } = 30_000;
+
+	/// <summary>Extra height (at 96 DPI) added for the input row + submit button.</summary>
+	public int InputExtraHeight { get; init; } = 56;
+
 	public int HorizontalMargin { get; init; } = ToastLayoutMetrics.Default.HorizontalMargin;
 	public int VerticalMargin { get; init; } = ToastLayoutMetrics.Default.VerticalMargin;
 	public int ToastWidth { get; init; } = ToastLayoutMetrics.Default.ToastWidth;
@@ -19,28 +26,42 @@ public sealed class ToastManagerOptions
 	public bool PlaySound { get; init; } = true;
 	public bool HideImagePanelWhenEmpty { get; init; } = true;
 
-	internal ToastLayoutMetrics ToLayoutMetrics() => new()
+	internal ToastLayoutMetrics ToLayoutMetrics(bool inputable = false)
 	{
-		ToastWidth = ToastWidth,
-		ToastHeight = ToastHeight,
-		HorizontalMargin = HorizontalMargin,
-		VerticalMargin = VerticalMargin,
-		StackGap = StackGap,
-		MinTouchTargetPx = ToastLayoutMetrics.Default.MinTouchTargetPx,
-		CloseButtonSize = ToastLayoutMetrics.Default.CloseButtonSize,
-		ThumbnailSize = ToastLayoutMetrics.Default.ThumbnailSize,
-		ContentPaddingLeft = ToastLayoutMetrics.Default.ContentPaddingLeft,
-		ContentPaddingRight = ToastLayoutMetrics.Default.ContentPaddingRight,
-		ContentPaddingTop = ToastLayoutMetrics.Default.ContentPaddingTop,
-		ContentPaddingBottom = ToastLayoutMetrics.Default.ContentPaddingBottom,
-		CaptionDescriptionGap = ToastLayoutMetrics.Default.CaptionDescriptionGap,
-		CaptionMinHeight = ToastLayoutMetrics.Default.CaptionMinHeight,
-		DescriptionMinHeight = ToastLayoutMetrics.Default.DescriptionMinHeight
-	};
+		var height = ToastHeight + (inputable ? Math.Max(0, InputExtraHeight) : 0);
+		return new ToastLayoutMetrics
+		{
+			ToastWidth = ToastWidth,
+			ToastHeight = height,
+			HorizontalMargin = HorizontalMargin,
+			VerticalMargin = VerticalMargin,
+			StackGap = StackGap,
+			MinTouchTargetPx = ToastLayoutMetrics.Default.MinTouchTargetPx,
+			CloseButtonSize = ToastLayoutMetrics.Default.CloseButtonSize,
+			ThumbnailSize = ToastLayoutMetrics.Default.ThumbnailSize,
+			ContentPaddingLeft = ToastLayoutMetrics.Default.ContentPaddingLeft,
+			ContentPaddingRight = ToastLayoutMetrics.Default.ContentPaddingRight,
+			ContentPaddingTop = ToastLayoutMetrics.Default.ContentPaddingTop,
+			ContentPaddingBottom = ToastLayoutMetrics.Default.ContentPaddingBottom,
+			CaptionDescriptionGap = ToastLayoutMetrics.Default.CaptionDescriptionGap,
+			CaptionMinHeight = ToastLayoutMetrics.Default.CaptionMinHeight,
+			DescriptionMinHeight = ToastLayoutMetrics.Default.DescriptionMinHeight
+		};
+	}
 
-	internal int ResolveDurationMs(Duration duration) => duration switch
+	/// <summary>Resolve auto-dismiss duration for the given options.</summary>
+	internal int ResolveDurationMs(ToastOptions options)
 	{
-		Duration.Long => LongDurationMs,
-		_ => ShortDurationMs
-	};
+		if (options.DurationMs is int explicitMs && explicitMs > 0)
+			return explicitMs;
+
+		if (options.EnableInput || options.Duration is Duration.Input)
+			return Math.Max(1, InputDurationMs);
+
+		return options.Duration switch
+		{
+			Duration.Long => LongDurationMs,
+			_ => ShortDurationMs
+		};
+	}
 }

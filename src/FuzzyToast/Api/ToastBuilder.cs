@@ -19,6 +19,12 @@ public sealed class ToastBuilder
 	private bool _ownsThumbnail;
 	private object? _tag;
 	private readonly Dictionary<string, object?> _metadata = new(StringComparer.Ordinal);
+	private bool _enableInput;
+	private string _inputPlaceholder = string.Empty;
+	private string _inputDefaultText = string.Empty;
+	private string _submitButtonText = "OK";
+	private bool _allowEmptySubmit;
+	private int? _durationMs;
 
 	internal ToastBuilder(ToastManager manager) => _manager = manager;
 
@@ -124,6 +130,38 @@ public sealed class ToastBuilder
 
 	public ToastBuilder SetExtData(IEnumerable<KeyValuePair<string, object?>> entries) => SetMetadata(entries);
 
+	public ToastBuilder EnableInput(
+		string? placeholder = null,
+		string? defaultText = null,
+		string submitButtonText = "OK",
+		bool allowEmptySubmit = false)
+	{
+		_enableInput = true;
+		_inputPlaceholder = placeholder?.Trim() ?? string.Empty;
+		_inputDefaultText = defaultText ?? string.Empty;
+		_submitButtonText = string.IsNullOrWhiteSpace(submitButtonText) ? "OK" : submitButtonText.Trim();
+		_allowEmptySubmit = allowEmptySubmit;
+		if (_duration is not Duration.Input && _durationMs is null)
+			_duration = Duration.Input;
+		return this;
+	}
+
+	public ToastBuilder SetInputable(bool enabled = true)
+	{
+		_enableInput = enabled;
+		if (enabled && _duration is not Duration.Input && _durationMs is null)
+			_duration = Duration.Input;
+		return this;
+	}
+
+	public ToastBuilder SetDurationMs(int milliseconds)
+	{
+		if (milliseconds < 1)
+			throw new ArgumentOutOfRangeException(nameof(milliseconds));
+		_durationMs = milliseconds;
+		return this;
+	}
+
 	public ToastOptions Build() => ToOptions();
 
 	public ToastHandle Show() => _manager.Show(ToOptions());
@@ -145,6 +183,12 @@ public sealed class ToastBuilder
 		Thumbnail = _thumbnail,
 		OwnsThumbnail = _ownsThumbnail,
 		Tag = _tag,
-		Metadata = ToastOptions.FreezeMetadata(_metadata)
+		Metadata = ToastOptions.FreezeMetadata(_metadata),
+		EnableInput = _enableInput,
+		InputPlaceholder = _inputPlaceholder,
+		InputDefaultText = _inputDefaultText,
+		SubmitButtonText = _submitButtonText,
+		AllowEmptySubmit = _allowEmptySubmit,
+		DurationMs = _durationMs
 	};
 }

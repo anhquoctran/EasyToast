@@ -230,6 +230,34 @@ public partial class Form1 : Form
 		}
 	}
 
+	/// <summary>v3 inputable toast demo — text box + Submit, long wait (~30s).</summary>
+	private void ShowInputableToastDemo()
+	{
+		try
+		{
+			var toast = Toast.Build(this, "Quick input", "Type and press Send or Enter")
+				.SetTheme(SelectedTheme)
+				.SetMuting(true)
+				.EnableInput(placeholder: "Your reply…", submitButtonText: "Send")
+				.SetDurationMs(60_000)
+				.SetExtData("action", "quick-input");
+
+			toast.OnSubmit += (_, e) =>
+			{
+				Log($"SUBMIT text=\"{e.InputText}\" meta action={e.GetMetadata<string>("action")}");
+				MessageBox.Show(this, $"You entered:\n{e.InputText}", "Inputable toast",
+					MessageBoxButtons.OK, MessageBoxIcon.Information);
+			};
+			toast.OnClosed += (_, _) => Log("Inputable toast closed");
+			toast.Show();
+		}
+		catch (Exception ex)
+		{
+			Log($"Error: {ex.Message}");
+			MessageBox.Show(this, ex.Message, "Toast error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		}
+	}
+
 	private void BtnInsertImage_Click(object? sender, EventArgs e)
 	{
 		using var opDlg = new OpenFileDialog
@@ -413,15 +441,18 @@ public partial class Form1 : Form
 
 	private void About_Click(object? sender, EventArgs e)
 	{
-		MessageBox.Show(this,
-			"FuzzyToast Demo\n\n" +
+		// Also used as a shortcut to demo inputable toast (Help → About).
+		var result = MessageBox.Show(this,
+			"FuzzyToast Demo v3\n\n" +
 			"Windows Forms toast library for Windows 10/11.\n" +
 			"API: Toast.Build(this, \"…\").Show()\n" +
-			"Target: .NET 8+\n\n" +
-			"MIT License",
-			"About",
-			MessageBoxButtons.OK,
+			"New: EnableInput() — text box + Submit\n\n" +
+			"Show an inputable toast now?",
+			"About / Input demo",
+			MessageBoxButtons.YesNo,
 			MessageBoxIcon.Information);
+		if (result == DialogResult.Yes)
+			ShowInputableToastDemo();
 	}
 
 	private void Form1_Click(object? sender, EventArgs e)

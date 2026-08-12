@@ -11,9 +11,18 @@ public enum Duration
 	/// <summary>Long duration (~3s). Same as <see cref="LENGTH_LONG"/>.</summary>
 	Long = 1,
 
+	/// <summary>
+	/// Extended wait for inputable toasts (~30s by default via <see cref="ToastManagerOptions.InputDurationMs"/>).
+	/// Same as <see cref="LENGTH_INPUT"/>.
+	/// </summary>
+	Input = 2,
+
 	/// <summary>Android-style alias for <see cref="Short"/>.</summary>
 	LENGTH_SHORT = Short,
 
 	/// <summary>Android-style alias for <see cref="Long"/>.</summary>
-	LENGTH_LONG = Long
+	LENGTH_LONG = Long,
+
+	/// <summary>Alias for <see cref="Input"/> — long wait while the user types.</summary>
+	LENGTH_INPUT = Input
 }

@@ -229,12 +229,14 @@ public sealed class ToastManager : IDisposable
 		var id = NewId();
 		var handle = new ToastHandle(id, options, ToastHandleState.Visible, this);
 		var scheme = ThemeCatalog.Resolve(options.Theme, options.CustomColors);
-		var durationMs = Options.ResolveDurationMs(options.Duration);
+		var durationMs = Options.ResolveDurationMs(options);
 		var view = _viewFactory(options, handle);
 
 		view.Closed += (_, _) => OnViewClosed(handle, view);
 		view.Clicked += (_, _) => handle.RaiseClicked();
 		view.Hovered += (_, _) => handle.RaiseHovered();
+		view.Submitted += (_, text) => handle.RaiseSubmitted(text);
+		// Form dismisses itself after raising Submitted.
 
 		view.Apply(options, scheme, durationMs, Options.PauseOnHover, Options.PlaySound && !options.IsMuted);
 
@@ -245,7 +247,7 @@ public sealed class ToastManager : IDisposable
 			_active.Add(new ActiveToast(handle, view, options.Position, Interlocked.Increment(ref _sequence)));
 		}
 
-		var metrics = ResolveMetrics();
+		var metrics = ResolveMetrics(options.EnableInput);
 		var area = GetArea(options.Position);
 		var location = ToastLayoutEngine.ComputeLocation(options.Position, stackIndex, metrics, area);
 		view.SetBounds(new Rectangle(location, new Size(metrics.ToastWidth, metrics.ToastHeight)));
@@ -255,10 +257,10 @@ public sealed class ToastManager : IDisposable
 		return handle;
 	}
 
-	private ToastLayoutMetrics ResolveMetrics()
+	private ToastLayoutMetrics ResolveMetrics(bool inputable = false)
 	{
 		var scale = DpiScaling.GetScale(_owner);
-		return DpiScaling.ScaleMetrics(Options.ToLayoutMetrics(), scale);
+		return DpiScaling.ScaleMetrics(Options.ToLayoutMetrics(inputable), scale);
 	}
 
 	private void RemoveVictimSync(string victimId)
@@ -328,12 +330,17 @@ public sealed class ToastManager : IDisposable
 		lock (_gate)
 			stack = _active.Where(a => a.Position == position).OrderBy(a => a.Sequence).ToList();
 
-		var metrics = ResolveMetrics();
+		// Reflow using non-input height as baseline; active input toasts keep their bounds
+		// until dismissed (stride uses max height among stack for spacing safety).
+		var metrics = ResolveMetrics(inputable: stack.Any(a => a.Handle.Options.EnableInput));
 		var area = GetArea(position);
 		for (var i = 0; i < stack.Count; i++)
 		{
-			var loc = ToastLayoutEngine.ComputeLocation(position, i, metrics, area);
-			stack[i].View.SetBounds(new Rectangle(loc, new Size(metrics.ToastWidth, metrics.ToastHeight)));
+			var itemMetrics = ResolveMetrics(stack[i].Handle.Options.EnableInput);
+			// Use tallest stride for vertical stack spacing consistency.
+			var strideMetrics = metrics.ToastHeight >= itemMetrics.ToastHeight ? metrics : itemMetrics;
+			var loc = ToastLayoutEngine.ComputeLocation(position, i, strideMetrics, area);
+			stack[i].View.SetBounds(new Rectangle(loc, new Size(itemMetrics.ToastWidth, itemMetrics.ToastHeight)));
 		}
 	}
 

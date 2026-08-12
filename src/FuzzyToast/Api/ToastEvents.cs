@@ -24,7 +24,7 @@ public sealed class ToastRejectedEventArgs : EventArgs
 /// Payload for toast user interaction (click / hover).
 /// Carries <see cref="Tag"/> and key/value <see cref="Metadata"/> set when building the toast.
 /// </summary>
-public sealed class ToastInteractionEventArgs : EventArgs
+public class ToastInteractionEventArgs : EventArgs
 {
 	public ToastInteractionEventArgs(ToastHandle handle)
 	{
@@ -80,4 +80,22 @@ public sealed class ToastInteractionEventArgs : EventArgs
 	/// <summary>Get metadata as <typeparamref name="T"/>, or <paramref name="defaultValue"/> if missing/incompatible.</summary>
 	public T? GetMetadata<T>(string key, T? defaultValue = default) =>
 		TryGetMetadata<T>(key, out var value) ? value : defaultValue;
+}
+
+/// <summary>
+/// Raised when the user submits text from an inputable toast (Submit button or Enter).
+/// </summary>
+public sealed class ToastSubmittedEventArgs : ToastInteractionEventArgs
+{
+	public ToastSubmittedEventArgs(ToastHandle handle, string inputText)
+		: base(handle)
+	{
+		InputText = inputText ?? string.Empty;
+	}
+
+	/// <summary>Text the user entered (trimmed by the form unless configured otherwise).</summary>
+	public string InputText { get; }
+
+	/// <summary>True when <see cref="InputText"/> is null/whitespace.</summary>
+	public bool IsEmpty => string.IsNullOrWhiteSpace(InputText);
 }
