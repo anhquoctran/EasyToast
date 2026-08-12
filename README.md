@@ -1,165 +1,177 @@
 # FuzzyToast
 
-A fuzzy Toast Nofification library for Windows Forms
+A toast notification library for **Windows Forms** on **.NET 8+**.
 
-**FuzzyToast** allows you to build, customize and display toast notifications like Windows 8/8.1/10 Toast Notifications in Windows Forms Applications. It's highly configurable with a set of built-in options like positions, image, duration and many others. It's extendable, it gives you the possibility to create custom and interactive notifications simply.
+**FuzzyToast 2.0** provides an instance-based manager, fluent builder, four-corner stacking, touchable UI metrics, and capacity policies — without polluting the `System.*` namespace.
 
-## Demo
+## Prerequisites
 
-### Some demo
+| Requirement | Detail |
+|-------------|--------|
+| **OS** | **Windows 10** (1809 / build 17763+) or **Windows 11** |
+| **Runtime** | **.NET 8 or later** (e.g. net8.0-windows, net9.0-windows) |
+| **UI stack** | **Windows Forms** only (`UseWindowsForms`) |
+| **Threading** | Call `Toast.Build` / `Show` from the UI thread, or from a background thread (library marshals to UI) |
 
-## Installation
+### Host app DPI (recommended)
 
-### Prerequisites
+For crisp toasts on high-DPI monitors, configure the **host** WinForms app:
 
-- .NET 8.0 SDK or later
-- Visual Studio 2022 / 2026 or later (to build from source)
-- Only Windows Forms Applications are supported
+```csharp
+[STAThread]
+static void Main()
+{
+    ApplicationConfiguration.Initialize(); // .NET 6+
+    Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
+    Application.Run(new MainForm());
+}
+```
 
-#### Via NuGet
+Or in the project file:
 
-You can install from `NuGet Package Manager Console`. In this case, all dependencies will be installed automatically.
+```xml
+<ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+```
+
+FuzzyToast scales toast size/margins from the owner control’s `DeviceDpi` (96 DPI baseline).
+
+## Install
 
 ```powershell
 Install-Package FuzzyToast
 ```
 
-#### Via direct download
-
-You can download the latest stable release from [here](https://github.com/anhquoctran/EasyToast/releases).  
-Then add the `FuzzyToast.dll` reference to your project.
-
-#### Build from Source code
-
-You need the .NET 8 SDK or Visual Studio 2022+ to build the source code to a `dll` file.  
-First, clone this source code or download from Git:
-
-```bash
-git clone https://github.com/anhquoctran/EasyToast.git
-```
-
-Open the `EasyToast.slnx` solution file that you cloned in Visual Studio. Or, simply use the .NET CLI:
+Or build from source:
 
 ```bash
 dotnet build EasyToast.slnx -c Release
 ```
 
-After building, all you need is the `FuzzyToast.dll` file found in the `/bin/Release/net8.0-windows` folder.
+Output: `src/FuzzyToast/bin/Release/net8.0-windows/FuzzyToast.dll`
 
-## Usage
+### Repository layout
 
-### Basic usage
-
-First, you need to add our namespace `System.UI.Widget`
-
-```csharp
-using System.UI.Widget;
+```text
+src/FuzzyToast/          # Library (public API, enums, layout, internal UI)
+samples/EasyToastDemo/   # WinForms demo app
+tests/FuzzyToast.Tests/  # xUnit + Coverlet (≥85% line)
+docs/                    # Design & migration notes
+scripts/                 # Coverage helper script
 ```
 
-And then, get started to build a simplest toast popup, all in one line only:
+## Quick start (Android-style API)
+
+Same call style as classic toast libraries / the original FuzzyToast API:
 
 ```csharp
+using FuzzyToast;
+
+// Simplest
 Toast.Build(this, "Hello, I am Toast!").Show();
-```
 
-Adding some description
+// Caption + description
+Toast.Build(this, "Hello, I am Toast!", "Details go here…").Show();
 
-```csharp
-Toast.Build(this, "Hello, I am Toast!", "Description goes here...").Show();
-```
+// Duration (LENGTH_SHORT / LENGTH_LONG — Android-style names)
+Toast.Build(this, "Saved", Duration.LENGTH_SHORT).Show();
 
-If you have an image thumbnail, put it on Toast like this:  
+// Animation
+Toast.Build(this, "Sliding in", Animation.SLIDE).Show();
 
-```csharp
-var image = Image.FromFile("D:\\thumbnail.jpg");
-Toast.Build(this, "Hello, I am Toast!", image).Show();
-```
+// Thumbnail
+Toast.Build(this, "With image", myImage).Show();
 
-***Warning:***
+// Optional fluent extras (theme / position) then Show
+Toast.Build(this, "Success")
+    .SetTheme(ToastTheme.SuccessDark)
+    .SetPosition(ToastPosition.TopRight)
+    .Show();
 
-- If you want the thumbnail best fitted for display, I highly recommend a minimum size of 80x80, square rectangle.  
-- Only JPEG and PNG formats are supported  
+// Events + metadata / ext data on click
+var toast = Toast.Build(this, "Order #42 ready", "Tap to open")
+    .SetTag(orderDto)                          // any object
+    .SetData(orderDto)                         // alias of SetTag
+    .SetExtData("orderId", 42)                 // key/value metadata
+    .SetMetadata("source", "kitchen");
 
-**Note:** `this` in this case is an instance of `System.Windows.Forms.Form`, where Toast will be created. Example: MainForm,...  
-
-### ToastBuilder
-
-We also provide `ToastBuilder` to create a Toast more powerfully, chaining is supported.
-
-```csharp
-private void CreateWithBuilder()
+toast.OnClick += (_, e) =>
 {
-  var toast = new ToastBuilder(this) //<-- 'this' is your Form instance
-    .SetCaption("Hello! I am Toast")
-    .SetDescription("This is demo")
-    .SetDuration(Duration.LENGTH_SHORT)
-    .SetMuting(false)
-    .Build();
-
-  toast.Show();
-}
+    var order = e.Tag as OrderDto;
+    var id = e.GetMetadata<int>("orderId");    // or e["orderId"]
+    var source = e.Metadata["source"];
+    // …
+};
+toast.Show();
 ```
 
-#### More features
+`Toast.Build` uses a shared per-form manager under the hood (layout, stacking, capacity).  
+Advanced hosts can still use `ToastManager` + `Create()` explicitly if they need custom options/events.
 
-##### Duration
+## Features
 
-You can specify duration by using the `Duration` enum. There are two values for this enum.  
-`Duration.LENGTH_SHORT` is 2 seconds and `Duration.LENGTH_LONG` is 3 seconds  
-Default `Duration` value if you don't set it is `LENGTH_SHORT`  
+| Feature | Notes |
+|---------|--------|
+| **Android-style API** | `Toast.Build(this, "…").Show()` |
+| **Windows 10/11** | Taskbar-aware `WorkingArea`, owner monitor, no focus steal |
+| **DPI-aware layout** | Scales with host `DeviceDpi` (100%–200%+) |
+| **Four corners** | `TopLeft`, `TopRight`, `BottomLeft`, `BottomRight` |
+| **Themes** | Dark/Light + semantic light/dark + custom RGB |
+| **Capacity** | Max global / per-corner; `DropNewest` / `DropOldest` / `Throw` |
+| **Hover pause** | Remaining time preserved (not full reset) |
+| **Touchable UI** | 44×44 close target, 420×140 @ 96 DPI, content padding |
+| **UI-thread safe** | Background `Show` marshaled to the owner form thread |
 
-**Example:**  
-
-```csharp
-Toast.Build(this, "Hello, I am Toast!", Duration.LENGTH_LONG).Show();
-```
-
-##### Animation
-
-Like `Duration`, `Animation` also has two values: `Fading` and `Sliding`.  
-Default is `Fading`
-
-**Example:**
+## Manager options
 
 ```csharp
-Toast.Build(this, "Hello, I am Toast!", Animation.SLIDE).Show();
-```
-
-##### Async supports
-
-Toast also supports asynchronous methods for displaying the toast without blocking your code
-
-```csharp
-private async void DisplayToastAsync() 
+var manager = new ToastManager(this, new ToastManagerOptions
 {
-  await Toast.Build(this, "Hello! I am Toast!", Duration.LENGTH_SHORT).ShowAsync();
-}
+    MaxToasts = 6,
+    MaxToastsPerPosition = 3,
+    OverflowPolicy = ToastOverflowPolicy.DropNewest,
+    ShortDurationMs = 2000,
+    LongDurationMs = 3000,
+    PauseOnHover = true,
+    PlaySound = true,
+    HideImagePanelWhenEmpty = true
+});
 ```
 
-##### Theme
+## Migration from 1.x
 
-We provide 8 predefined themes. You can also add your custom theme.  
-There are 8 built-in themes:  
+See [docs/MIGRATION.md](docs/MIGRATION.md).
 
-- Dark
-- Light
-- PrimaryLight
-- SuccessLight
-- WarningLight
-- ErrorLight
-- PrimaryDark
-- SuccessDark
-- WarningDark
-- ErrorDark
+**Breaking:** namespace is now `FuzzyToast` (not `System.UI.Widget`). Use `ToastManager` + `Create()` instead of static `Toast.Build(...)`.
 
-**Example:**
+## Tests & coverage
 
-```csharp
-Toast.Build(this, "Hello, I am Toast!", Theme.Light).Show();
+```bash
+dotnet test EasyToast.slnx
+dotnet run --project samples/EasyToastDemo
 ```
 
-#### More examples and documentation available in [wiki](https://github.com) and our [Official Documentation](/docs/html/index.html)
+Line coverage is measured with **Coverlet** and must stay **≥ 85%** (designer/generated files excluded):
+
+```powershell
+# Windows PowerShell
+./scripts/test-coverage.ps1
+```
+
+Or:
+
+```bash
+dotnet test tests/FuzzyToast.Tests/FuzzyToast.Tests.csproj -c Release \
+  /p:CollectCoverage=true \
+  /p:CoverletOutputFormat=cobertura \
+  /p:CoverletOutput=TestResults/coverage \
+  /p:ExcludeByFile="**/Properties/**/*.cs%2c**/*Designer.cs" \
+  /p:Include="[FuzzyToast]*" \
+  /p:Threshold=85 \
+  /p:ThresholdType=line
+```
+
+Report: `TestResults/coverage.cobertura.xml`
 
 ## License
 
-FuzzyToast is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+MIT — see [LICENSE](LICENSE).
