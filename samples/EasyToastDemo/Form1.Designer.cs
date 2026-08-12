@@ -511,10 +511,10 @@
             this.label5.Text = "Close style:";
             // 
             // Form1
-            // Layout was designed at 96 DPI with Font auto-scale (6x13). Do NOT use AutoScaleMode.Dpi here —
-            // with PerMonitorV2 it can inflate ClientSize to multi-monitor width.
+            // Absolute-positioned designer layout. AutoScaleMode.None avoids DPI inflation
+            // of ClientSize/MinimumSize (which could grow to ~2x screen width at 200% DPI).
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(901, 571);
             this.Controls.Add(this.groupBox10);
             this.Controls.Add(this.groupBox9);
@@ -531,11 +531,9 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(920, 620);
-            this.MinimumSize = new System.Drawing.Size(900, 560);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Demo display Toast Notification";
+            this.Text = "FuzzyToast Demo";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Click += new System.EventHandler(this.Form1_Click);
             this.groupBox1.ResumeLayout(false);
