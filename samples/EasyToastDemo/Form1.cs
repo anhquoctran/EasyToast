@@ -43,70 +43,99 @@ public partial class Form1 : Form
 		BuildInputableDemoSection();
 	}
 
-	/// <summary>Adds the v3 Inputable toast panel (caption, placeholder, submit, show button).</summary>
+	/// <summary>Adds the v3 Inputable toast panel — spaced rows, no overlap.</summary>
 	private void BuildInputableDemoSection()
 	{
+		// Right column under Close style; tall enough for labeled fields + actions.
 		_grpInputable = new GroupBox
 		{
 			Text = "Inputable toast (v3)",
-			Location = new Point(488, 300),
-			Size = new Size(399, 105),
+			Location = new Point(511, 183),
+			Size = new Size(376, 218),
 			TabIndex = 14
 		};
 
 		_lblInputHint = new Label
 		{
 			AutoSize = false,
-			Location = new Point(10, 18),
-			Size = new Size(380, 16),
+			Location = new Point(12, 22),
+			Size = new Size(350, 18),
 			ForeColor = Color.DimGray,
-			Font = new Font("Segoe UI", 8F),
-			Text = "Text box + Send · waits ~60s · Enter submits · Esc closes"
+			Font = new Font("Segoe UI", 8.25F),
+			Text = "Text box + Send · stays open until Submit / Esc"
 		};
 
+		var lblCap = new Label
+		{
+			AutoSize = true,
+			Location = new Point(12, 48),
+			Text = "Caption",
+			Font = new Font("Segoe UI", 8.25F)
+		};
 		_txtInputCaption = new TextBox
 		{
-			Location = new Point(10, 38),
-			Size = new Size(150, 23),
+			Location = new Point(12, 66),
+			Size = new Size(350, 23),
 			Text = "Quick reply",
-			MaxLength = 200
+			MaxLength = 200,
+			PlaceholderText = "Toast caption"
 		};
 
+		var lblPh = new Label
+		{
+			AutoSize = true,
+			Location = new Point(12, 98),
+			Text = "Placeholder",
+			Font = new Font("Segoe UI", 8.25F)
+		};
+		var lblBtn = new Label
+		{
+			AutoSize = true,
+			Location = new Point(250, 98),
+			Text = "Button",
+			Font = new Font("Segoe UI", 8.25F)
+		};
 		_txtInputPlaceholder = new TextBox
 		{
-			Location = new Point(166, 38),
-			Size = new Size(140, 23),
+			Location = new Point(12, 116),
+			Size = new Size(228, 23),
 			Text = "Your message…",
-			MaxLength = 200
+			MaxLength = 200,
+			PlaceholderText = "Input placeholder"
 		};
-
 		_txtSubmitLabel = new TextBox
 		{
-			Location = new Point(312, 38),
-			Size = new Size(76, 23),
+			Location = new Point(250, 116),
+			Size = new Size(112, 23),
 			Text = "Send",
-			MaxLength = 32
+			MaxLength = 32,
+			PlaceholderText = "Submit label"
 		};
 
 		_chkAllowEmpty = new CheckBox
 		{
 			AutoSize = true,
-			Location = new Point(10, 70),
-			Text = "Allow empty",
-			Checked = false
+			Location = new Point(12, 152),
+			Text = "Allow empty submit",
+			Checked = false,
+			Font = new Font("Segoe UI", 9F)
 		};
 
 		_btnShowInputable = new Button
 		{
-			Location = new Point(166, 66),
-			Size = new Size(222, 28),
+			Location = new Point(12, 178),
+			Size = new Size(350, 28),
 			Text = "Show inputable toast",
-			UseVisualStyleBackColor = true
+			UseVisualStyleBackColor = true,
+			Font = new Font("Segoe UI", 9F)
 		};
 		_btnShowInputable.Click += BtnShowInputable_Click;
 
 		_grpInputable.Controls.Add(_lblInputHint);
+		_grpInputable.Controls.Add(lblCap);
 		_grpInputable.Controls.Add(_txtInputCaption);
+		_grpInputable.Controls.Add(lblPh);
+		_grpInputable.Controls.Add(lblBtn);
 		_grpInputable.Controls.Add(_txtInputPlaceholder);
 		_grpInputable.Controls.Add(_txtSubmitLabel);
 		_grpInputable.Controls.Add(_chkAllowEmpty);
@@ -330,6 +359,7 @@ public partial class Form1 : Form
 				? "Send"
 				: _txtSubmitLabel.Text.Trim();
 
+			// DurationMs = 0 (default from EnableInput): stays until Send / Esc / ✕ — no flash-dismiss.
 			var toast = Toast.Build(this, caption, "Type below, then Send or press Enter")
 				.SetTheme(SelectedTheme)
 				.SetMuting(true)
@@ -338,7 +368,6 @@ public partial class Form1 : Form
 					defaultText: string.Empty,
 					submitButtonText: submit,
 					allowEmptySubmit: _chkAllowEmpty.Checked)
-				.SetDurationMs(60_000)
 				.SetCloseStyle(CloseStyle.Button)
 				.SetExtData("action", "quick-input")
 				.SetMetadata("demo", "inputable-v3")
@@ -349,9 +378,9 @@ public partial class Form1 : Form
 				Log($"SUBMIT id={ShortId(e.ToastId)} text=\"{e.InputText}\" empty={e.IsEmpty}");
 				Log($"  tag={e.Tag} action={e.GetMetadata<string>("action")} demo={e.GetMetadata<string>("demo")}");
 			};
-			toast.OnClosed += (_, _) => Log("Inputable toast closed (submit, Esc, close, or timeout)");
+			toast.OnClosed += (_, _) => Log("Inputable toast closed (submit, Esc, or close button)");
 			toast.Show();
-			Log($"Inputable toast shown (wait 60s) · placeholder=\"{placeholder}\" · submit=\"{submit}\"");
+			Log($"Inputable toast shown (stays open until Send/Esc/✕) · placeholder=\"{placeholder}\" · submit=\"{submit}\"");
 		}
 		catch (Exception ex)
 		{

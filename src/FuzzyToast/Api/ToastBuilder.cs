@@ -143,6 +143,8 @@ public sealed class ToastBuilder
 		_allowEmptySubmit = allowEmptySubmit;
 		if (_duration is not Duration.Input && _durationMs is null)
 			_duration = Duration.Input;
+		// Stay open until user acts unless caller set an explicit timeout.
+		_durationMs ??= 0;
 		return this;
 	}
 
@@ -156,7 +158,7 @@ public sealed class ToastBuilder
 
 	public ToastBuilder SetDurationMs(int milliseconds)
 	{
-		if (milliseconds < 1)
+		if (milliseconds < 0)
 			throw new ArgumentOutOfRangeException(nameof(milliseconds));
 		_durationMs = milliseconds;
 		return this;

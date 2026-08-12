@@ -216,7 +216,8 @@ public sealed class Toast
 
 	/// <summary>
 	/// Enable quick-input mode: text box + submit button.
-	/// Uses a longer default wait (<see cref="Duration.Input"/> / manager <c>InputDurationMs</c>, ~30s).
+	/// By default stays open until Submit/Esc/close (<c>DurationMs = 0</c>).
+	/// Call <see cref="SetDurationMs"/> if you want a safety auto-timeout.
 	/// </summary>
 	public Toast EnableInput(
 		string? placeholder = null,
@@ -231,6 +232,8 @@ public sealed class Toast
 		_allowEmptySubmit = allowEmptySubmit;
 		if (_duration is not Duration.Input && _durationMs is null)
 			_duration = Duration.Input;
+		// Stay open until user acts unless caller set an explicit timeout.
+		_durationMs ??= 0;
 		return this;
 	}
 
@@ -243,10 +246,13 @@ public sealed class Toast
 		return this;
 	}
 
-	/// <summary>Override auto-dismiss duration in milliseconds (useful for long input waits).</summary>
+	/// <summary>
+	/// Override auto-dismiss duration in milliseconds.
+	/// Use <c>0</c> to disable auto-dismiss (toast stays until Submit / Esc / close).
+	/// </summary>
 	public Toast SetDurationMs(int milliseconds)
 	{
-		if (milliseconds < 1)
+		if (milliseconds < 0)
 			throw new ArgumentOutOfRangeException(nameof(milliseconds));
 		_durationMs = milliseconds;
 		return this;

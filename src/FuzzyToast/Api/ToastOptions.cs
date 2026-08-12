@@ -46,7 +46,11 @@ public sealed class ToastOptions
 
 	/// <summary>
 	/// Optional absolute duration in milliseconds (overrides <see cref="Duration"/> presets).
-	/// When null and <see cref="EnableInput"/> is true, manager uses <see cref="ToastManagerOptions.InputDurationMs"/>.
+	/// <list type="bullet">
+	/// <item><c>null</c> — use preset (<see cref="Duration"/> / <see cref="ToastManagerOptions.InputDurationMs"/> for input)</item>
+	/// <item><c>0</c> — no auto-dismiss (stay until Submit / Esc / close)</item>
+	/// <item><c>&gt; 0</c> — dismiss after this many ms</item>
+	/// </list>
 	/// </summary>
 	public int? DurationMs { get; init; }
 
@@ -56,8 +60,8 @@ public sealed class ToastOptions
 			throw new ArgumentException("Caption is required.", nameof(Caption));
 		if (Theme == ToastTheme.Custom && CustomColors is null)
 			throw new ArgumentException("CustomColors required when Theme is Custom.", nameof(CustomColors));
-		if (DurationMs is < 1)
-			throw new ArgumentOutOfRangeException(nameof(DurationMs), "DurationMs must be >= 1 when set.");
+		if (DurationMs is < 0)
+			throw new ArgumentOutOfRangeException(nameof(DurationMs), "DurationMs must be >= 0 when set (0 = no auto-dismiss).");
 		if (EnableInput && string.IsNullOrWhiteSpace(SubmitButtonText))
 			throw new ArgumentException("SubmitButtonText is required when EnableInput is true.", nameof(SubmitButtonText));
 	}

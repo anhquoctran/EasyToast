@@ -22,6 +22,7 @@ partial class ToastForm
 	private void InitializeComponent()
 	{
 		components = new System.ComponentModel.Container();
+		contentShell = new Panel();
 		mainContainer = new SplitContainer();
 		picImage = new PictureBox();
 		textContainer = new SplitContainer();
@@ -29,6 +30,8 @@ partial class ToastForm
 		lblDescription = new Label();
 		lblCaption = new Label();
 		tmrClose = new System.Windows.Forms.Timer(components);
+
+		contentShell.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)mainContainer).BeginInit();
 		mainContainer.Panel1.SuspendLayout();
 		mainContainer.Panel2.SuspendLayout();
@@ -39,6 +42,14 @@ partial class ToastForm
 		textContainer.Panel2.SuspendLayout();
 		textContainer.SuspendLayout();
 		SuspendLayout();
+
+		// contentShell — parent padding so all children sit inset from the toast edge
+		contentShell.BackColor = Color.Transparent;
+		contentShell.Dock = DockStyle.Fill;
+		contentShell.Name = "contentShell";
+		contentShell.Padding = new Padding(12, 10, 12, 10);
+		contentShell.Controls.Add(mainContainer);
+
 		// mainContainer
 		mainContainer.BackColor = Color.Transparent;
 		mainContainer.Dock = DockStyle.Fill;
@@ -47,22 +58,24 @@ partial class ToastForm
 		mainContainer.Name = "mainContainer";
 		mainContainer.Panel1.Controls.Add(picImage);
 		mainContainer.Panel1.Click += ToastContentClick;
-		mainContainer.Panel1MinSize = 96;
+		mainContainer.Panel1.Padding = new Padding(0, 0, 8, 0); // gap between thumb and text
+		mainContainer.Panel1MinSize = 64;
 		mainContainer.Panel1Collapsed = true;
 		mainContainer.Panel2.Controls.Add(textContainer);
 		mainContainer.Panel2.Click += ToastContentClick;
-		mainContainer.Panel2.Padding = new Padding(0, 0, 4, 0);
-		mainContainer.Size = new Size(420, 140);
-		mainContainer.SplitterDistance = 96;
+		mainContainer.Panel2.Padding = new Padding(0);
+		mainContainer.SplitterDistance = 72;
 		mainContainer.SplitterWidth = 1;
+
 		// picImage
 		picImage.BackColor = Color.FromArgb(48, 48, 48);
 		picImage.Dock = DockStyle.Fill;
 		picImage.Name = "picImage";
-		picImage.Size = new Size(96, 140);
 		picImage.SizeMode = PictureBoxSizeMode.Zoom;
 		picImage.TabStop = false;
 		picImage.Click += ToastContentClick;
+		picImage.Margin = new Padding(0);
+
 		// textContainer
 		textContainer.Dock = DockStyle.Fill;
 		textContainer.FixedPanel = FixedPanel.Panel1;
@@ -71,61 +84,69 @@ partial class ToastForm
 		textContainer.Orientation = Orientation.Horizontal;
 		textContainer.Panel1.Controls.Add(btnClose);
 		textContainer.Panel1.Controls.Add(lblCaption);
-		textContainer.Panel1.Padding = new Padding(12, 12, 8, 0);
+		// Inner spacing between caption / close (edge inset comes from contentShell)
+		textContainer.Panel1.Padding = new Padding(2, 0, 0, 2);
 		textContainer.Panel2.Controls.Add(lblDescription);
-		textContainer.Panel2.Padding = new Padding(12, 8, 12, 12);
-		textContainer.Size = new Size(323, 140);
-		textContainer.SplitterDistance = 52;
+		textContainer.Panel2.Padding = new Padding(2, 2, 2, 0);
+		textContainer.SplitterDistance = 28;
 		textContainer.SplitterWidth = 1;
+
 		// btnClose
 		btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 		btnClose.Cursor = Cursors.Hand;
 		btnClose.FlatAppearance.BorderSize = 0;
 		btnClose.FlatStyle = FlatStyle.Flat;
-		btnClose.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-		btnClose.Location = new Point(267, 4);
+		btnClose.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+		btnClose.Location = new Point(250, 0);
 		btnClose.Name = "btnClose";
-		btnClose.Size = new Size(44, 44);
+		btnClose.Size = new Size(32, 26);
 		btnClose.TabIndex = 1;
 		btnClose.Text = "✕";
 		btnClose.UseVisualStyleBackColor = false;
 		btnClose.Click += BtnClose_Click;
+		btnClose.Margin = new Padding(0);
+
 		// lblDescription
 		lblDescription.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 		lblDescription.AutoEllipsis = true;
 		lblDescription.BackColor = Color.Transparent;
-		lblDescription.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+		lblDescription.Font = new Font("Segoe UI", 8.5F, FontStyle.Regular, GraphicsUnit.Point);
 		lblDescription.ForeColor = Color.Silver;
 		lblDescription.Location = new Point(0, 0);
 		lblDescription.Name = "lblDescription";
-		lblDescription.Padding = new Padding(4, 0, 28, 0);
-		lblDescription.Size = new Size(299, 64);
+		lblDescription.Padding = new Padding(0, 0, 4, 0);
+		lblDescription.Size = new Size(260, 32);
 		lblDescription.Click += ToastContentClick;
+		lblDescription.Margin = new Padding(0);
+
 		// lblCaption
 		lblCaption.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 		lblCaption.AutoEllipsis = true;
 		lblCaption.BackColor = Color.Transparent;
-		lblCaption.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
+		lblCaption.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold, GraphicsUnit.Point);
 		lblCaption.ForeColor = Color.White;
-		lblCaption.Location = new Point(0, 4);
+		lblCaption.Location = new Point(0, 0);
 		lblCaption.Name = "lblCaption";
-		lblCaption.Padding = new Padding(4, 0, 8, 0);
-		lblCaption.Size = new Size(255, 36);
+		lblCaption.Padding = new Padding(0, 0, 6, 0);
+		lblCaption.Size = new Size(240, 24);
 		lblCaption.TextAlign = ContentAlignment.MiddleLeft;
 		lblCaption.Click += ToastContentClick;
+		lblCaption.Margin = new Padding(0);
+
 		// tmrClose
 		tmrClose.Tick += TmrClose_Tick;
+
 		// ToastForm
 		AutoScaleDimensions = new SizeF(7F, 15F);
 		AutoScaleMode = AutoScaleMode.Font;
 		BackColor = Color.FromArgb(33, 33, 33);
-		ClientSize = new Size(420, 140);
+		ClientSize = new Size(380, 100);
 		ControlBox = false;
-		Controls.Add(mainContainer);
+		Controls.Add(contentShell);
 		DoubleBuffered = true;
 		Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
 		FormBorderStyle = FormBorderStyle.None;
-		MinimumSize = new Size(360, 120);
+		MinimumSize = new Size(280, 72);
 		Name = "ToastForm";
 		Opacity = 0.98D;
 		ShowIcon = false;
@@ -133,6 +154,7 @@ partial class ToastForm
 		StartPosition = FormStartPosition.Manual;
 		Text = "Toast";
 		TopMost = true;
+		Padding = new Padding(0);
 		FormClosing += ToastForm_FormClosing;
 		FormClosed += ToastForm_FormClosed;
 		Load += ToastForm_Load;
@@ -140,6 +162,8 @@ partial class ToastForm
 		Click += ToastContentClick;
 		MouseEnter += ToastForm_MouseEnter;
 		MouseLeave += ToastForm_MouseLeave;
+
+		contentShell.ResumeLayout(false);
 		mainContainer.Panel1.ResumeLayout(false);
 		mainContainer.Panel2.ResumeLayout(false);
 		((System.ComponentModel.ISupportInitialize)mainContainer).EndInit();
@@ -151,7 +175,7 @@ partial class ToastForm
 		textContainer.ResumeLayout(false);
 		ResumeLayout(false);
 
-		// Propagate hover pause to children (mouse leave on child would otherwise cancel hover).
+		WireHover(contentShell);
 		WireHover(mainContainer);
 		WireHover(picImage);
 		WireHover(textContainer);
@@ -166,6 +190,8 @@ partial class ToastForm
 		c.MouseLeave += ToastForm_MouseLeave;
 	}
 
+	/// <summary>Parent shell that applies outer padding around all toast content.</summary>
+	private Panel contentShell = null!;
 	private SplitContainer mainContainer = null!;
 	private PictureBox picImage = null!;
 	private Label lblCaption = null!;

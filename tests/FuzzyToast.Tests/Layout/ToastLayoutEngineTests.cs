@@ -96,14 +96,15 @@ public class ToastLayoutEngineTests
 	}
 
 	[Fact]
-	public void DefaultMetrics_AreTouchableAndSpacious()
+	public void DefaultMetrics_AreCompactAndTouchable()
 	{
-		Assert.True(Metrics.CloseButtonSize >= Metrics.MinTouchTargetPx);
-		Assert.True(Metrics.MinTouchTargetPx >= 44);
-		Assert.True(Metrics.CaptionDescriptionGap >= 8);
-		Assert.True(Metrics.ToastHeight >= 140);
-		Assert.True(Metrics.ToastWidth >= 420);
-		Assert.True(Metrics.ContentPaddingLeft >= 12);
+		Assert.True(Metrics.CloseButtonSize >= 32);
+		Assert.True(Metrics.MinTouchTargetPx >= 32);
+		Assert.True(Metrics.CaptionDescriptionGap >= 2);
+		// Compact baseline (was 140×420 — left large empty bands)
+		Assert.InRange(Metrics.ToastHeight, 72, 120);
+		Assert.InRange(Metrics.ToastWidth, 320, 420);
+		Assert.True(Metrics.ContentPaddingLeft >= 8);
 		Assert.True(Metrics.StackGap >= 8);
 	}
 }

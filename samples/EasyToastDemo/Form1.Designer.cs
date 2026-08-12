@@ -437,13 +437,13 @@
 			radioButton2.Text = "Long";
 			radioButton2.UseVisualStyleBackColor = true;
 			// 
-			// groupBox9
+			// groupBox9 — Theme (compact; right column)
 			// 
 			groupBox9.Controls.Add(cbBuiltinThemes);
 			groupBox9.Controls.Add(label4);
 			groupBox9.Location = new Point(511, 27);
 			groupBox9.Name = "groupBox9";
-			groupBox9.Size = new Size(375, 151);
+			groupBox9.Size = new Size(376, 70);
 			groupBox9.TabIndex = 12;
 			groupBox9.TabStop = false;
 			groupBox9.Text = "Theme";
@@ -452,27 +452,27 @@
 			// 
 			cbBuiltinThemes.DropDownStyle = ComboBoxStyle.DropDownList;
 			cbBuiltinThemes.FormattingEnabled = true;
-			cbBuiltinThemes.Location = new Point(98, 19);
+			cbBuiltinThemes.Location = new Point(110, 28);
 			cbBuiltinThemes.Name = "cbBuiltinThemes";
-			cbBuiltinThemes.Size = new Size(144, 23);
+			cbBuiltinThemes.Size = new Size(248, 23);
 			cbBuiltinThemes.TabIndex = 1;
 			// 
 			// label4
 			// 
 			label4.AutoSize = true;
-			label4.Location = new Point(6, 21);
+			label4.Location = new Point(12, 31);
 			label4.Name = "label4";
 			label4.Size = new Size(86, 15);
 			label4.TabIndex = 0;
 			label4.Text = "Built-in theme:";
 			// 
-			// groupBox10
+			// groupBox10 — Close style (compact; right column)
 			// 
 			groupBox10.Controls.Add(comboBox1);
 			groupBox10.Controls.Add(label5);
-			groupBox10.Location = new Point(511, 184);
+			groupBox10.Location = new Point(511, 105);
 			groupBox10.Name = "groupBox10";
-			groupBox10.Size = new Size(376, 109);
+			groupBox10.Size = new Size(376, 70);
 			groupBox10.TabIndex = 13;
 			groupBox10.TabStop = false;
 			groupBox10.Text = "Close style";
@@ -481,15 +481,15 @@
 			// 
 			comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
 			comboBox1.FormattingEnabled = true;
-			comboBox1.Location = new Point(98, 18);
+			comboBox1.Location = new Point(110, 28);
 			comboBox1.Name = "comboBox1";
-			comboBox1.Size = new Size(144, 23);
+			comboBox1.Size = new Size(248, 23);
 			comboBox1.TabIndex = 1;
 			// 
 			// label5
 			// 
 			label5.AutoSize = true;
-			label5.Location = new Point(6, 21);
+			label5.Location = new Point(12, 31);
 			label5.Name = "label5";
 			label5.Size = new Size(66, 15);
 			label5.TabIndex = 0;
