@@ -28,537 +28,520 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.components = new System.ComponentModel.Container();
-            this.btnShowToastDemo = new System.Windows.Forms.Button();
-            this.btnSimpeWithCustomText = new System.Windows.Forms.Button();
-            this.txtText = new System.Windows.Forms.TextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnInsertImage = new System.Windows.Forms.Button();
-            this.picThumbnail = new System.Windows.Forms.PictureBox();
-            this.txttextImage = new System.Windows.Forms.TextBox();
-            this.btnToastTextImage = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.btnDisplayMultiple = new System.Windows.Forms.Button();
-            this.numofToasts = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.btnBottom = new System.Windows.Forms.Button();
-            this.btnTopRight = new System.Windows.Forms.Button();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.btnToastWithAnimation = new System.Windows.Forms.Button();
-            this.txtAnimation = new System.Windows.Forms.TextBox();
-            this.rSlide = new System.Windows.Forms.RadioButton();
-            this.rFade = new System.Windows.Forms.RadioButton();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.rchTextWatch = new System.Windows.Forms.RichTextBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.btnCustomDuration = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.cbBuiltinThemes = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.groupBox10 = new System.Windows.Forms.GroupBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picThumbnail)).BeginInit();
-            this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numofToasts)).BeginInit();
-            this.groupBox5.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            this.groupBox7.SuspendLayout();
-            this.groupBox8.SuspendLayout();
-            this.groupBox9.SuspendLayout();
-            this.groupBox10.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // btnShowToastDemo
-            // 
-            this.btnShowToastDemo.Location = new System.Drawing.Point(6, 19);
-            this.btnShowToastDemo.Name = "btnShowToastDemo";
-            this.btnShowToastDemo.Size = new System.Drawing.Size(226, 30);
-            this.btnShowToastDemo.TabIndex = 0;
-            this.btnShowToastDemo.Text = "Show a simple toast";
-            this.btnShowToastDemo.UseVisualStyleBackColor = true;
-            this.btnShowToastDemo.Click += new System.EventHandler(this.BtnShowToastDemo_Click);
-            // 
-            // btnSimpeWithCustomText
-            // 
-            this.btnSimpeWithCustomText.Location = new System.Drawing.Point(6, 45);
-            this.btnSimpeWithCustomText.Name = "btnSimpeWithCustomText";
-            this.btnSimpeWithCustomText.Size = new System.Drawing.Size(226, 30);
-            this.btnSimpeWithCustomText.TabIndex = 1;
-            this.btnSimpeWithCustomText.Text = "Show a simple toast with custom text";
-            this.btnSimpeWithCustomText.UseVisualStyleBackColor = true;
-            this.btnSimpeWithCustomText.Click += new System.EventHandler(this.BtnSimpeWithCustomText_Click);
-            // 
-            // txtText
-            // 
-            this.txtText.Location = new System.Drawing.Point(6, 19);
-            this.txtText.MaxLength = 512;
-            this.txtText.Name = "txtText";
-            this.txtText.Size = new System.Drawing.Size(226, 20);
-            this.txtText.TabIndex = 2;
-            this.txtText.Text = "Hello, I am Toast!";
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.btnShowToastDemo);
-            this.groupBox1.Location = new System.Drawing.Point(12, 27);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(238, 59);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Simplest Toast";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.txtText);
-            this.groupBox2.Controls.Add(this.btnSimpeWithCustomText);
-            this.groupBox2.Location = new System.Drawing.Point(12, 92);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(238, 86);
-            this.groupBox2.TabIndex = 4;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Simple with caption";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.btnInsertImage);
-            this.groupBox3.Controls.Add(this.picThumbnail);
-            this.groupBox3.Controls.Add(this.txttextImage);
-            this.groupBox3.Controls.Add(this.btnToastTextImage);
-            this.groupBox3.Location = new System.Drawing.Point(12, 184);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(238, 221);
-            this.groupBox3.TabIndex = 5;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Text and thumbnail";
-            // 
-            // label1
-            // 
-            this.label1.AutoEllipsis = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
-            this.label1.ForeColor = System.Drawing.Color.DimGray;
-            this.label1.Location = new System.Drawing.Point(6, 112);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(226, 59);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Required minimum size of thumbnail is 64x64. Recommended size is 80x80. Square ra" +
-    "tio for best display. JPEG and PNG format supported.";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // btnInsertImage
-            // 
-            this.btnInsertImage.Location = new System.Drawing.Point(76, 45);
-            this.btnInsertImage.Name = "btnInsertImage";
-            this.btnInsertImage.Size = new System.Drawing.Size(94, 30);
-            this.btnInsertImage.TabIndex = 4;
-            this.btnInsertImage.Text = "Choose image";
-            this.btnInsertImage.UseVisualStyleBackColor = true;
-            this.btnInsertImage.Click += new System.EventHandler(this.BtnInsertImage_Click);
-            // 
-            // picThumbnail
-            // 
-            this.picThumbnail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picThumbnail.Location = new System.Drawing.Point(6, 45);
-            this.picThumbnail.Name = "picThumbnail";
-            this.picThumbnail.Size = new System.Drawing.Size(64, 64);
-            this.picThumbnail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picThumbnail.TabIndex = 3;
-            this.picThumbnail.TabStop = false;
-            // 
-            // txttextImage
-            // 
-            this.txttextImage.Location = new System.Drawing.Point(6, 19);
-            this.txttextImage.MaxLength = 512;
-            this.txttextImage.Name = "txttextImage";
-            this.txttextImage.Size = new System.Drawing.Size(226, 20);
-            this.txttextImage.TabIndex = 2;
-            this.txttextImage.Text = "Hello, I am Toast!";
-            // 
-            // btnToastTextImage
-            // 
-            this.btnToastTextImage.Location = new System.Drawing.Point(6, 185);
-            this.btnToastTextImage.Name = "btnToastTextImage";
-            this.btnToastTextImage.Size = new System.Drawing.Size(226, 30);
-            this.btnToastTextImage.TabIndex = 1;
-            this.btnToastTextImage.Text = "Show toast with text and thumbnail image";
-            this.btnToastTextImage.UseVisualStyleBackColor = true;
-            this.btnToastTextImage.Click += new System.EventHandler(this.BtnToastTextImage_Click);
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.label3);
-            this.groupBox4.Controls.Add(this.btnDisplayMultiple);
-            this.groupBox4.Controls.Add(this.numofToasts);
-            this.groupBox4.Controls.Add(this.label2);
-            this.groupBox4.Location = new System.Drawing.Point(256, 27);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(225, 94);
-            this.groupBox4.TabIndex = 6;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Multiple toasts";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 46);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(85, 13);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Max allowed is 3";
-            // 
-            // btnDisplayMultiple
-            // 
-            this.btnDisplayMultiple.Location = new System.Drawing.Point(6, 62);
-            this.btnDisplayMultiple.Name = "btnDisplayMultiple";
-            this.btnDisplayMultiple.Size = new System.Drawing.Size(213, 27);
-            this.btnDisplayMultiple.TabIndex = 2;
-            this.btnDisplayMultiple.Text = "Display random multiple Toast";
-            this.btnDisplayMultiple.UseVisualStyleBackColor = true;
-            this.btnDisplayMultiple.Click += new System.EventHandler(this.BtnDisplayMultiple_Click);
-            // 
-            // numofToasts
-            // 
-            this.numofToasts.Location = new System.Drawing.Point(148, 19);
-            this.numofToasts.Maximum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.numofToasts.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numofToasts.Name = "numofToasts";
-            this.numofToasts.Size = new System.Drawing.Size(71, 20);
-            this.numofToasts.TabIndex = 1;
-            this.numofToasts.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.numofToasts.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 21);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(136, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Number of Toast to display:";
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.btnBottom);
-            this.groupBox5.Controls.Add(this.btnTopRight);
-            this.groupBox5.Location = new System.Drawing.Point(256, 127);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(225, 51);
-            this.groupBox5.TabIndex = 7;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Position";
-            // 
-            // btnBottom
-            // 
-            this.btnBottom.Location = new System.Drawing.Point(87, 19);
-            this.btnBottom.Name = "btnBottom";
-            this.btnBottom.Size = new System.Drawing.Size(75, 23);
-            this.btnBottom.TabIndex = 3;
-            this.btnBottom.Text = "Bottom Right";
-            this.btnBottom.UseVisualStyleBackColor = true;
-            this.btnBottom.Click += new System.EventHandler(this.BtnBottom_Click);
-            // 
-            // btnTopRight
-            // 
-            this.btnTopRight.Location = new System.Drawing.Point(6, 19);
-            this.btnTopRight.Name = "btnTopRight";
-            this.btnTopRight.Size = new System.Drawing.Size(75, 23);
-            this.btnTopRight.TabIndex = 2;
-            this.btnTopRight.Text = "Top Right";
-            this.btnTopRight.UseVisualStyleBackColor = true;
-            this.btnTopRight.Click += new System.EventHandler(this.BtnTopRight_Click);
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.BackColor = System.Drawing.SystemColors.Control;
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(901, 24);
-            this.menuStrip1.TabIndex = 8;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem1});
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.aboutToolStripMenuItem.Text = "Help";
-            // 
-            // aboutToolStripMenuItem1
-            // 
-            this.aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(107, 22);
-            this.aboutToolStripMenuItem1.Text = "About";
-            this.aboutToolStripMenuItem1.Click += new System.EventHandler(this.About_Click);
-            // 
-            // groupBox6
-            // 
-            this.groupBox6.Controls.Add(this.btnToastWithAnimation);
-            this.groupBox6.Controls.Add(this.txtAnimation);
-            this.groupBox6.Controls.Add(this.rSlide);
-            this.groupBox6.Controls.Add(this.rFade);
-            this.groupBox6.Location = new System.Drawing.Point(256, 184);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(226, 104);
-            this.groupBox6.TabIndex = 9;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Animation";
-            // 
-            // btnToastWithAnimation
-            // 
-            this.btnToastWithAnimation.Location = new System.Drawing.Point(6, 68);
-            this.btnToastWithAnimation.Name = "btnToastWithAnimation";
-            this.btnToastWithAnimation.Size = new System.Drawing.Size(213, 27);
-            this.btnToastWithAnimation.TabIndex = 4;
-            this.btnToastWithAnimation.Text = "Display Toast with custom animation";
-            this.btnToastWithAnimation.UseVisualStyleBackColor = true;
-            this.btnToastWithAnimation.Click += new System.EventHandler(this.BtnToastWithAnimation_Click);
-            // 
-            // txtAnimation
-            // 
-            this.txtAnimation.Location = new System.Drawing.Point(6, 42);
-            this.txtAnimation.MaxLength = 512;
-            this.txtAnimation.Name = "txtAnimation";
-            this.txtAnimation.Size = new System.Drawing.Size(213, 20);
-            this.txtAnimation.TabIndex = 3;
-            this.txtAnimation.Text = "Hello, I am Toast!";
-            // 
-            // rSlide
-            // 
-            this.rSlide.AutoSize = true;
-            this.rSlide.Location = new System.Drawing.Point(107, 19);
-            this.rSlide.Name = "rSlide";
-            this.rSlide.Size = new System.Drawing.Size(48, 17);
-            this.rSlide.TabIndex = 1;
-            this.rSlide.Text = "Slide";
-            this.rSlide.UseVisualStyleBackColor = true;
-            // 
-            // rFade
-            // 
-            this.rFade.AutoSize = true;
-            this.rFade.Checked = true;
-            this.rFade.Location = new System.Drawing.Point(9, 19);
-            this.rFade.Name = "rFade";
-            this.rFade.Size = new System.Drawing.Size(92, 17);
-            this.rFade.TabIndex = 0;
-            this.rFade.TabStop = true;
-            this.rFade.Text = "Fade (Default)";
-            this.rFade.UseVisualStyleBackColor = true;
-            // 
-            // groupBox7
-            // 
-            this.groupBox7.Controls.Add(this.rchTextWatch);
-            this.groupBox7.Location = new System.Drawing.Point(12, 411);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(877, 148);
-            this.groupBox7.TabIndex = 10;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Toast Collection Live Watch";
-            // 
-            // rchTextWatch
-            // 
-            this.rchTextWatch.BackColor = System.Drawing.Color.White;
-            this.rchTextWatch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rchTextWatch.Location = new System.Drawing.Point(3, 16);
-            this.rchTextWatch.Name = "rchTextWatch";
-            this.rchTextWatch.ReadOnly = true;
-            this.rchTextWatch.Size = new System.Drawing.Size(871, 129);
-            this.rchTextWatch.TabIndex = 0;
-            this.rchTextWatch.Text = "";
-            // 
-            // groupBox8
-            // 
-            this.groupBox8.Controls.Add(this.btnCustomDuration);
-            this.groupBox8.Controls.Add(this.textBox1);
-            this.groupBox8.Controls.Add(this.radioButton1);
-            this.groupBox8.Controls.Add(this.radioButton2);
-            this.groupBox8.Location = new System.Drawing.Point(256, 294);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(226, 111);
-            this.groupBox8.TabIndex = 11;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Duration";
-            // 
-            // btnCustomDuration
-            // 
-            this.btnCustomDuration.Location = new System.Drawing.Point(6, 75);
-            this.btnCustomDuration.Name = "btnCustomDuration";
-            this.btnCustomDuration.Size = new System.Drawing.Size(213, 30);
-            this.btnCustomDuration.TabIndex = 4;
-            this.btnCustomDuration.Text = "Display Toast with custom duration";
-            this.btnCustomDuration.UseVisualStyleBackColor = true;
-            this.btnCustomDuration.Click += new System.EventHandler(this.BtnCustomDuration_Click);
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(6, 42);
-            this.textBox1.MaxLength = 512;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(213, 20);
-            this.textBox1.TabIndex = 3;
-            this.textBox1.Text = "Hello, I am Toast!";
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(64, 19);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(50, 17);
-            this.radioButton1.TabIndex = 1;
-            this.radioButton1.Text = "Short";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Checked = true;
-            this.radioButton2.Location = new System.Drawing.Point(9, 19);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(49, 17);
-            this.radioButton2.TabIndex = 0;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Long";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            // 
-            // groupBox9
-            // 
-            this.groupBox9.Controls.Add(this.cbBuiltinThemes);
-            this.groupBox9.Controls.Add(this.label4);
-            this.groupBox9.Location = new System.Drawing.Point(487, 27);
-            this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(399, 151);
-            this.groupBox9.TabIndex = 12;
-            this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Theme";
-            // 
-            // cbBuiltinThemes
-            // 
-            this.cbBuiltinThemes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbBuiltinThemes.FormattingEnabled = true;
-            this.cbBuiltinThemes.Location = new System.Drawing.Point(85, 18);
-            this.cbBuiltinThemes.Name = "cbBuiltinThemes";
-            this.cbBuiltinThemes.Size = new System.Drawing.Size(144, 21);
-            this.cbBuiltinThemes.TabIndex = 1;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 21);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(73, 13);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Built-in theme:";
-            // 
-            // groupBox10
-            // 
-            this.groupBox10.Controls.Add(this.comboBox1);
-            this.groupBox10.Controls.Add(this.label5);
-            this.groupBox10.Location = new System.Drawing.Point(488, 184);
-            this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(399, 109);
-            this.groupBox10.TabIndex = 13;
-            this.groupBox10.TabStop = false;
-            this.groupBox10.Text = "Close style";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(85, 18);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(144, 21);
-            this.comboBox1.TabIndex = 1;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 21);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(73, 13);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Close style:";
-            // 
-            // Form1
-            // Absolute-positioned designer layout. AutoScaleMode.None avoids DPI inflation
-            // of ClientSize/MinimumSize (which could grow to ~2x screen width at 200% DPI).
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(901, 571);
-            this.Controls.Add(this.groupBox10);
-            this.Controls.Add(this.groupBox9);
-            this.Controls.Add(this.groupBox8);
-            this.Controls.Add(this.groupBox7);
-            this.Controls.Add(this.groupBox6);
-            this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.menuStrip1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MainMenuStrip = this.menuStrip1;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "Form1";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "FuzzyToast Demo";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.Click += new System.EventHandler(this.Form1_Click);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picThumbnail)).EndInit();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numofToasts)).EndInit();
-            this.groupBox5.ResumeLayout(false);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            this.groupBox7.ResumeLayout(false);
-            this.groupBox8.ResumeLayout(false);
-            this.groupBox8.PerformLayout();
-            this.groupBox9.ResumeLayout(false);
-            this.groupBox9.PerformLayout();
-            this.groupBox10.ResumeLayout(false);
-            this.groupBox10.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+			components = new System.ComponentModel.Container();
+			btnShowToastDemo = new Button();
+			btnSimpeWithCustomText = new Button();
+			txtText = new TextBox();
+			groupBox1 = new GroupBox();
+			groupBox2 = new GroupBox();
+			groupBox3 = new GroupBox();
+			label1 = new Label();
+			btnInsertImage = new Button();
+			picThumbnail = new PictureBox();
+			txttextImage = new TextBox();
+			btnToastTextImage = new Button();
+			groupBox4 = new GroupBox();
+			label3 = new Label();
+			btnDisplayMultiple = new Button();
+			numofToasts = new NumericUpDown();
+			label2 = new Label();
+			groupBox5 = new GroupBox();
+			btnBottom = new Button();
+			btnTopRight = new Button();
+			menuStrip1 = new MenuStrip();
+			aboutToolStripMenuItem = new ToolStripMenuItem();
+			aboutToolStripMenuItem1 = new ToolStripMenuItem();
+			groupBox6 = new GroupBox();
+			btnToastWithAnimation = new Button();
+			txtAnimation = new TextBox();
+			rSlide = new RadioButton();
+			rFade = new RadioButton();
+			groupBox7 = new GroupBox();
+			rchTextWatch = new RichTextBox();
+			timer1 = new System.Windows.Forms.Timer(components);
+			timer2 = new System.Windows.Forms.Timer(components);
+			groupBox8 = new GroupBox();
+			btnCustomDuration = new Button();
+			textBox1 = new TextBox();
+			radioButton1 = new RadioButton();
+			radioButton2 = new RadioButton();
+			groupBox9 = new GroupBox();
+			cbBuiltinThemes = new ComboBox();
+			label4 = new Label();
+			groupBox10 = new GroupBox();
+			comboBox1 = new ComboBox();
+			label5 = new Label();
+			groupBox1.SuspendLayout();
+			groupBox2.SuspendLayout();
+			groupBox3.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)picThumbnail).BeginInit();
+			groupBox4.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)numofToasts).BeginInit();
+			groupBox5.SuspendLayout();
+			menuStrip1.SuspendLayout();
+			groupBox6.SuspendLayout();
+			groupBox7.SuspendLayout();
+			groupBox8.SuspendLayout();
+			groupBox9.SuspendLayout();
+			groupBox10.SuspendLayout();
+			SuspendLayout();
+			// 
+			// btnShowToastDemo
+			// 
+			btnShowToastDemo.Location = new Point(6, 19);
+			btnShowToastDemo.Name = "btnShowToastDemo";
+			btnShowToastDemo.Size = new Size(226, 30);
+			btnShowToastDemo.TabIndex = 0;
+			btnShowToastDemo.Text = "Show a simple toast";
+			btnShowToastDemo.UseVisualStyleBackColor = true;
+			btnShowToastDemo.Click += BtnShowToastDemo_Click;
+			// 
+			// btnSimpeWithCustomText
+			// 
+			btnSimpeWithCustomText.Location = new Point(6, 45);
+			btnSimpeWithCustomText.Name = "btnSimpeWithCustomText";
+			btnSimpeWithCustomText.Size = new Size(226, 30);
+			btnSimpeWithCustomText.TabIndex = 1;
+			btnSimpeWithCustomText.Text = "Show a simple toast with custom text";
+			btnSimpeWithCustomText.UseVisualStyleBackColor = true;
+			btnSimpeWithCustomText.Click += BtnSimpeWithCustomText_Click;
+			// 
+			// txtText
+			// 
+			txtText.Location = new Point(6, 19);
+			txtText.MaxLength = 512;
+			txtText.Name = "txtText";
+			txtText.Size = new Size(226, 23);
+			txtText.TabIndex = 2;
+			txtText.Text = "Hello, I am Toast!";
+			// 
+			// groupBox1
+			// 
+			groupBox1.Controls.Add(btnShowToastDemo);
+			groupBox1.Location = new Point(12, 27);
+			groupBox1.Name = "groupBox1";
+			groupBox1.Size = new Size(238, 59);
+			groupBox1.TabIndex = 3;
+			groupBox1.TabStop = false;
+			groupBox1.Text = "Simplest Toast";
+			// 
+			// groupBox2
+			// 
+			groupBox2.Controls.Add(txtText);
+			groupBox2.Controls.Add(btnSimpeWithCustomText);
+			groupBox2.Location = new Point(12, 92);
+			groupBox2.Name = "groupBox2";
+			groupBox2.Size = new Size(238, 86);
+			groupBox2.TabIndex = 4;
+			groupBox2.TabStop = false;
+			groupBox2.Text = "Simple with caption";
+			// 
+			// groupBox3
+			// 
+			groupBox3.Controls.Add(label1);
+			groupBox3.Controls.Add(btnInsertImage);
+			groupBox3.Controls.Add(picThumbnail);
+			groupBox3.Controls.Add(txttextImage);
+			groupBox3.Controls.Add(btnToastTextImage);
+			groupBox3.Location = new Point(12, 184);
+			groupBox3.Name = "groupBox3";
+			groupBox3.Size = new Size(238, 221);
+			groupBox3.TabIndex = 5;
+			groupBox3.TabStop = false;
+			groupBox3.Text = "Text and thumbnail";
+			// 
+			// label1
+			// 
+			label1.AutoEllipsis = true;
+			label1.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 163);
+			label1.ForeColor = Color.DimGray;
+			label1.Location = new Point(6, 112);
+			label1.Name = "label1";
+			label1.Size = new Size(226, 59);
+			label1.TabIndex = 5;
+			label1.Text = "Required minimum size of thumbnail is 64x64. Recommended size is 80x80. Square ratio for best display. JPEG and PNG format supported.";
+			label1.TextAlign = ContentAlignment.MiddleCenter;
+			// 
+			// btnInsertImage
+			// 
+			btnInsertImage.Location = new Point(76, 45);
+			btnInsertImage.Name = "btnInsertImage";
+			btnInsertImage.Size = new Size(94, 30);
+			btnInsertImage.TabIndex = 4;
+			btnInsertImage.Text = "Choose image";
+			btnInsertImage.UseVisualStyleBackColor = true;
+			btnInsertImage.Click += BtnInsertImage_Click;
+			// 
+			// picThumbnail
+			// 
+			picThumbnail.BorderStyle = BorderStyle.FixedSingle;
+			picThumbnail.Location = new Point(6, 45);
+			picThumbnail.Name = "picThumbnail";
+			picThumbnail.Size = new Size(64, 64);
+			picThumbnail.SizeMode = PictureBoxSizeMode.StretchImage;
+			picThumbnail.TabIndex = 3;
+			picThumbnail.TabStop = false;
+			// 
+			// txttextImage
+			// 
+			txttextImage.Location = new Point(6, 19);
+			txttextImage.MaxLength = 512;
+			txttextImage.Name = "txttextImage";
+			txttextImage.Size = new Size(226, 23);
+			txttextImage.TabIndex = 2;
+			txttextImage.Text = "Hello, I am Toast!";
+			// 
+			// btnToastTextImage
+			// 
+			btnToastTextImage.Location = new Point(6, 185);
+			btnToastTextImage.Name = "btnToastTextImage";
+			btnToastTextImage.Size = new Size(226, 30);
+			btnToastTextImage.TabIndex = 1;
+			btnToastTextImage.Text = "Show toast with text and thumbnail image";
+			btnToastTextImage.UseVisualStyleBackColor = true;
+			btnToastTextImage.Click += BtnToastTextImage_Click;
+			// 
+			// groupBox4
+			// 
+			groupBox4.Controls.Add(label3);
+			groupBox4.Controls.Add(btnDisplayMultiple);
+			groupBox4.Controls.Add(numofToasts);
+			groupBox4.Controls.Add(label2);
+			groupBox4.Location = new Point(256, 27);
+			groupBox4.Name = "groupBox4";
+			groupBox4.Size = new Size(249, 94);
+			groupBox4.TabIndex = 6;
+			groupBox4.TabStop = false;
+			groupBox4.Text = "Multiple toasts";
+			// 
+			// label3
+			// 
+			label3.AutoSize = true;
+			label3.Location = new Point(6, 44);
+			label3.Name = "label3";
+			label3.Size = new Size(93, 15);
+			label3.TabIndex = 3;
+			label3.Text = "Max allowed is 3";
+			// 
+			// btnDisplayMultiple
+			// 
+			btnDisplayMultiple.Location = new Point(6, 62);
+			btnDisplayMultiple.Name = "btnDisplayMultiple";
+			btnDisplayMultiple.Size = new Size(237, 27);
+			btnDisplayMultiple.TabIndex = 2;
+			btnDisplayMultiple.Text = "Display random multiple Toast";
+			btnDisplayMultiple.UseVisualStyleBackColor = true;
+			btnDisplayMultiple.Click += BtnDisplayMultiple_Click;
+			// 
+			// numofToasts
+			// 
+			numofToasts.Location = new Point(172, 19);
+			numofToasts.Maximum = new decimal(new int[] { 3, 0, 0, 0 });
+			numofToasts.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+			numofToasts.Name = "numofToasts";
+			numofToasts.Size = new Size(71, 23);
+			numofToasts.TabIndex = 1;
+			numofToasts.TextAlign = HorizontalAlignment.Center;
+			numofToasts.Value = new decimal(new int[] { 2, 0, 0, 0 });
+			// 
+			// label2
+			// 
+			label2.AutoSize = true;
+			label2.Location = new Point(6, 21);
+			label2.Name = "label2";
+			label2.Size = new Size(153, 15);
+			label2.TabIndex = 0;
+			label2.Text = "Number of Toast to display:";
+			// 
+			// groupBox5
+			// 
+			groupBox5.Controls.Add(btnBottom);
+			groupBox5.Controls.Add(btnTopRight);
+			groupBox5.Location = new Point(256, 127);
+			groupBox5.Name = "groupBox5";
+			groupBox5.Size = new Size(249, 51);
+			groupBox5.TabIndex = 7;
+			groupBox5.TabStop = false;
+			groupBox5.Text = "Position";
+			// 
+			// btnBottom
+			// 
+			btnBottom.Location = new Point(87, 19);
+			btnBottom.Name = "btnBottom";
+			btnBottom.Size = new Size(75, 23);
+			btnBottom.TabIndex = 3;
+			btnBottom.Text = "Bottom Right";
+			btnBottom.UseVisualStyleBackColor = true;
+			btnBottom.Click += BtnBottom_Click;
+			// 
+			// btnTopRight
+			// 
+			btnTopRight.Location = new Point(6, 19);
+			btnTopRight.Name = "btnTopRight";
+			btnTopRight.Size = new Size(75, 23);
+			btnTopRight.TabIndex = 2;
+			btnTopRight.Text = "Top Right";
+			btnTopRight.UseVisualStyleBackColor = true;
+			btnTopRight.Click += BtnTopRight_Click;
+			// 
+			// menuStrip1
+			// 
+			menuStrip1.BackColor = SystemColors.Control;
+			menuStrip1.Items.AddRange(new ToolStripItem[] { aboutToolStripMenuItem });
+			menuStrip1.Location = new Point(0, 0);
+			menuStrip1.Name = "menuStrip1";
+			menuStrip1.Size = new Size(901, 24);
+			menuStrip1.TabIndex = 8;
+			menuStrip1.Text = "menuStrip1";
+			// 
+			// aboutToolStripMenuItem
+			// 
+			aboutToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { aboutToolStripMenuItem1 });
+			aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+			aboutToolStripMenuItem.Size = new Size(44, 20);
+			aboutToolStripMenuItem.Text = "Help";
+			// 
+			// aboutToolStripMenuItem1
+			// 
+			aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
+			aboutToolStripMenuItem1.Size = new Size(107, 22);
+			aboutToolStripMenuItem1.Text = "About";
+			aboutToolStripMenuItem1.Click += About_Click;
+			// 
+			// groupBox6
+			// 
+			groupBox6.Controls.Add(btnToastWithAnimation);
+			groupBox6.Controls.Add(txtAnimation);
+			groupBox6.Controls.Add(rSlide);
+			groupBox6.Controls.Add(rFade);
+			groupBox6.Location = new Point(256, 184);
+			groupBox6.Name = "groupBox6";
+			groupBox6.Size = new Size(249, 104);
+			groupBox6.TabIndex = 9;
+			groupBox6.TabStop = false;
+			groupBox6.Text = "Animation";
+			// 
+			// btnToastWithAnimation
+			// 
+			btnToastWithAnimation.Location = new Point(6, 68);
+			btnToastWithAnimation.Name = "btnToastWithAnimation";
+			btnToastWithAnimation.Size = new Size(237, 27);
+			btnToastWithAnimation.TabIndex = 4;
+			btnToastWithAnimation.Text = "Display Toast with custom animation";
+			btnToastWithAnimation.UseVisualStyleBackColor = true;
+			btnToastWithAnimation.Click += BtnToastWithAnimation_Click;
+			// 
+			// txtAnimation
+			// 
+			txtAnimation.Location = new Point(6, 42);
+			txtAnimation.MaxLength = 512;
+			txtAnimation.Name = "txtAnimation";
+			txtAnimation.Size = new Size(237, 23);
+			txtAnimation.TabIndex = 3;
+			txtAnimation.Text = "Hello, I am Toast!";
+			// 
+			// rSlide
+			// 
+			rSlide.AutoSize = true;
+			rSlide.Location = new Point(107, 19);
+			rSlide.Name = "rSlide";
+			rSlide.Size = new Size(50, 19);
+			rSlide.TabIndex = 1;
+			rSlide.Text = "Slide";
+			rSlide.UseVisualStyleBackColor = true;
+			// 
+			// rFade
+			// 
+			rFade.AutoSize = true;
+			rFade.Checked = true;
+			rFade.Location = new Point(9, 19);
+			rFade.Name = "rFade";
+			rFade.Size = new Size(99, 19);
+			rFade.TabIndex = 0;
+			rFade.TabStop = true;
+			rFade.Text = "Fade (Default)";
+			rFade.UseVisualStyleBackColor = true;
+			// 
+			// groupBox7
+			// 
+			groupBox7.Controls.Add(rchTextWatch);
+			groupBox7.Location = new Point(12, 411);
+			groupBox7.Name = "groupBox7";
+			groupBox7.Size = new Size(877, 148);
+			groupBox7.TabIndex = 10;
+			groupBox7.TabStop = false;
+			groupBox7.Text = "Toast Collection Live Watch";
+			// 
+			// rchTextWatch
+			// 
+			rchTextWatch.BackColor = Color.White;
+			rchTextWatch.Dock = DockStyle.Fill;
+			rchTextWatch.Location = new Point(3, 19);
+			rchTextWatch.Name = "rchTextWatch";
+			rchTextWatch.ReadOnly = true;
+			rchTextWatch.Size = new Size(871, 126);
+			rchTextWatch.TabIndex = 0;
+			rchTextWatch.Text = "";
+			// 
+			// groupBox8
+			// 
+			groupBox8.Controls.Add(btnCustomDuration);
+			groupBox8.Controls.Add(textBox1);
+			groupBox8.Controls.Add(radioButton1);
+			groupBox8.Controls.Add(radioButton2);
+			groupBox8.Location = new Point(256, 294);
+			groupBox8.Name = "groupBox8";
+			groupBox8.Size = new Size(249, 111);
+			groupBox8.TabIndex = 11;
+			groupBox8.TabStop = false;
+			groupBox8.Text = "Duration";
+			// 
+			// btnCustomDuration
+			// 
+			btnCustomDuration.Location = new Point(6, 75);
+			btnCustomDuration.Name = "btnCustomDuration";
+			btnCustomDuration.Size = new Size(237, 30);
+			btnCustomDuration.TabIndex = 4;
+			btnCustomDuration.Text = "Display Toast with custom duration";
+			btnCustomDuration.UseVisualStyleBackColor = true;
+			btnCustomDuration.Click += BtnCustomDuration_Click;
+			// 
+			// textBox1
+			// 
+			textBox1.Location = new Point(6, 42);
+			textBox1.MaxLength = 512;
+			textBox1.Name = "textBox1";
+			textBox1.Size = new Size(237, 23);
+			textBox1.TabIndex = 3;
+			textBox1.Text = "Hello, I am Toast!";
+			// 
+			// radioButton1
+			// 
+			radioButton1.AutoSize = true;
+			radioButton1.Location = new Point(64, 19);
+			radioButton1.Name = "radioButton1";
+			radioButton1.Size = new Size(53, 19);
+			radioButton1.TabIndex = 1;
+			radioButton1.Text = "Short";
+			radioButton1.UseVisualStyleBackColor = true;
+			// 
+			// radioButton2
+			// 
+			radioButton2.AutoSize = true;
+			radioButton2.Checked = true;
+			radioButton2.Location = new Point(9, 19);
+			radioButton2.Name = "radioButton2";
+			radioButton2.Size = new Size(52, 19);
+			radioButton2.TabIndex = 0;
+			radioButton2.TabStop = true;
+			radioButton2.Text = "Long";
+			radioButton2.UseVisualStyleBackColor = true;
+			// 
+			// groupBox9
+			// 
+			groupBox9.Controls.Add(cbBuiltinThemes);
+			groupBox9.Controls.Add(label4);
+			groupBox9.Location = new Point(511, 27);
+			groupBox9.Name = "groupBox9";
+			groupBox9.Size = new Size(375, 151);
+			groupBox9.TabIndex = 12;
+			groupBox9.TabStop = false;
+			groupBox9.Text = "Theme";
+			// 
+			// cbBuiltinThemes
+			// 
+			cbBuiltinThemes.DropDownStyle = ComboBoxStyle.DropDownList;
+			cbBuiltinThemes.FormattingEnabled = true;
+			cbBuiltinThemes.Location = new Point(98, 19);
+			cbBuiltinThemes.Name = "cbBuiltinThemes";
+			cbBuiltinThemes.Size = new Size(144, 23);
+			cbBuiltinThemes.TabIndex = 1;
+			// 
+			// label4
+			// 
+			label4.AutoSize = true;
+			label4.Location = new Point(6, 21);
+			label4.Name = "label4";
+			label4.Size = new Size(86, 15);
+			label4.TabIndex = 0;
+			label4.Text = "Built-in theme:";
+			// 
+			// groupBox10
+			// 
+			groupBox10.Controls.Add(comboBox1);
+			groupBox10.Controls.Add(label5);
+			groupBox10.Location = new Point(511, 184);
+			groupBox10.Name = "groupBox10";
+			groupBox10.Size = new Size(376, 109);
+			groupBox10.TabIndex = 13;
+			groupBox10.TabStop = false;
+			groupBox10.Text = "Close style";
+			// 
+			// comboBox1
+			// 
+			comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+			comboBox1.FormattingEnabled = true;
+			comboBox1.Location = new Point(98, 18);
+			comboBox1.Name = "comboBox1";
+			comboBox1.Size = new Size(144, 23);
+			comboBox1.TabIndex = 1;
+			// 
+			// label5
+			// 
+			label5.AutoSize = true;
+			label5.Location = new Point(6, 21);
+			label5.Name = "label5";
+			label5.Size = new Size(66, 15);
+			label5.TabIndex = 0;
+			label5.Text = "Close style:";
+			// 
+			// Form1
+			// 
+			AutoScaleMode = AutoScaleMode.None;
+			ClientSize = new Size(901, 571);
+			Controls.Add(groupBox10);
+			Controls.Add(groupBox9);
+			Controls.Add(groupBox8);
+			Controls.Add(groupBox7);
+			Controls.Add(groupBox6);
+			Controls.Add(groupBox5);
+			Controls.Add(groupBox4);
+			Controls.Add(groupBox3);
+			Controls.Add(groupBox2);
+			Controls.Add(groupBox1);
+			Controls.Add(menuStrip1);
+			FormBorderStyle = FormBorderStyle.FixedSingle;
+			MainMenuStrip = menuStrip1;
+			MaximizeBox = false;
+			MinimizeBox = false;
+			Name = "Form1";
+			StartPosition = FormStartPosition.CenterScreen;
+			Text = "FuzzyToast Demo";
+			Load += Form1_Load;
+			Click += Form1_Click;
+			groupBox1.ResumeLayout(false);
+			groupBox2.ResumeLayout(false);
+			groupBox2.PerformLayout();
+			groupBox3.ResumeLayout(false);
+			groupBox3.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)picThumbnail).EndInit();
+			groupBox4.ResumeLayout(false);
+			groupBox4.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)numofToasts).EndInit();
+			groupBox5.ResumeLayout(false);
+			menuStrip1.ResumeLayout(false);
+			menuStrip1.PerformLayout();
+			groupBox6.ResumeLayout(false);
+			groupBox6.PerformLayout();
+			groupBox7.ResumeLayout(false);
+			groupBox8.ResumeLayout(false);
+			groupBox8.PerformLayout();
+			groupBox9.ResumeLayout(false);
+			groupBox9.PerformLayout();
+			groupBox10.ResumeLayout(false);
+			groupBox10.PerformLayout();
+			ResumeLayout(false);
+			PerformLayout();
 
 		}
 
