@@ -516,7 +516,7 @@
 			MinimizeBox = false;
 			Name = "Form1";
 			StartPosition = FormStartPosition.CenterScreen;
-			Text = "FuzzyToast Demo";
+			Text = "FuzzyToast Demo v3";
 			Load += Form1_Load;
 			Click += Form1_Click;
 			groupBox1.ResumeLayout(false);
