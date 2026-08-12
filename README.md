@@ -2,7 +2,9 @@
 
 A toast notification library for **Windows Forms** on **.NET 8+**.
 
-**FuzzyToast 2.0** provides an instance-based manager, fluent builder, four-corner stacking, touchable UI metrics, and capacity policies — without polluting the `System.*` namespace.
+**Repo:** [github.com/anhquoctran/FuzzyToast](https://github.com/anhquoctran/FuzzyToast) · **Package:** `FuzzyToast` **3.0.1**
+
+**FuzzyToast 3.x** adds inputable toasts; 2.x brought an instance-based manager, fluent builder, four-corner stacking, touchable UI metrics, and capacity policies — without polluting the `System.*` namespace.
 
 ## Prerequisites
 

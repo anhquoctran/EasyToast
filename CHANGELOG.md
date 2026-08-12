@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.0.1
+
+### Changed
+
+- Package project/repository URL → [github.com/anhquoctran/FuzzyToast](https://github.com/anhquoctran/FuzzyToast)
+- Demo: Inputable panel layout (no overlap), compact Theme/Close style column
+- Inputable toast: stay open until Submit/Esc by default; tighter content padding
+
+### Notes
+
+- Package version **3.0.1**
+
 ## 3.0.0
 
 ### Added
