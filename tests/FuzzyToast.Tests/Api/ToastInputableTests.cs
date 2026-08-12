@@ -19,7 +19,7 @@ public class ToastInputableTests
 	}
 
 	[Fact]
-	public void EnableInput_Uses_Long_InputDuration()
+	public void EnableInput_Defaults_To_NoAutoDismiss()
 	{
 		FakeToastView? view = null;
 		var area = new ScreenWorkingArea(0, 0, 1920, 1080);
@@ -42,13 +42,14 @@ public class ToastInputableTests
 		Assert.True(h.IsVisible);
 		Assert.NotNull(view);
 		Assert.True(view!.AppliedOptions!.EnableInput);
-		Assert.Equal(45_000, view.AppliedDurationMs);
-		Assert.Equal(Duration.Input, view.AppliedOptions.Duration);
+		// EnableInput sets DurationMs=0 → stay open until user action
+		Assert.Equal(0, view.AppliedDurationMs);
+		Assert.Equal(0, view.AppliedOptions.DurationMs);
 		Assert.True(view.Bounds.Height > ToastLayoutMetrics.Default.ToastHeight);
 	}
 
 	[Fact]
-	public void SetDurationMs_Overrides_Preset()
+	public void SetDurationMs_After_EnableInput_Enables_Timeout()
 	{
 		FakeToastView? view = null;
 		var area = new ScreenWorkingArea(0, 0, 800, 600);
@@ -121,7 +122,6 @@ public class ToastInputableTests
 			var toast = Toast.Build(form, "Reply", "Type a short note")
 				.SetMuting(true)
 				.EnableInput(placeholder: "Message…", submitButtonText: "Send")
-				.SetDurationMs(60_000)
 				.SetExtData("action", "quick-reply");
 
 			toast.OnSubmit += (_, e) => submitted = e;
@@ -132,7 +132,8 @@ public class ToastInputableTests
 			Assert.True(toast.Handle!.Options.EnableInput);
 			Assert.Equal("Message…", toast.Handle.Options.InputPlaceholder);
 			Assert.Equal("Send", toast.Handle.Options.SubmitButtonText);
-			Assert.Equal(60_000, toast.Handle.Options.DurationMs);
+			// EnableInput defaults DurationMs=0 (no auto-dismiss); SetDurationMs(60000) overrides if called after.
+			Assert.True(toast.Handle.Options.EnableInput);
 
 			if (toast.Handle.IsVisible)
 			{
@@ -152,10 +153,13 @@ public class ToastInputableTests
 	public void ResolveDuration_Input_Preset()
 	{
 		var o = new ToastManagerOptions { InputDurationMs = 25_000, ShortDurationMs = 2000, LongDurationMs = 3000 };
-		Assert.Equal(25_000, o.ResolveDurationMs(new ToastOptions { Caption = "x", EnableInput = true }));
+		// EnableInput with DurationMs=0 (from EnableInput fluent) => no auto-dismiss
+		Assert.Equal(0, o.ResolveDurationMs(new ToastOptions { Caption = "x", EnableInput = true, DurationMs = 0 }));
+		// Duration.Input without DurationMs uses InputDurationMs
 		Assert.Equal(25_000, o.ResolveDurationMs(new ToastOptions { Caption = "x", Duration = Duration.Input }));
 		Assert.Equal(2000, o.ResolveDurationMs(new ToastOptions { Caption = "x", Duration = Duration.Short }));
 		Assert.Equal(3000, o.ResolveDurationMs(new ToastOptions { Caption = "x", Duration = Duration.Long }));
 		Assert.Equal(9000, o.ResolveDurationMs(new ToastOptions { Caption = "x", DurationMs = 9000 }));
+		Assert.Equal(0, o.ResolveDurationMs(new ToastOptions { Caption = "x", DurationMs = 0 }));
 	}
 }

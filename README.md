@@ -109,12 +109,12 @@ Advanced hosts can still use `ToastManager` + `Create()` explicitly if they need
 
 ### Inputable toast (v3)
 
-Quick text input with Submit (or Enter). Wait is long by default (~30s, configurable):
+Quick text input with Submit (or Enter). **Stays open until the user acts** (Submit / Esc / ✕) by default:
 
 ```csharp
 var toast = Toast.Build(this, "Quick reply", "Type a short note")
     .EnableInput(placeholder: "Your message…", submitButtonText: "Send")
-    .SetDurationMs(60_000)   // optional override (ms)
+    // .SetDurationMs(120_000)  // optional safety timeout (ms); 0 = no auto-dismiss
     .SetExtData("action", "reply");
 
 toast.OnSubmit += (_, e) =>
@@ -126,9 +126,10 @@ toast.OnSubmit += (_, e) =>
 toast.Show();
 ```
 
-- `Duration.Input` / `LENGTH_INPUT` → uses `ToastManagerOptions.InputDurationMs` (default **30000**)
-- Escape closes without submit; empty submit blocked unless `allowEmptySubmit: true`
-- Input toasts activate focus so the user can type immediately
+- Default: **no auto-dismiss** (`DurationMs = 0`) so the toast does not vanish while typing
+- Optional timeout: `.SetDurationMs(120000)` (countdown pauses while the input is focused)
+- Escape / ✕ closes without submit; empty submit blocked unless `allowEmptySubmit: true`
+- Input toasts take focus so you can type immediately
 
 ## Features
 

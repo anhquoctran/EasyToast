@@ -11,11 +11,20 @@ public sealed class ToastManagerOptions
 	public int ShortDurationMs { get; init; } = 2000;
 	public int LongDurationMs { get; init; } = 3000;
 
-	/// <summary>Default wait while an inputable toast is open (user typing). Default 30 seconds.</summary>
-	public int InputDurationMs { get; init; } = 30_000;
+	/// <summary>
+	/// Default wait while an inputable toast is open (user typing).
+	/// Default <b>5 minutes</b>. Use <c>DurationMs = 0</c> on options for no auto-dismiss.
+	/// </summary>
+	public int InputDurationMs { get; init; } = 300_000;
 
-	/// <summary>Extra height (at 96 DPI) added for the input row + submit button.</summary>
-	public int InputExtraHeight { get; init; } = 56;
+	/// <summary>Extra height for the input row only (used if <see cref="InputToastHeight"/> is not set).</summary>
+	public int InputExtraHeight { get; init; } = 36;
+
+	/// <summary>
+	/// Total height for inputable toasts (parent padding + caption + description + input).
+	/// Includes room for contentShell inset so children are not flush to the border.
+	/// </summary>
+	public int InputToastHeight { get; init; } = 132;
 
 	public int HorizontalMargin { get; init; } = ToastLayoutMetrics.Default.HorizontalMargin;
 	public int VerticalMargin { get; init; } = ToastLayoutMetrics.Default.VerticalMargin;
@@ -28,7 +37,10 @@ public sealed class ToastManagerOptions
 
 	internal ToastLayoutMetrics ToLayoutMetrics(bool inputable = false)
 	{
-		var height = ToastHeight + (inputable ? Math.Max(0, InputExtraHeight) : 0);
+		// Inputable: use dedicated compact height (not base+extra which left empty space).
+		var height = inputable
+			? Math.Max(100, InputToastHeight)
+			: ToastHeight;
 		return new ToastLayoutMetrics
 		{
 			ToastWidth = ToastWidth,
@@ -49,18 +61,26 @@ public sealed class ToastManagerOptions
 		};
 	}
 
-	/// <summary>Resolve auto-dismiss duration for the given options.</summary>
+	/// <summary>
+	/// Resolve auto-dismiss duration for the given options.
+	/// Returns <c>0</c> when the toast should stay open until user action.
+	/// </summary>
 	internal int ResolveDurationMs(ToastOptions options)
 	{
+		// Explicit 0 => no auto-dismiss (inputable toasts often want this).
+		if (options.DurationMs is 0)
+			return 0;
+
 		if (options.DurationMs is int explicitMs && explicitMs > 0)
 			return explicitMs;
 
 		if (options.EnableInput || options.Duration is Duration.Input)
-			return Math.Max(1, InputDurationMs);
+			return Math.Max(0, InputDurationMs);
 
 		return options.Duration switch
 		{
 			Duration.Long => LongDurationMs,
+			Duration.Input => Math.Max(0, InputDurationMs),
 			_ => ShortDurationMs
 		};
 	}

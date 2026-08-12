@@ -32,6 +32,10 @@ internal sealed partial class ToastForm : Form, IToastView
 	private bool _inputMode;
 	private bool _allowEmptySubmit;
 	private bool _activateForInput;
+	private bool _autoDismissEnabled;
+	private int _remainingMs;
+	private bool _countdownPaused;
+	private const int CountdownTickMs = 250;
 
 	private Panel? _inputPanel;
 	private TextBox? _txtInput;
@@ -114,6 +118,9 @@ internal sealed partial class ToastForm : Form, IToastView
 				break;
 		}
 
+		// Outer inset always comes from contentShell.Padding (parent panel).
+		ApplyContentShellPadding();
+
 		if (options.EnableInput)
 		{
 			// Body click should not dismiss input toasts (would lose typed text).
@@ -122,22 +129,53 @@ internal sealed partial class ToastForm : Form, IToastView
 			if (_inputPanel is not null && _txtInput is not null && _btnSubmit is not null)
 			{
 				_inputPanel.Visible = true;
+				_inputPanel.Height = 34;
+				// Horizontal inset already on contentShell — only small gap above input.
+				_inputPanel.Padding = new Padding(0, 6, 0, 0);
 				_txtInput.PlaceholderText = options.InputPlaceholder ?? string.Empty;
 				_txtInput.Text = options.InputDefaultText ?? string.Empty;
 				_btnSubmit.Text = string.IsNullOrWhiteSpace(options.SubmitButtonText)
 					? "OK"
 					: options.SubmitButtonText;
 			}
+			textContainer.SplitterDistance = 28;
+			textContainer.Panel1.Padding = new Padding(2, 0, 0, 2);
+			textContainer.Panel2.Padding = new Padding(2, 2, 2, 0);
+			lblDescription.AutoEllipsis = true;
 		}
-		else if (_inputPanel is not null)
+		else
 		{
-			_inputPanel.Visible = false;
+			if (_inputPanel is not null)
+				_inputPanel.Visible = false;
+			textContainer.SplitterDistance = 28;
+			textContainer.Panel1.Padding = new Padding(2, 0, 0, 2);
+			textContainer.Panel2.Padding = new Padding(2, 2, 2, 0);
+		}
+
+		// Collapse description band when empty.
+		var hasDescription = !string.IsNullOrWhiteSpace(options.Description);
+		lblDescription.Visible = hasDescription;
+		if (!hasDescription && !options.EnableInput)
+		{
+			textContainer.SplitterDistance = Math.Max(28, textContainer.Height - 4);
 		}
 
 		ApplyScheme(scheme);
-		_timerState = new AutoDismissTimerState(Math.Max(1, durationMs));
-		tmrClose.Interval = Math.Max(1, durationMs);
+
+		// durationMs == 0 → stay open until Submit / Esc / close (typical for inputable).
+		_autoDismissEnabled = durationMs > 0;
+		_remainingMs = _autoDismissEnabled ? durationMs : 0;
+		_countdownPaused = false;
+		_timerState = _autoDismissEnabled ? new AutoDismissTimerState(durationMs) : null;
+		tmrClose.Stop();
+		tmrClose.Interval = CountdownTickMs;
 		tmrClose.Enabled = false;
+
+		// Inputable toasts must be fully visible immediately (no fade-from-zero).
+		if (_inputMode)
+		{
+			try { Opacity = 1; } catch { /* ignore */ }
+		}
 	}
 
 	public void SetBounds(Rectangle bounds)
@@ -202,6 +240,13 @@ internal sealed partial class ToastForm : Form, IToastView
 		}
 	}
 
+	/// <summary>Parent shell padding: keeps every child inset from the toast outer edge.</summary>
+	private void ApplyContentShellPadding()
+	{
+		// LTRB — breathing room around the whole card content (normal + inputable).
+		contentShell.Padding = new Padding(12, 10, 12, 10);
+	}
+
 	private void EnsureInputUi()
 	{
 		if (_inputPanel is not null)
@@ -210,31 +255,41 @@ internal sealed partial class ToastForm : Form, IToastView
 		_inputPanel = new Panel
 		{
 			Name = "inputPanel",
-			Height = 40,
+			Height = 34,
 			Dock = DockStyle.Bottom,
-			Padding = new Padding(8, 0, 8, 8),
+			// Edge inset is contentShell.Padding; only separate input from description above.
+			Padding = new Padding(0, 6, 0, 0),
 			BackColor = Color.Transparent
 		};
 
 		_txtInput = new TextBox
 		{
 			Name = "txtInput",
-			Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point),
+			Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point),
 			BorderStyle = BorderStyle.FixedSingle,
-			// leave room for submit button
 		};
 		_txtInput.KeyDown += TxtInput_KeyDown;
-		_txtInput.GotFocus += (_, _) => PauseTimerForInput();
+		_txtInput.GotFocus += (_, _) => PauseCountdown();
+		_txtInput.LostFocus += (_, _) =>
+		{
+			// Only resume if focus left the toast entirely (not to Submit button).
+			BeginInvoke(() =>
+			{
+				if (IsDisposed || _btnSubmit is { Focused: true } || _txtInput is { Focused: true })
+					return;
+				ResumeCountdown();
+			});
+		};
 		_txtInput.Click += (_, _) => { /* don't bubble as toast content click */ };
 
 		_btnSubmit = new Button
 		{
 			Name = "btnSubmit",
 			Text = "OK",
-			Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point),
+			Font = new Font("Segoe UI", 8.5F, FontStyle.Bold, GraphicsUnit.Point),
 			FlatStyle = FlatStyle.Flat,
 			Cursor = Cursors.Hand,
-			Size = new Size(72, 28),
+			Size = new Size(64, 24),
 			TabIndex = 2
 		};
 		_btnSubmit.FlatAppearance.BorderSize = 0;
@@ -242,10 +297,17 @@ internal sealed partial class ToastForm : Form, IToastView
 
 		_inputPanel.Controls.Add(_txtInput);
 		_inputPanel.Controls.Add(_btnSubmit);
-		// Add to form (above fill dock of mainContainer — dock bottom first works if added after)
-		Controls.Add(_inputPanel);
+		// Inside parent shell so outer padding applies to input row as well.
+		contentShell.Controls.Add(_inputPanel);
 		_inputPanel.BringToFront();
+		mainContainer.BringToFront(); // Fill remaining space above bottom input
+		// Dock order: bottom first, then fill — re-add main for correct dock
+		contentShell.Controls.SetChildIndex(_inputPanel, 0);
+		contentShell.Controls.SetChildIndex(mainContainer, 1);
 		LayoutInputPanel();
+		WireHover(_inputPanel);
+		WireHover(_txtInput);
+		WireHover(_btnSubmit);
 	}
 
 	private void LayoutInputPanel()
@@ -253,13 +315,17 @@ internal sealed partial class ToastForm : Form, IToastView
 		if (_inputPanel is null || _txtInput is null || _btnSubmit is null || !_inputPanel.Visible)
 			return;
 
-		var pad = 8;
-		var btnW = Math.Max(64, _btnSubmit.Width);
-		var h = 28;
+		// Client area already has panel Padding; layout children inside content box.
+		var gap = 6;
+		var btnW = 64;
+		var h = 24;
+		var contentW = _inputPanel.ClientSize.Width;
+		var contentH = _inputPanel.ClientSize.Height;
+		var y = Math.Max(0, (contentH - h) / 2);
 		_btnSubmit.Size = new Size(btnW, h);
-		_btnSubmit.Location = new Point(_inputPanel.ClientSize.Width - pad - btnW, pad);
-		_txtInput.Location = new Point(pad, pad);
-		_txtInput.Size = new Size(Math.Max(40, _btnSubmit.Left - pad - 6), h);
+		_btnSubmit.Location = new Point(Math.Max(0, contentW - btnW), y);
+		_txtInput.Location = new Point(0, y);
+		_txtInput.Size = new Size(Math.Max(40, _btnSubmit.Left - gap), h);
 	}
 
 	private void ApplyScheme(ColorScheme scheme)
@@ -301,10 +367,17 @@ internal sealed partial class ToastForm : Form, IToastView
 
 		try
 		{
-			if (_animation is Animation.Fade)
-				_ = FadeInAsync();
+			// Inputable: always fully opaque (fade-from-0 made toasts "vanish" before users could type).
+			if (_inputMode || _animation is not Animation.Fade)
+			{
+				Opacity = 1;
+				if (!_inputMode && _animation is not Animation.Fade)
+					AnimateWindow(base.Handle, 250, AwSlide | AwHorNegative);
+			}
 			else
-				AnimateWindow(base.Handle, 250, AwSlide | AwHorNegative);
+			{
+				_ = FadeInAsync();
+			}
 		}
 		catch
 		{
@@ -316,20 +389,31 @@ internal sealed partial class ToastForm : Form, IToastView
 
 	private void ToastForm_Shown(object? sender, EventArgs e)
 	{
-		if (_timerState is null)
-			return;
-		tmrClose.Interval = _timerState.StartOrResume();
-		_armedAtTick = Environment.TickCount64;
-		tmrClose.Start();
+		if (_autoDismissEnabled && _remainingMs > 0)
+		{
+			_countdownPaused = false;
+			_armedAtTick = Environment.TickCount64;
+			tmrClose.Interval = CountdownTickMs;
+			tmrClose.Start();
+		}
 
 		if (_activateForInput && _txtInput is not null)
 		{
-			try
+			// Delay focus one tick so the form is fully shown first.
+			BeginInvoke(() =>
 			{
-				_txtInput.Focus();
-				_txtInput.SelectAll();
-			}
-			catch { /* ignore */ }
+				try
+				{
+					if (IsDisposed || _txtInput is null)
+						return;
+					Activate();
+					_txtInput.Focus();
+					_txtInput.SelectAll();
+					// While typing, pause auto-dismiss countdown.
+					PauseCountdown();
+				}
+				catch { /* ignore */ }
+			});
 		}
 	}
 
@@ -360,9 +444,36 @@ internal sealed partial class ToastForm : Form, IToastView
 
 	private void TmrClose_Tick(object? sender, EventArgs e)
 	{
+		if (!_autoDismissEnabled || _countdownPaused)
+			return;
+
+		_remainingMs -= CountdownTickMs;
+		if (_remainingMs > 0)
+			return;
+
 		tmrClose.Stop();
 		_timerState?.OnTimerElapsed();
 		BeginDismiss();
+	}
+
+	private void PauseCountdown()
+	{
+		if (!_autoDismissEnabled)
+			return;
+		_countdownPaused = true;
+		// Keep timer running so resume is simple; Tick no-ops while paused.
+	}
+
+	private void ResumeCountdown()
+	{
+		if (!_autoDismissEnabled || _remainingMs <= 0)
+			return;
+		_countdownPaused = false;
+		if (!tmrClose.Enabled)
+		{
+			tmrClose.Interval = CountdownTickMs;
+			tmrClose.Start();
+		}
 	}
 
 	private void BtnClose_Click(object? sender, EventArgs e) => BeginDismiss();
@@ -409,17 +520,6 @@ internal sealed partial class ToastForm : Form, IToastView
 		BeginDismiss();
 	}
 
-	private void PauseTimerForInput()
-	{
-		if (_timerState is null)
-			return;
-		var elapsed = (int)Math.Min(int.MaxValue, Environment.TickCount64 - _armedAtTick);
-		tmrClose.Stop();
-		_timerState.Pause(elapsed);
-		// Resume with remaining when leave focus — keep long remaining for input
-		_armedAtTick = Environment.TickCount64;
-	}
-
 	private void ToastContentClick(object? sender, EventArgs e)
 	{
 		if (_inputMode)
@@ -433,28 +533,20 @@ internal sealed partial class ToastForm : Form, IToastView
 	private void ToastForm_MouseEnter(object? sender, EventArgs e)
 	{
 		Hovered?.Invoke(this, EventArgs.Empty);
-		if (!_pauseOnHover || _timerState is null)
+		if (!_pauseOnHover || !_autoDismissEnabled)
 			return;
-
-		var elapsed = (int)Math.Min(int.MaxValue, Environment.TickCount64 - _armedAtTick);
-		tmrClose.Stop();
-		_timerState.Pause(elapsed);
+		PauseCountdown();
 	}
 
 	private void ToastForm_MouseLeave(object? sender, EventArgs e)
 	{
-		if (!_pauseOnHover || _timerState is null || _timerState.IsExpired)
+		if (!_pauseOnHover || !_autoDismissEnabled)
 			return;
 		if (ClientRectangle.Contains(PointToClient(MousePosition)))
 			return;
-
-		// If input focused, keep paused
-		if (_inputMode && _txtInput is { Focused: true })
+		if (_inputMode && (_txtInput is { Focused: true } || _btnSubmit is { Focused: true }))
 			return;
-
-		tmrClose.Interval = _timerState.Resume();
-		_armedAtTick = Environment.TickCount64;
-		tmrClose.Start();
+		ResumeCountdown();
 	}
 
 	protected override void OnResize(EventArgs e)
