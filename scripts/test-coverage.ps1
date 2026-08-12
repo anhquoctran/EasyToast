@@ -1,0 +1,38 @@
+# Requires: .NET SDK 8+, Windows
+# Runs FuzzyToast.Tests with coverlet and fails if line coverage < 85%.
+
+$ErrorActionPreference = "Stop"
+$root = Split-Path -Parent $PSScriptRoot
+$outDir = Join-Path $root "TestResults"
+New-Item -ItemType Directory -Force -Path $outDir | Out-Null
+
+$proj = Join-Path $root "tests\FuzzyToast.Tests\FuzzyToast.Tests.csproj"
+$coverageOut = Join-Path $outDir "coverage"
+
+Write-Host "Running tests with coverage (threshold 85% line)..." -ForegroundColor Cyan
+
+dotnet test $proj -c Release `
+  "/p:CollectCoverage=true" `
+  "/p:CoverletOutputFormat=cobertura" `
+  "/p:CoverletOutput=$coverageOut" `
+  "/p:ExcludeByFile=**/Properties/**/*.cs%2c**/*Designer.cs" `
+  "/p:Include=[FuzzyToast]*" `
+  "/p:Threshold=85" `
+  "/p:ThresholdType=line" `
+  "/p:ThresholdStat=total"
+
+if ($LASTEXITCODE -ne 0) {
+  Write-Error "Tests or coverage threshold failed (exit $LASTEXITCODE)."
+  exit $LASTEXITCODE
+}
+
+$cobertura = "$coverageOut.cobertura.xml"
+if (Test-Path $cobertura) {
+  [xml]$x = Get-Content $cobertura
+  $lineRate = [double]$x.coverage.'line-rate'
+  $pct = [math]::Round($lineRate * 100, 2)
+  Write-Host "Line coverage: $pct% (required > 85%)" -ForegroundColor Green
+  Write-Host "Report: $cobertura"
+}
+
+exit 0
