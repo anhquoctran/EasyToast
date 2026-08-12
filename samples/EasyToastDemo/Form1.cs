@@ -14,41 +14,45 @@ public partial class Form1 : Form
 	private ToastManager _toasts = null!;
 	private bool _busy;
 
-	/// <summary>Design-time client size (96 DPI). Kept fixed so high-DPI hosts do not blow the window.</summary>
+	/// <summary>Fixed client size for the absolute-positioned designer layout.</summary>
 	private static readonly Size DesignClientSize = new(901, 571);
 
 	public Form1()
 	{
+		// Disable scaling before controls are created.
+		AutoScaleMode = AutoScaleMode.None;
 		InitializeComponent();
-		ApplyStableWindowSize();
-	}
-
-	/// <summary>
-	/// Re-assert a sane window size after InitializeComponent.
-	/// Prevents AutoScale / PerMonitorV2 from expanding the form across multiple monitors.
-	/// </summary>
-	private void ApplyStableWindowSize()
-	{
-		// Prefer Font auto-scale (set in designer). Clamp final size to working area.
-		var work = Screen.FromControl(this).WorkingArea;
-		var maxW = Math.Min(920, work.Width - 40);
-		var maxH = Math.Min(620, work.Height - 40);
-		if (maxW < 640) maxW = Math.Max(640, work.Width - 20);
-		if (maxH < 480) maxH = Math.Max(480, work.Height - 20);
-
-		MaximumSize = new Size(maxW + 16, maxH + 40); // allow chrome
-		MinimumSize = new Size(Math.Min(900, maxW), Math.Min(560, maxH));
-
-		var w = Math.Min(DesignClientSize.Width, maxW);
-		var h = Math.Min(DesignClientSize.Height, maxH);
-		ClientSize = new Size(w, h);
+		AutoScaleMode = AutoScaleMode.None;
+		// Clear any min/max left from older builds that could force a huge window.
+		MinimumSize = Size.Empty;
+		MaximumSize = Size.Empty;
+		ClientSize = DesignClientSize;
+		FormBorderStyle = FormBorderStyle.FixedSingle;
+		MaximizeBox = false;
 		StartPosition = FormStartPosition.CenterScreen;
+		Text = "FuzzyToast Demo";
 	}
 
 	private void Form1_Load(object? sender, EventArgs e)
 	{
-		// Re-clamp after handle/DPI are fully realized.
-		ApplyStableWindowSize();
+		// Final clamp once the window handle exists (working-area aware).
+		try
+		{
+			var work = Screen.FromControl(this).WorkingArea;
+			var w = Math.Min(DesignClientSize.Width, Math.Max(640, work.Width - 80));
+			var h = Math.Min(DesignClientSize.Height, Math.Max(480, work.Height - 80));
+			MinimumSize = Size.Empty;
+			MaximumSize = Size.Empty;
+			ClientSize = new Size(w, h);
+			// Keep window fully on the current screen.
+			var x = Math.Max(work.Left, Math.Min(Left, work.Right - Width));
+			var y = Math.Max(work.Top, Math.Min(Top, work.Bottom - Height));
+			Location = new Point(x, y);
+		}
+		catch
+		{
+			ClientSize = DesignClientSize;
+		}
 
 		// Shared manager: Toast.Build(this, …) and event log use the same stack.
 		_toasts = new ToastManager(this, new ToastManagerOptions
