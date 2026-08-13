@@ -265,18 +265,24 @@ public partial class Form1 : Form
 		host.Controls.Add(gBuild);
 
 		var gDur = Box("Duration + Animation", 520, 8, 516, 210);
-		_rShort = Radio("Short  (~2s)", 12, 24, true);
-		_rLong = Radio("Long  (~3s)", 130, 24, false);
-		_rInput = Radio("Input  (InputDurationMs)", 250, 24, false);
-		_rFade = Radio("Fade", 12, 54, true);
-		_rSlide = Radio("Slide", 90, 54, false);
+		var pnlDur = new Panel { Location = new Point(0, 16), Size = new Size(500, 30) };
+		_rShort = Radio("Short  (~2s)", 12, 8, true);
+		_rLong = Radio("Long  (~3s)", 130, 8, false);
+		_rInput = Radio("Input  (InputDurationMs)", 250, 8, false);
+		pnlDur.Controls.Add(_rShort);
+		pnlDur.Controls.Add(_rLong);
+		pnlDur.Controls.Add(_rInput);
+		gDur.Controls.Add(pnlDur);
+
+		var pnlAnim = new Panel { Location = new Point(0, 46), Size = new Size(190, 30) };
+		_rFade = Radio("Fade", 12, 8, true);
+		_rSlide = Radio("Slide", 90, 8, false);
+		pnlAnim.Controls.Add(_rFade);
+		pnlAnim.Controls.Add(_rSlide);
+		gDur.Controls.Add(pnlAnim);
+
 		_chkUseMs = Chk("SetDurationMs", 200, 54);
 		_numDurationMs = Num(330, 50, 90, 0, ToastLimits.MaxDurationMs, 4000);
-		gDur.Controls.Add(_rShort);
-		gDur.Controls.Add(_rLong);
-		gDur.Controls.Add(_rInput);
-		gDur.Controls.Add(_rFade);
-		gDur.Controls.Add(_rSlide);
 		gDur.Controls.Add(_chkUseMs);
 		gDur.Controls.Add(_numDurationMs);
 		gDur.Controls.Add(Btn("Build(caption, Duration)", 12, 92, 240, 28, BtnShowDuration_Click));
