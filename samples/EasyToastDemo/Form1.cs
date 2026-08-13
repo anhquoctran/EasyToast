@@ -460,7 +460,7 @@ public partial class Form1 : Form
 	{
 		var host = ScrollHost();
 
-		var g = Box("EnableInput / SetInputable / Duration.Input", 8, 8, 1028, 300);
+		var g = Box("EnableInput / SetInputable / Duration.Input", 8, 8, 1028, 320);
 		g.Controls.Add(Lbl("Caption", 12, 24));
 		_txtInCaption = Txt(12, 42, 320, "Quick reply");
 		g.Controls.Add(_txtInCaption);
@@ -492,7 +492,7 @@ public partial class Form1 : Form
 			12, 198, 990));
 		g.Controls.Add(Hint(
 			"SetInputable toggles the text box without resetting placeholder / default / submit label. Duration.Input uses manager InputDurationMs unless DurationMs is set.",
-			12, 222, 990, 36));
+			12, 230, 990, 48));
 		host.Controls.Add(g);
 		FinishScrollPage(host);
 		return host;
