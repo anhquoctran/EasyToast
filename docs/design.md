@@ -4,8 +4,6 @@ title: Design
 
 # FuzzyToast / EasyToast v2 — Technical Design Document
 
-[Home](index.md) · [Getting started](getting-started.md) · [API reference](api-reference.md) · [Migration](migration.md) · [Design](design.md)
-
 | Field | Value |
 |-------|--------|
 | **Title** | FuzzyToast v2 Refactor: Instance Manager, Builder API, Namespace Migration & xUnit Strategy |

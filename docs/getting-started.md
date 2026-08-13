@@ -4,8 +4,6 @@ title: Getting started
 
 # Getting started
 
-[Home](index.md) · [Getting started](getting-started.md) · [API reference](api-reference.md) · [Migration](migration.md) · [Design](design.md)
-
 ## Install
 
 ```bash

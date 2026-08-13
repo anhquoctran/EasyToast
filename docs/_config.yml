@@ -1,7 +1,6 @@
 title: FuzzyToast
 description: Toast notifications for Windows Forms on .NET Framework 4.6.1+ and .NET 8+
-theme: jekyll-theme-cayman
-show_downloads: true
+baseurl: /FuzzyToast
 markdown: kramdown
 kramdown:
   input: GFM
@@ -9,7 +8,4 @@ defaults:
   - scope:
       path: ""
     values:
-      layout: default
-github:
-  zip_url: https://github.com/anhquoctran/FuzzyToast/archive/refs/heads/master.zip
-  tar_url: https://github.com/anhquoctran/FuzzyToast/archive/refs/heads/master.tar.gz
+      layout: docs

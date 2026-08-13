@@ -1,32 +1,16 @@
 ---
 title: API reference
+sidebar_api: true
 ---
 
 # API reference
-
-[Home](index.md) · [Getting started](getting-started.md) · [API reference](api-reference.md) · [Migration](migration.md) · [Design](design.md)
 
 Public surface of **FuzzyToast 3.0.3** (`net461` + `net8.0-windows`). Internal types in `FuzzyToast.Internal` (except `AutoDismissTimerState`) are not listed.
 
 **Namespaces:** `FuzzyToast` · `FuzzyToast.Layout` · `FuzzyToast.Internal` (`AutoDismissTimerState` only)
 
-- [Toast](#toast)
-- [ToastBuilder](#toastbuilder)
-- [ToastManager](#toastmanager)
-- [ToastHandle](#toasthandle)
-- [ToastOptions](#toastoptions)
-- [ToastManagerOptions](#toastmanageroptions)
-- [Events](#events)
-- [ColorScheme & ThemeCatalog](#colorscheme--themecatalog)
-- [Enums](#enums)
-- [ToastLimits](#toastlimits)
-- [ImageValidation](#imagevalidation)
-- [Layout](#layout)
-- [AutoDismissTimerState](#autodismisstimerstate)
-
----
-
 ## Toast
+{: #toast}
 
 `public sealed class Toast`
 
@@ -117,6 +101,7 @@ Each setter returns `this`.
 ---
 
 ## ToastBuilder
+{: #toastbuilder}
 
 `public sealed class ToastBuilder`
 
@@ -144,6 +129,7 @@ manager.Create()
 ---
 
 ## ToastManager
+{: #toastmanager}
 
 `public sealed class ToastManager : IDisposable`
 
@@ -191,6 +177,7 @@ public ToastManager(Control owner, ToastManagerOptions? options = null)
 ---
 
 ## ToastHandle
+{: #toasthandle}
 
 `public sealed class ToastHandle : IDisposable`
 
@@ -217,6 +204,7 @@ Live handle for one show attempt (or a rejected show).
 ---
 
 ## ToastOptions
+{: #toastoptions}
 
 `public sealed class ToastOptions`
 
@@ -254,6 +242,7 @@ Immutable configuration (`init` properties). Validated by `ToastManager.Show`.
 ---
 
 ## ToastManagerOptions
+{: #toastmanageroptions}
 
 `public sealed class ToastManagerOptions`
 
@@ -281,6 +270,7 @@ Manager-wide defaults (`init`).
 ---
 
 ## Events
+{: #events}
 
 ### ToastChangedEventArgs
 
@@ -325,6 +315,7 @@ Click / hover payload.
 ---
 
 ## ColorScheme & ThemeCatalog
+{: #colorscheme-themecatalog}
 
 ### ColorScheme
 
@@ -348,6 +339,7 @@ public static ColorScheme Resolve(ToastTheme theme, ColorScheme? custom = null)
 ---
 
 ## Enums
+{: #enums}
 
 ### Duration
 
@@ -397,6 +389,7 @@ Inputable toasts always keep a close button.
 ---
 
 ## ToastLimits
+{: #toastlimits}
 
 `public static class ToastLimits`
 
@@ -416,6 +409,7 @@ Inputable toasts always keep a close button.
 ---
 
 ## ImageValidation
+{: #imagevalidation}
 
 `public static class ImageValidation`
 
@@ -431,6 +425,7 @@ Does **not** decode pixels from disk (avoids GDI+ parser bugs).
 ---
 
 ## Layout
+{: #layout}
 
 Namespace `FuzzyToast.Layout`. Used by the manager; safe to call from tests without a HWND.
 
@@ -478,6 +473,7 @@ Per-corner limit is checked before the global limit. `max*` must be ≥ 1.
 ---
 
 ## AutoDismissTimerState
+{: #autodismisstimerstate}
 
 `public sealed class FuzzyToast.Internal.AutoDismissTimerState`
 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title and page.title != site.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ site.description }}">
+  <link rel="icon" href="{{ '/assets/icon.png' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/docs.css' | relative_url }}">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="{{ '/' | relative_url }}">
+        <img src="{{ '/assets/icon.png' | relative_url }}" alt="" width="36" height="36">
+        <span>
+          <strong>FuzzyToast</strong>
+          <small>WinForms docs</small>
+        </span>
+      </a>
+
+      <nav class="nav" aria-label="Docs">
+        <a href="{{ '/' | relative_url }}"{% if page.url == '/' or page.url == '/index.html' %} class="is-active"{% endif %}>Home</a>
+        <a href="{{ '/getting-started.html' | relative_url }}"{% if page.url contains 'getting-started' %} class="is-active"{% endif %}>Getting started</a>
+        <a href="{{ '/api-reference.html' | relative_url }}"{% if page.url contains 'api-reference' %} class="is-active"{% endif %}>API reference</a>
+        {% if page.sidebar_api %}
+        <div class="subnav" id="api-toc">
+          <a href="#toast">Toast</a>
+          <a href="#toastbuilder">ToastBuilder</a>
+          <a href="#toastmanager">ToastManager</a>
+          <a href="#toasthandle">ToastHandle</a>
+          <a href="#toastoptions">ToastOptions</a>
+          <a href="#toastmanageroptions">ToastManagerOptions</a>
+          <a href="#events">Events</a>
+          <a href="#colorscheme-themecatalog">ColorScheme</a>
+          <a href="#enums">Enums</a>
+          <a href="#toastlimits">ToastLimits</a>
+          <a href="#imagevalidation">ImageValidation</a>
+          <a href="#layout">Layout</a>
+          <a href="#autodismisstimerstate">AutoDismissTimerState</a>
+        </div>
+        {% endif %}
+        <a href="{{ '/migration.html' | relative_url }}"{% if page.url contains 'migration' %} class="is-active"{% endif %}>Migration</a>
+        <a href="{{ '/design.html' | relative_url }}"{% if page.url contains 'design' %} class="is-active"{% endif %}>Design</a>
+      </nav>
+
+      <div class="sidebar-foot">
+        <a href="https://www.nuget.org/packages/FuzzyToast">NuGet</a>
+        <a href="https://github.com/anhquoctran/FuzzyToast">GitHub</a>
+      </div>
+    </aside>
+
+    <div class="backdrop" id="backdrop" hidden></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button type="button" class="menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+        <span class="crumb">{{ page.title }}</span>
+      </header>
+      <article class="content">
+        {{ content }}
+      </article>
+    </div>
+  </div>
+  <script src="{{ '/assets/js/docs.js' | relative_url }}"></script>
+</body>
+</html>

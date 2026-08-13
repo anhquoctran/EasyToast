@@ -15,8 +15,6 @@ Toast notifications for **Windows Forms** on **.NET Framework 4.6.1+** and **.NE
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e.svg?style=flat-square)](https://github.com/anhquoctran/FuzzyToast/blob/master/LICENSE)
 [![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen?style=flat-square)](https://github.com/anhquoctran/FuzzyToast#tests--coverage)
 
-**Docs:** [Getting started](getting-started.md) · [API reference](api-reference.md) · [Migration](migration.md) · [Design](design.md) · [GitHub](https://github.com/anhquoctran/FuzzyToast) · [NuGet](https://www.nuget.org/packages/FuzzyToast)
-
 ```csharp
 using FuzzyToast;
 
