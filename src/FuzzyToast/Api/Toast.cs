@@ -191,6 +191,8 @@ public sealed class Toast
 	{
 		if (string.IsNullOrWhiteSpace(key))
 			throw new ArgumentException("Metadata key is required.", nameof(key));
+		if (key.Length > ToastLimits.MaxMetadataKeyLength)
+			throw new ArgumentException($"Metadata key must be <= {ToastLimits.MaxMetadataKeyLength} characters.", nameof(key));
 		_metadata[key] = value;
 		return this;
 	}
@@ -198,12 +200,12 @@ public sealed class Toast
 	/// <summary>Merge multiple metadata entries (overwrites existing keys).</summary>
 	public Toast SetMetadata(IEnumerable<KeyValuePair<string, object?>> entries)
 	{
-		ArgumentNullException.ThrowIfNull(entries);
-		foreach (var (key, value) in entries)
+		FuzzyToast.Internal.Guard.NotNull(entries, nameof(entries));
+		foreach (var pair in entries)
 		{
-			if (string.IsNullOrWhiteSpace(key))
+			if (string.IsNullOrWhiteSpace(pair.Key))
 				continue;
-			_metadata[key] = value;
+			_metadata[pair.Key] = pair.Value;
 		}
 		return this;
 	}
@@ -318,7 +320,7 @@ public sealed class Toast
 
 	private static Control RequireControl(IWin32Window window)
 	{
-		ArgumentNullException.ThrowIfNull(window);
+		FuzzyToast.Internal.Guard.NotNull(window, nameof(window));
 		if (window is Control control)
 		{
 			if (control.IsDisposed)

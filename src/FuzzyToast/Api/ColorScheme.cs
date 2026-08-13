@@ -29,7 +29,13 @@ public sealed class ColorScheme : IEquatable<ColorScheme>
 
 	public override bool Equals(object? obj) => Equals(obj as ColorScheme);
 
-	public override int GetHashCode() => HashCode.Combine(Background.ToArgb(), Foreground.ToArgb());
+	public override int GetHashCode()
+	{
+		unchecked
+		{
+			return (Background.ToArgb() * 397) ^ Foreground.ToArgb();
+		}
+	}
 }
 
 /// <summary>Built-in toast color schemes (true RGB).</summary>

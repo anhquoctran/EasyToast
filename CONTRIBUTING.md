@@ -1,6 +1,6 @@
 # Contributing to FuzzyToast
 
-Thanks for helping improve the library. FuzzyToast targets **Windows 10/11** and **.NET 8+ Windows Forms** only.
+Thanks for helping improve the library. FuzzyToast targets **Windows 10/11** WinForms on **.NET Framework 4.6.1+** and **.NET 8+**.
 
 ## Development setup
 

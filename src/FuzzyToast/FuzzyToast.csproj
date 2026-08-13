@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- .NET 8+ Windows Forms. Package is consumable by net8.0-windows and later (net9, …). -->
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <!-- net461 is the first Framework TFM that can consume netstandard2.0 (4.6.1+). -->
+    <TargetFrameworks>net461;net8.0-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>FuzzyToast</RootNamespace>
@@ -10,15 +10,13 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <!-- Analyzer platform: Windows desktop (runtime target: Windows 10/11). -->
-    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
 
     <PackageId>FuzzyToast</PackageId>
     <Title>FuzzyToast</Title>
     <Authors>anhquoctran</Authors>
     <Company>anhquoctran</Company>
     <Copyright>Copyright © 2018–2026 anhquoctran</Copyright>
-    <Description>Toast notifications for Windows Forms on Windows 10/11 (.NET 8+). Android-style API, inputable toasts with submit, DPI-aware layout, four-corner stacking.</Description>
+    <Description>Toast notifications for Windows Forms on .NET Framework 4.6.1+ and .NET 8+ (Windows 10/11). Android-style API, inputable toasts with submit, DPI-aware layout, four-corner stacking.</Description>
     <PackageProjectUrl>https://github.com/anhquoctran/FuzzyToast</PackageProjectUrl>
     <RepositoryUrl>https://github.com/anhquoctran/FuzzyToast</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -30,11 +28,25 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageTags>winforms;toast;notification;ui;windows10;windows11;net8;input</PackageTags>
+    <PackageTags>winforms;toast;notification;ui;windows10;windows11;net8;net461;net48;input</PackageTags>
     <PackageReleaseNotes>See https://github.com/anhquoctran/FuzzyToast/blob/master/CHANGELOG.md</PackageReleaseNotes>
-    <Version>3.0.2</Version>
+    <Version>3.0.3</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />

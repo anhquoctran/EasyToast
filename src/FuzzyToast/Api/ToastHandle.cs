@@ -3,7 +3,7 @@ namespace FuzzyToast;
 /// <summary>Live runtime handle for a toast (or a rejected show attempt).</summary>
 public sealed class ToastHandle : IDisposable
 {
-	private readonly TaskCompletionSource _dismissedTcs =
+	private readonly TaskCompletionSource<bool> _dismissedTcs =
 		new(TaskCreationOptions.RunContinuationsAsynchronously);
 
 	private ToastManager? _manager;
@@ -17,7 +17,7 @@ public sealed class ToastHandle : IDisposable
 		_state = state;
 		_manager = manager;
 		if (state == ToastHandleState.RejectedCapacity || state == ToastHandleState.Dismissed)
-			_dismissedTcs.TrySetResult();
+			_dismissedTcs.TrySetResult(true);
 	}
 
 	public string Id { get; }
@@ -74,7 +74,7 @@ public sealed class ToastHandle : IDisposable
 			return;
 		_state = ToastHandleState.Dismissed;
 		try { Dismissed?.Invoke(this, EventArgs.Empty); } catch { /* host errors ignored */ }
-		_dismissedTcs.TrySetResult();
+		_dismissedTcs.TrySetResult(true);
 	}
 
 	internal void RaiseClicked()

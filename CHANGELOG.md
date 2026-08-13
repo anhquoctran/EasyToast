@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.0.3
+
+### Added
+
+- Multi-target **`net461`** + **`net8.0-windows`** so existing .NET Framework 4.6.1+ WinForms apps can consume FuzzyToast
+- `ToastLimits` and stricter `ToastOptions.Validate` / `ImageValidation` guards (caption/metadata size, image dimensions, 8 MiB file cap)
+
+### Security
+
+- Image path checks read **only the 8-byte magic header** (no full-file load / GDI+ decode)
+- Reject reserved device names (`CON`, `NUL`, …), `\\.\` device paths, reparse points, and oversized bitmaps
+- Input text box `MaxLength` capped; metadata key/entry counts bounded
+
+### Notes
+
+- Package version **3.0.3**
+
 ## 3.0.2
 
 ### Added

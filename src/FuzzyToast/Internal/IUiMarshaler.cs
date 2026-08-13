@@ -30,7 +30,7 @@ internal sealed class WinFormsUiMarshaler : IUiMarshaler
 
 	public void Invoke(Action action)
 	{
-		ArgumentNullException.ThrowIfNull(action);
+		Guard.NotNull(action, nameof(action));
 		if (_control.IsDisposed)
 			throw new ObjectDisposedException(_control.Name);
 
@@ -42,12 +42,12 @@ internal sealed class WinFormsUiMarshaler : IUiMarshaler
 			return;
 		}
 
-		_control.Invoke(action);
+		NativeMethods.InvokeOn(_control, action);
 	}
 
 	public Task InvokeAsync(Action action)
 	{
-		ArgumentNullException.ThrowIfNull(action);
+		Guard.NotNull(action, nameof(action));
 		if (_control.IsDisposed)
 			return Task.FromException(new ObjectDisposedException(_control.Name));
 
@@ -66,15 +66,15 @@ internal sealed class WinFormsUiMarshaler : IUiMarshaler
 			}
 		}
 
-		var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+		var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 		try
 		{
-			_control.BeginInvoke(() =>
+			NativeMethods.BeginInvokeOn(_control, () =>
 			{
 				try
 				{
 					action();
-					tcs.TrySetResult();
+					tcs.TrySetResult(true);
 				}
 				catch (Exception ex)
 				{

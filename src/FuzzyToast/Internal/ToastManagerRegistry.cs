@@ -13,7 +13,7 @@ internal static class ToastManagerRegistry
 
 	public static ToastManager GetOrCreate(Control owner)
 	{
-		ArgumentNullException.ThrowIfNull(owner);
+		Guard.NotNull(owner, nameof(owner));
 		if (owner.IsDisposed)
 			throw new ObjectDisposedException(nameof(owner));
 
@@ -26,8 +26,8 @@ internal static class ToastManagerRegistry
 	/// </summary>
 	public static void Register(Control owner, ToastManager manager)
 	{
-		ArgumentNullException.ThrowIfNull(owner);
-		ArgumentNullException.ThrowIfNull(manager);
+		Guard.NotNull(owner, nameof(owner));
+		Guard.NotNull(manager, nameof(manager));
 		// ConditionalWeakTable has no replace; remove + add
 		Managers.Remove(owner);
 		Managers.Add(owner, manager);

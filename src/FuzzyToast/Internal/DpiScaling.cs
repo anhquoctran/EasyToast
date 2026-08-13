@@ -15,7 +15,7 @@ internal static class DpiScaling
 	{
 		try
 		{
-			var dpi = control is { IsDisposed: false } ? control.DeviceDpi : BaselineDpi;
+			var dpi = control is { IsDisposed: false } ? NativeMethods.GetDeviceDpi(control) : BaselineDpi;
 			if (dpi <= 0)
 				dpi = BaselineDpi;
 			return dpi / (float)BaselineDpi;
