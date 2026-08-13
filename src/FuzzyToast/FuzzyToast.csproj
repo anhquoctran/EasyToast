@@ -3,6 +3,8 @@
   <PropertyGroup>
     <!-- net461 is the first Framework TFM that can consume netstandard2.0 (4.6.1+). -->
     <TargetFrameworks>net461;net8.0-windows</TargetFrameworks>
+    <!-- VS inner-build restore with TargetFramework=net461 rewrites assets.json and drops net8.0-windows (NETSDK1005). -->
+    <RestoreTargetFrameworks>net461;net8.0-windows</RestoreTargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>FuzzyToast</RootNamespace>
