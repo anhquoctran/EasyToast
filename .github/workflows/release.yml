@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Pack & publish
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Test with coverage
+        shell: pwsh
+        run: ./scripts/test-coverage.ps1
+
+      - name: Pack
+        run: >
+          dotnet pack src/FuzzyToast/FuzzyToast.csproj
+          -c Release
+          -o artifacts/nuget
+          --include-symbols
+          -p:SymbolPackageFormat=snupkg
+
+      - name: Push to NuGet.org
+        if: env.NUGET_API_KEY != ''
+        run: >
+          dotnet nuget push artifacts/nuget/*.nupkg
+          --api-key ${{ env.NUGET_API_KEY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            artifacts/nuget/*.nupkg
+            artifacts/nuget/*.snupkg

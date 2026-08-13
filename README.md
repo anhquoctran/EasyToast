@@ -2,7 +2,19 @@
 
 A toast notification library for **Windows Forms** on **.NET 8+**.
 
-**Repo:** [github.com/anhquoctran/FuzzyToast](https://github.com/anhquoctran/FuzzyToast) · **Package:** `FuzzyToast` **3.0.1**
+[![CI](https://github.com/anhquoctran/FuzzyToast/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/anhquoctran/FuzzyToast/actions/workflows/ci.yml)
+[![NuGet](https://img.shields.io/nuget/v/FuzzyToast.svg?style=flat-square&logo=nuget&label=NuGet)](https://www.nuget.org/packages/FuzzyToast)
+[![Downloads](https://img.shields.io/nuget/dt/FuzzyToast.svg?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/FuzzyToast)
+[![License: MIT](https://img.shields.io/badge/license-MIT-22c55e.svg?style=flat-square)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/anhquoctran/FuzzyToast?style=flat-square&logo=github&color=yellow)](https://github.com/anhquoctran/FuzzyToast/stargazers)
+[![Last commit](https://img.shields.io/github/last-commit/anhquoctran/FuzzyToast?style=flat-square&logo=github)](https://github.com/anhquoctran/FuzzyToast/commits/master)
+
+[![.NET 8+](https://img.shields.io/badge/.NET-8%2B-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
+[![Windows 10/11](https://img.shields.io/badge/OS-Windows%2010%20%2F%2011-0078D6?style=flat-square&logo=windows&logoColor=white)](#prerequisites)
+[![WinForms](https://img.shields.io/badge/UI-Windows%20Forms-5C2D91?style=flat-square)](#prerequisites)
+[![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen?style=flat-square)](#tests--coverage)
+[![Tests](https://img.shields.io/badge/tests-xUnit-2e8b57?style=flat-square)](#tests--coverage)
+[![Changelog](https://img.shields.io/badge/changelog-3.0.2-0ea5e9?style=flat-square)](CHANGELOG.md)
 
 **FuzzyToast 3.x** adds inputable toasts; 2.x brought an instance-based manager, fluent builder, four-corner stacking, touchable UI metrics, and capacity policies — without polluting the `System.*` namespace.
 
@@ -39,6 +51,12 @@ FuzzyToast scales toast size/margins from the owner control’s `DeviceDpi` (96 
 
 ## Install
 
+```bash
+dotnet add package FuzzyToast
+```
+
+Package Manager Console:
+
 ```powershell
 Install-Package FuzzyToast
 ```
@@ -56,7 +74,7 @@ Output: `src/FuzzyToast/bin/Release/net8.0-windows/FuzzyToast.dll`
 ```text
 src/FuzzyToast/          # Library (public API, enums, layout, internal UI)
 samples/EasyToastDemo/   # WinForms demo app
-tests/FuzzyToast.Tests/  # xUnit + Coverlet (≥85% line)
+tests/FuzzyToast.Tests/  # xUnit + Coverlet (≥95% line)
 docs/                    # Design & migration notes
 scripts/                 # Coverage helper script
 ```
@@ -176,7 +194,7 @@ dotnet test EasyToast.slnx
 dotnet run --project samples/EasyToastDemo
 ```
 
-Line coverage is measured with **Coverlet** and must stay **≥ 85%** (designer/generated files excluded):
+Line coverage is measured with **Coverlet** and must stay **≥ 95%** (designer/generated files excluded):
 
 ```powershell
 # Windows PowerShell
@@ -192,11 +210,15 @@ dotnet test tests/FuzzyToast.Tests/FuzzyToast.Tests.csproj -c Release \
   /p:CoverletOutput=TestResults/coverage \
   /p:ExcludeByFile="**/Properties/**/*.cs%2c**/*Designer.cs" \
   /p:Include="[FuzzyToast]*" \
-  /p:Threshold=85 \
+  /p:Threshold=95 \
   /p:ThresholdType=line
 ```
 
 Report: `TestResults/coverage.cobertura.xml`
+
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for build/test/coverage steps and [SECURITY.md](SECURITY.md) to report vulnerabilities privately.
 
 ## License
 
