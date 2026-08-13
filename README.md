@@ -1,6 +1,6 @@
 # FuzzyToast
 
-A toast notification library for **Windows Forms** on **.NET 8+**.
+A toast notification library for **Windows Forms** on **.NET Framework 4.6.1+** and **.NET 8+**.
 
 [![CI](https://github.com/anhquoctran/FuzzyToast/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/anhquoctran/FuzzyToast/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/FuzzyToast.svg?style=flat-square&logo=nuget&label=NuGet)](https://www.nuget.org/packages/FuzzyToast)
@@ -9,12 +9,13 @@ A toast notification library for **Windows Forms** on **.NET 8+**.
 [![Stars](https://img.shields.io/github/stars/anhquoctran/FuzzyToast?style=flat-square&logo=github&color=yellow)](https://github.com/anhquoctran/FuzzyToast/stargazers)
 [![Last commit](https://img.shields.io/github/last-commit/anhquoctran/FuzzyToast?style=flat-square&logo=github)](https://github.com/anhquoctran/FuzzyToast/commits/master)
 
+[![.NET Framework 4.6.1+](https://img.shields.io/badge/.NET%20Framework-4.6.1%2B-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
 [![.NET 8+](https://img.shields.io/badge/.NET-8%2B-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
 [![Windows 10/11](https://img.shields.io/badge/OS-Windows%2010%20%2F%2011-0078D6?style=flat-square&logo=windows&logoColor=white)](#prerequisites)
 [![WinForms](https://img.shields.io/badge/UI-Windows%20Forms-5C2D91?style=flat-square)](#prerequisites)
 [![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen?style=flat-square)](#tests--coverage)
 [![Tests](https://img.shields.io/badge/tests-xUnit-2e8b57?style=flat-square)](#tests--coverage)
-[![Changelog](https://img.shields.io/badge/changelog-3.0.2-0ea5e9?style=flat-square)](CHANGELOG.md)
+[![Changelog](https://img.shields.io/badge/changelog-3.0.3-0ea5e9?style=flat-square)](CHANGELOG.md)
 
 **FuzzyToast 3.x** adds inputable toasts; 2.x brought an instance-based manager, fluent builder, four-corner stacking, touchable UI metrics, and capacity policies — without polluting the `System.*` namespace.
 
@@ -23,7 +24,7 @@ A toast notification library for **Windows Forms** on **.NET 8+**.
 | Requirement | Detail |
 |-------------|--------|
 | **OS** | **Windows 10** (1809 / build 17763+) or **Windows 11** |
-| **Runtime** | **.NET 8 or later** (e.g. net8.0-windows, net9.0-windows) |
+| **Runtime** | **.NET Framework 4.6.1+** or **.NET 8+** (`net461` / `net48` / `net8.0-windows` / `net9.0-windows`, …) |
 | **UI stack** | **Windows Forms** only (`UseWindowsForms`) |
 | **Threading** | Call `Toast.Build` / `Show` from the UI thread, or from a background thread (library marshals to UI) |
 

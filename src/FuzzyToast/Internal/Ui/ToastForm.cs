@@ -132,7 +132,8 @@ internal sealed partial class ToastForm : Form, IToastView
 				_inputPanel.Height = 34;
 				// Horizontal inset already on contentShell — only small gap above input.
 				_inputPanel.Padding = new Padding(0, 6, 0, 0);
-				_txtInput.PlaceholderText = options.InputPlaceholder ?? string.Empty;
+				NativeMethods.SetCueBanner(_txtInput, options.InputPlaceholder ?? string.Empty);
+				_txtInput.MaxLength = ToastLimits.MaxInputTextLength;
 				_txtInput.Text = options.InputDefaultText ?? string.Empty;
 				_btnSubmit.Text = string.IsNullOrWhiteSpace(options.SubmitButtonText)
 					? "OK"
@@ -223,7 +224,7 @@ internal sealed partial class ToastForm : Form, IToastView
 			return;
 		if (InvokeRequired)
 		{
-			try { BeginInvoke(BeginDismiss); }
+			try { NativeMethods.BeginInvokeOn(this, BeginDismiss); }
 			catch { /* handle destroyed */ }
 			return;
 		}
@@ -267,13 +268,14 @@ internal sealed partial class ToastForm : Form, IToastView
 			Name = "txtInput",
 			Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point),
 			BorderStyle = BorderStyle.FixedSingle,
+			MaxLength = ToastLimits.MaxInputTextLength
 		};
 		_txtInput.KeyDown += TxtInput_KeyDown;
 		_txtInput.GotFocus += (_, _) => PauseCountdown();
 		_txtInput.LostFocus += (_, _) =>
 		{
 			// Only resume if focus left the toast entirely (not to Submit button).
-			BeginInvoke(() =>
+			NativeMethods.BeginInvokeOn(this, () =>
 			{
 				if (IsDisposed || _btnSubmit is { Focused: true } || _txtInput is { Focused: true })
 					return;
@@ -392,7 +394,7 @@ internal sealed partial class ToastForm : Form, IToastView
 		if (_autoDismissEnabled && _remainingMs > 0)
 		{
 			_countdownPaused = false;
-			_armedAtTick = Environment.TickCount64;
+			_armedAtTick = NativeMethods.TickCount64;
 			tmrClose.Interval = CountdownTickMs;
 			tmrClose.Start();
 		}
@@ -400,7 +402,7 @@ internal sealed partial class ToastForm : Form, IToastView
 		if (_activateForInput && _txtInput is not null)
 		{
 			// Delay focus one tick so the form is fully shown first.
-			BeginInvoke(() =>
+			NativeMethods.BeginInvokeOn(this, () =>
 			{
 				try
 				{

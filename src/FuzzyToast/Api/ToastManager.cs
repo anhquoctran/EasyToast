@@ -21,7 +21,7 @@ public sealed class ToastManager : IDisposable
 
 	public ToastManager(Control owner, ToastManagerOptions? options = null)
 	{
-		ArgumentNullException.ThrowIfNull(owner);
+		Guard.NotNull(owner, nameof(owner));
 		if (owner.IsDisposed)
 		{
 			throw new ObjectDisposedException(nameof(owner));
@@ -86,8 +86,8 @@ public sealed class ToastManager : IDisposable
 
 	public ToastHandle Show(ToastOptions options)
 	{
-		ObjectDisposedException.ThrowIf(_disposed, this);
-		ArgumentNullException.ThrowIfNull(options);
+		Guard.NotDisposed(_disposed, this);
+		Guard.NotNull(options, nameof(options));
 
 		ToastHandle? result = null;
 		Exception? error = null;
@@ -103,8 +103,8 @@ public sealed class ToastManager : IDisposable
 
 	public async Task<ToastHandle> ShowAsync(ToastOptions options, CancellationToken cancellationToken = default)
 	{
-		ObjectDisposedException.ThrowIf(_disposed, this);
-		ArgumentNullException.ThrowIfNull(options);
+		Guard.NotDisposed(_disposed, this);
+		Guard.NotNull(options, nameof(options));
 
 		ToastHandle handle;
 		if (_marshaler.InvokeRequired)
@@ -197,7 +197,7 @@ public sealed class ToastManager : IDisposable
 
 	private ToastHandle ShowCore(ToastOptions options)
 	{
-		ObjectDisposedException.ThrowIf(_disposed, this);
+		Guard.NotDisposed(_disposed, this);
 		options.Validate();
 
 		var activeSnapshot = SnapshotActiveOldestFirst();

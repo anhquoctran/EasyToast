@@ -110,18 +110,20 @@ public sealed class ToastBuilder
 	{
 		if (string.IsNullOrWhiteSpace(key))
 			throw new ArgumentException("Metadata key is required.", nameof(key));
+		if (key.Length > ToastLimits.MaxMetadataKeyLength)
+			throw new ArgumentException($"Metadata key must be <= {ToastLimits.MaxMetadataKeyLength} characters.", nameof(key));
 		_metadata[key] = value;
 		return this;
 	}
 
 	public ToastBuilder SetMetadata(IEnumerable<KeyValuePair<string, object?>> entries)
 	{
-		ArgumentNullException.ThrowIfNull(entries);
-		foreach (var (key, value) in entries)
+		FuzzyToast.Internal.Guard.NotNull(entries, nameof(entries));
+		foreach (var pair in entries)
 		{
-			if (string.IsNullOrWhiteSpace(key))
+			if (string.IsNullOrWhiteSpace(pair.Key))
 				continue;
-			_metadata[key] = value;
+			_metadata[pair.Key] = pair.Value;
 		}
 		return this;
 	}

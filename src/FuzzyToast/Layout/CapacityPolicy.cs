@@ -41,7 +41,7 @@ public static class CapacityPolicy
 		ToastPosition incomingPosition,
 		IReadOnlyList<(string Id, ToastPosition Position)> activeOldestFirstGlobal)
 	{
-		ArgumentNullException.ThrowIfNull(activeOldestFirstGlobal);
+		FuzzyToast.Internal.Guard.NotNull(activeOldestFirstGlobal, nameof(activeOldestFirstGlobal));
 		if (maxToasts < 1)
 			throw new ArgumentOutOfRangeException(nameof(maxToasts));
 		if (maxToastsPerPosition < 1)

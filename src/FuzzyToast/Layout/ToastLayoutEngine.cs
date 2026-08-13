@@ -21,7 +21,7 @@ public static class ToastLayoutEngine
 		ToastLayoutMetrics metrics,
 		ScreenWorkingArea area)
 	{
-		ArgumentNullException.ThrowIfNull(metrics);
+		FuzzyToast.Internal.Guard.NotNull(metrics, nameof(metrics));
 		if (stackIndex < 0)
 			throw new ArgumentOutOfRangeException(nameof(stackIndex));
 

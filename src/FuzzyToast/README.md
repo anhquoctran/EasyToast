@@ -1,6 +1,6 @@
 # FuzzyToast (library)
 
-Windows Forms toast notification library for **.NET 8+** on **Windows 10/11**.
+Windows Forms toast notification library for **.NET Framework 4.6.1+** and **.NET 8+** on **Windows 10/11**.
 
 ## Folder map
 
