@@ -1,4 +1,10 @@
+---
+title: Migration
+---
+
 # Migrating to FuzzyToast 2.0
+
+[Home](index.md) · [Getting started](getting-started.md) · [Design](design.md)
 
 ## Summary
 

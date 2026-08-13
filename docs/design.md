@@ -1,4 +1,10 @@
+---
+title: Design
+---
+
 # FuzzyToast / EasyToast v2 — Technical Design Document
+
+[Home](index.md) · [Getting started](getting-started.md) · [Migration](migration.md)
 
 | Field | Value |
 |-------|--------|

@@ -76,7 +76,7 @@ Output: `src/FuzzyToast/bin/Release/net8.0-windows/FuzzyToast.dll`
 src/FuzzyToast/          # Library (public API, enums, layout, internal UI)
 samples/EasyToastDemo/   # WinForms demo app
 tests/FuzzyToast.Tests/  # xUnit + Coverlet (≥95% line)
-docs/                    # Design & migration notes
+docs/                    # GitHub Pages site (https://anhquoctran.github.io/FuzzyToast/)
 scripts/                 # Coverage helper script
 ```
 
@@ -184,7 +184,7 @@ var manager = new ToastManager(this, new ToastManagerOptions
 
 ## Migration from 1.x
 
-See [docs/MIGRATION.md](docs/MIGRATION.md).
+See [docs/migration.md](docs/migration.md) or the [GitHub Pages site](https://anhquoctran.github.io/FuzzyToast/).
 
 **Breaking:** namespace is now `FuzzyToast` (not `System.UI.Widget`). Use `ToastManager` + `Create()` instead of static `Toast.Build(...)`.
 

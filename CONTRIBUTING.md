@@ -43,7 +43,7 @@ Output: `artifacts/nuget/`.
 | `src/FuzzyToast/` | Library (public API, layout, WinForms view) |
 | `tests/FuzzyToast.Tests/` | xUnit + Coverlet |
 | `samples/EasyToastDemo/` | Manual demo app |
-| `docs/` | Design & migration notes |
+| `docs/` | GitHub Pages site (getting started, migration, design) |
 
 Public types live in the `FuzzyToast` namespace. Keep new UI-thread work behind `IUiMarshaler` so unit tests can inject fakes.
 
