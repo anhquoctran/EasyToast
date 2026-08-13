@@ -4,7 +4,7 @@ title: Migration
 
 # Migrating to FuzzyToast 2.0
 
-[Home](index.md) · [Getting started](getting-started.md) · [Design](design.md)
+[Home](index.md) · [Getting started](getting-started.md) · [API reference](api-reference.md) · [Migration](migration.md) · [Design](design.md)
 
 ## Summary
 

@@ -4,7 +4,7 @@ title: Getting started
 
 # Getting started
 
-[Home](index.md) · [Migration](migration.md) · [Design](design.md)
+[Home](index.md) · [Getting started](getting-started.md) · [API reference](api-reference.md) · [Migration](migration.md) · [Design](design.md)
 
 ## Install
 
@@ -89,4 +89,4 @@ On .NET Framework 4.6.1, set DPI awareness in the application manifest instead.
 
 ## Limits
 
-Content is bounded so a toast cannot become a resource bomb. See `ToastLimits` (caption, description, metadata, image size).
+Content is bounded so a toast cannot become a resource bomb. See `ToastLimits` (caption, description, metadata, image size) in the [API reference](api-reference.md).

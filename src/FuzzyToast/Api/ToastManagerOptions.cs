@@ -5,10 +5,19 @@ namespace FuzzyToast;
 /// <summary>Manager-level defaults for capacity, layout, duration, and UX.</summary>
 public sealed class ToastManagerOptions
 {
+	/// <summary>Maximum visible toasts across all corners (default 6).</summary>
 	public int MaxToasts { get; init; } = 6;
+
+	/// <summary>Maximum visible toasts in a single corner (default 3).</summary>
 	public int MaxToastsPerPosition { get; init; } = 3;
+
+	/// <summary>What happens when <see cref="MaxToasts"/> or <see cref="MaxToastsPerPosition"/> is reached.</summary>
 	public ToastOverflowPolicy OverflowPolicy { get; init; } = ToastOverflowPolicy.DropNewest;
+
+	/// <summary>Auto-dismiss for <see cref="Duration.Short"/> when <see cref="ToastOptions.DurationMs"/> is unset (default 2000).</summary>
 	public int ShortDurationMs { get; init; } = 2000;
+
+	/// <summary>Auto-dismiss for <see cref="Duration.Long"/> when <see cref="ToastOptions.DurationMs"/> is unset (default 3000).</summary>
 	public int LongDurationMs { get; init; } = 3000;
 
 	/// <summary>
@@ -26,13 +35,28 @@ public sealed class ToastManagerOptions
 	/// </summary>
 	public int InputToastHeight { get; init; } = 132;
 
+	/// <summary>Inset from the working-area left/right edge, in 96-DPI pixels.</summary>
 	public int HorizontalMargin { get; init; } = ToastLayoutMetrics.Default.HorizontalMargin;
+
+	/// <summary>Inset from the working-area top/bottom edge, in 96-DPI pixels.</summary>
 	public int VerticalMargin { get; init; } = ToastLayoutMetrics.Default.VerticalMargin;
+
+	/// <summary>Toast width at 96 DPI (scaled at show time).</summary>
 	public int ToastWidth { get; init; } = ToastLayoutMetrics.Default.ToastWidth;
+
+	/// <summary>Toast height at 96 DPI for non-input toasts.</summary>
 	public int ToastHeight { get; init; } = ToastLayoutMetrics.Default.ToastHeight;
+
+	/// <summary>Gap between stacked toasts at 96 DPI.</summary>
 	public int StackGap { get; init; } = ToastLayoutMetrics.Default.StackGap;
+
+	/// <summary>When <see langword="true"/>, hover pauses the auto-dismiss countdown (non-input toasts).</summary>
 	public bool PauseOnHover { get; init; } = true;
+
+	/// <summary>When <see langword="true"/>, play the built-in sound unless the toast is muted.</summary>
 	public bool PlaySound { get; init; } = true;
+
+	/// <summary>When <see langword="true"/>, collapse the thumbnail column if no image is set.</summary>
 	public bool HideImagePanelWhenEmpty { get; init; } = true;
 
 	internal ToastLayoutMetrics ToLayoutMetrics(bool inputable = false)

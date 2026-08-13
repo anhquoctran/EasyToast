@@ -6,11 +6,20 @@ namespace FuzzyToast.Internal;
 /// </summary>
 public sealed class AutoDismissTimerState
 {
+	/// <summary>Original duration in milliseconds.</summary>
 	public int TotalDurationMs { get; }
+
+	/// <summary>Milliseconds still remaining (not reset on resume after pause).</summary>
 	public int RemainingMs { get; private set; }
+
+	/// <summary>Whether <see cref="Pause"/> is active.</summary>
 	public bool IsPaused { get; private set; }
+
+	/// <summary><see langword="true"/> when <see cref="RemainingMs"/> is 0 or less.</summary>
 	public bool IsExpired => RemainingMs <= 0;
 
+	/// <param name="totalDurationMs">Must be at least 1.</param>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="totalDurationMs"/> is less than 1.</exception>
 	public AutoDismissTimerState(int totalDurationMs)
 	{
 		if (totalDurationMs < 1)

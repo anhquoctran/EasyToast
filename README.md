@@ -184,7 +184,7 @@ var manager = new ToastManager(this, new ToastManagerOptions
 
 ## Migration from 1.x
 
-See [docs/migration.md](docs/migration.md) or the [GitHub Pages site](https://anhquoctran.github.io/FuzzyToast/).
+See [docs/migration.md](docs/migration.md) or the [GitHub Pages site](https://anhquoctran.github.io/FuzzyToast/). Full public API: [docs/api-reference.md](docs/api-reference.md).
 
 **Breaking:** namespace is now `FuzzyToast` (not `System.UI.Widget`). Use `ToastManager` + `Create()` instead of static `Toast.Build(...)`.
 

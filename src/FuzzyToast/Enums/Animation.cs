@@ -1,12 +1,15 @@
 namespace FuzzyToast;
 
 /// <summary>
-/// Toast transition animation. Android-era names <see cref="FADE"/> / <see cref="SLIDE"/> are preferred aliases.
-/// Numeric values: Slide/SLIDE = 0, Fade/FADE = 1.
+/// How the toast appears and leaves the screen.
+/// Android-style aliases <see cref="FADE"/> and <see cref="SLIDE"/> match FuzzyToast 1.x.
 /// </summary>
 public enum Animation
 {
+	/// <summary>Slides in from the screen edge and slides out on dismiss.</summary>
 	Slide = 0,
+
+	/// <summary>Fades opacity in and out (default).</summary>
 	Fade = 1,
 
 	/// <summary>Alias for <see cref="Slide"/>.</summary>

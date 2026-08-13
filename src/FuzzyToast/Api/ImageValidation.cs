@@ -19,9 +19,16 @@ public static class ImageValidation
 	];
 
 	/// <summary>
-	/// Thumbnail must meet minimum size on <b>both</b> width and height (v1 used OR — too loose)
-	/// and stay under <see cref="ToastLimits.MaxImageDimension"/> unless overridden.
+	/// Returns <see langword="true"/> when both width and height are within
+	/// <paramref name="minWidth"/>–<paramref name="maxWidth"/> and
+	/// <paramref name="minHeight"/>–<paramref name="maxHeight"/>.
+	/// Disposed or unreadable images return <see langword="false"/>.
 	/// </summary>
+	/// <param name="image">Bitmap or other GDI+ image; may be <see langword="null"/>.</param>
+	/// <param name="minWidth">Inclusive minimum width (default 64).</param>
+	/// <param name="minHeight">Inclusive minimum height (default 64).</param>
+	/// <param name="maxWidth">Inclusive maximum width (default <see cref="ToastLimits.MaxImageDimension"/>).</param>
+	/// <param name="maxHeight">Inclusive maximum height (default <see cref="ToastLimits.MaxImageDimension"/>).</param>
 	public static bool ValidateImageSize(
 		Image? image,
 		int minWidth = 64,
@@ -45,9 +52,12 @@ public static class ImageValidation
 	}
 
 	/// <summary>
-	/// Accepts PNG and JPEG signatures, including common JPEG APP0/APP1 (E0/E1) and generic SOI.
-	/// Reads only the first 8 bytes. Rejects oversized files, reserved device names, and reparse points.
+	/// Returns <see langword="true"/> if <paramref name="path"/> is a regular file whose first bytes
+	/// are a PNG or JPEG signature (including JFIF APP0 / EXIF APP1).
+	/// Does not decode pixels. Rejects missing files, reserved device names, <c>\\.\</c> paths,
+	/// reparse points, and files larger than <see cref="ToastLimits.MaxImageFileBytes"/>.
 	/// </summary>
+	/// <param name="path">Filesystem path; <see langword="null"/> or whitespace returns <see langword="false"/>.</param>
 	public static bool ValidateImagePath(string? path)
 	{
 		if (!TryGetSafeExistingFile(path, out var fullPath))
@@ -73,14 +83,18 @@ public static class ImageValidation
 		}
 	}
 
+	/// <summary>Returns <see langword="true"/> when <paramref name="bytes"/> starts with the PNG signature (89 50 4E 47).</summary>
 	public static bool IsPng(byte[]? bytes) =>
 		bytes is not null && IsPng(bytes, bytes.Length);
 
+	/// <summary>Returns <see langword="true"/> when <paramref name="bytes"/> starts with JPEG SOI + marker (FF D8 FF).</summary>
 	public static bool IsJpeg(byte[]? bytes) =>
 		bytes is not null && IsJpeg(bytes, bytes.Length);
 
+	/// <inheritdoc cref="IsPng(byte[])"/>
 	public static bool IsPng(ReadOnlySpan<byte> bytes) => IsPng(bytes, bytes.Length);
 
+	/// <inheritdoc cref="IsJpeg(byte[])"/>
 	public static bool IsJpeg(ReadOnlySpan<byte> bytes) => IsJpeg(bytes, bytes.Length);
 
 	private static bool IsPng(ReadOnlySpan<byte> bytes, int length)

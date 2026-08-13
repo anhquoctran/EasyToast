@@ -9,16 +9,37 @@ public sealed class ToastOptions
 	private static readonly IReadOnlyDictionary<string, object?> EmptyMetadata =
 		new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>(0));
 
+	/// <summary>Title line. Required (non-whitespace) and at most <see cref="ToastLimits.MaxCaptionLength"/> characters.</summary>
 	public string Caption { get; init; } = string.Empty;
+
+	/// <summary>Optional secondary line, at most <see cref="ToastLimits.MaxDescriptionLength"/> characters.</summary>
 	public string Description { get; init; } = string.Empty;
+
+	/// <summary>Preset auto-dismiss. Ignored when <see cref="DurationMs"/> is set.</summary>
 	public Duration Duration { get; init; } = Duration.Short;
+
+	/// <summary>Appear / dismiss animation.</summary>
 	public Animation Animation { get; init; } = Animation.Fade;
+
+	/// <summary>Corner stack for this toast.</summary>
 	public ToastPosition Position { get; init; } = ToastPosition.BottomRight;
+
+	/// <summary>Built-in theme. <see cref="ToastTheme.Custom"/> requires <see cref="CustomColors"/>.</summary>
 	public ToastTheme Theme { get; init; } = ToastTheme.Dark;
+
+	/// <summary>Palette used when <see cref="Theme"/> is <see cref="ToastTheme.Custom"/>.</summary>
 	public ColorScheme? CustomColors { get; init; }
+
+	/// <summary>How the user can dismiss the toast.</summary>
 	public CloseStyle CloseStyle { get; init; } = CloseStyle.ButtonAndClickEntire;
+
+	/// <summary>When <see langword="true"/>, no notification sound is played.</summary>
 	public bool IsMuted { get; init; }
+
+	/// <summary>Optional left thumbnail. Dimensions must stay within <see cref="ToastLimits"/>.</summary>
 	public Image? Thumbnail { get; init; }
+
+	/// <summary>When <see langword="true"/>, the toast disposes <see cref="Thumbnail"/> after close.</summary>
 	public bool OwnsThumbnail { get; init; }
 
 	/// <summary>Arbitrary user payload (entity id, DTO, etc.).</summary>
@@ -54,6 +75,12 @@ public sealed class ToastOptions
 	/// </summary>
 	public int? DurationMs { get; init; }
 
+	/// <summary>
+	/// Throws if caption, theme, duration, input fields, thumbnail, or metadata violate
+	/// <see cref="ToastLimits"/> or other invariants. Called automatically by <see cref="ToastManager.Show"/>.
+	/// </summary>
+	/// <exception cref="ArgumentException">A required field is missing or a string/image exceeds limits.</exception>
+	/// <exception cref="ArgumentOutOfRangeException"><see cref="DurationMs"/> is negative or above the max.</exception>
 	public void Validate()
 	{
 		if (string.IsNullOrWhiteSpace(Caption))
@@ -98,6 +125,12 @@ public sealed class ToastOptions
 		}
 	}
 
+	/// <summary>
+	/// Copies <paramref name="entries"/> into an immutable dictionary.
+	/// Blank keys are skipped; oversize keys are skipped; extra entries beyond
+	/// <see cref="ToastLimits.MaxMetadataEntries"/> are dropped.
+	/// </summary>
+	/// <param name="entries">Source pairs; <see langword="null"/> yields an empty snapshot.</param>
 	public static IReadOnlyDictionary<string, object?> FreezeMetadata(
 		IEnumerable<KeyValuePair<string, object?>>? entries)
 	{

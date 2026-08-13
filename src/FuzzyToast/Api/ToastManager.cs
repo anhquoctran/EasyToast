@@ -6,7 +6,8 @@ using FuzzyToast.Layout;
 namespace FuzzyToast;
 
 /// <summary>
-/// Instance-scoped toast manager for one owner control. Preferred: one manager per owner.
+/// Instance-scoped toast manager for one owner control. Prefer one manager per form.
+/// <see cref="Toast.Build(IWin32Window, string)"/> reuses the manager registered for that owner.
 /// </summary>
 public sealed class ToastManager : IDisposable
 {
@@ -19,6 +20,14 @@ public sealed class ToastManager : IDisposable
 	private bool _disposed;
 	private long _sequence;
 
+	/// <summary>
+	/// Creates a manager bound to <paramref name="owner"/> and registers it for <see cref="Toast.Build(IWin32Window, string)"/>.
+	/// Disposing the owner disposes this manager.
+	/// </summary>
+	/// <param name="owner">Host form or control. Must not be disposed.</param>
+	/// <param name="options">Capacity, duration, and layout defaults. <see langword="null"/> uses <see cref="ToastManagerOptions"/> defaults.</param>
+	/// <exception cref="ArgumentNullException"><paramref name="owner"/> is <see langword="null"/>.</exception>
+	/// <exception cref="ObjectDisposedException"><paramref name="owner"/> is already disposed.</exception>
 	public ToastManager(Control owner, ToastManagerOptions? options = null)
 	{
 		Guard.NotNull(owner, nameof(owner));
@@ -53,12 +62,18 @@ public sealed class ToastManager : IDisposable
 		owner?.Disposed += OwnerOnDisposed;
 	}
 
+	/// <summary>Owner control passed to the public constructor.</summary>
+	/// <exception cref="InvalidOperationException">This instance was created in test mode without an owner.</exception>
 	public Control Owner =>
 		_owner ?? throw new InvalidOperationException("This manager was created without an owner (test mode).");
 
+	/// <summary>Immutable defaults used for capacity, duration, and layout.</summary>
 	public ToastManagerOptions Options { get; }
+
+	/// <summary>Whether <see cref="Dispose"/> has been called.</summary>
 	public bool IsDisposed => _disposed;
 
+	/// <summary>Snapshot of currently visible (not rejected) toast handles, oldest first within the list.</summary>
 	public IReadOnlyList<ToastHandle> ActiveToasts
 	{
 		get
@@ -68,6 +83,7 @@ public sealed class ToastManager : IDisposable
 		}
 	}
 
+	/// <summary>Number of visible toasts currently managed by this instance.</summary>
 	public int Count
 	{
 		get
@@ -77,13 +93,30 @@ public sealed class ToastManager : IDisposable
 		}
 	}
 
+	/// <summary>Raised after a toast is shown and added to the stack.</summary>
 	public event EventHandler<ToastChangedEventArgs>? ToastAdded;
+
+	/// <summary>Raised after a visible toast is removed (dismiss, victim, or dispose).</summary>
 	public event EventHandler<ToastChangedEventArgs>? ToastRemoved;
+
+	/// <summary>Raised when the last visible toast is removed or the manager is disposed.</summary>
 	public event EventHandler? CollectionCleared;
+
+	/// <summary>Raised when a show is rejected by <see cref="ToastOverflowPolicy.DropNewest"/>.</summary>
 	public event EventHandler<ToastRejectedEventArgs>? ToastRejected;
 
+	/// <summary>Starts a fluent <see cref="ToastBuilder"/> bound to this manager.</summary>
 	public ToastBuilder Create() => new(this);
 
+	/// <summary>
+	/// Validates and shows <paramref name="options"/> on the UI thread.
+	/// Returns a live handle that is either <see cref="ToastHandleState.Visible"/> or
+	/// <see cref="ToastHandleState.RejectedCapacity"/>.
+	/// </summary>
+	/// <exception cref="ObjectDisposedException">The manager has been disposed.</exception>
+	/// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
+	/// <exception cref="ArgumentException"><paramref name="options"/> fails <see cref="ToastOptions.Validate"/>.</exception>
+	/// <exception cref="InvalidOperationException">Capacity exceeded and policy is <see cref="ToastOverflowPolicy.Throw"/>.</exception>
 	public ToastHandle Show(ToastOptions options)
 	{
 		Guard.NotDisposed(_disposed, this);
@@ -101,6 +134,10 @@ public sealed class ToastManager : IDisposable
 		return result!;
 	}
 
+	/// <summary>
+	/// Shows the toast asynchronously. The returned task completes when the toast is shown or rejected.
+	/// If <paramref name="cancellationToken"/> is cancelled afterwards, the visible toast is dismissed.
+	/// </summary>
 	public async Task<ToastHandle> ShowAsync(ToastOptions options, CancellationToken cancellationToken = default)
 	{
 		Guard.NotDisposed(_disposed, this);
@@ -133,6 +170,7 @@ public sealed class ToastManager : IDisposable
 		return handle;
 	}
 
+	/// <summary>Begins dismiss on every visible toast. No-op if already disposed.</summary>
 	public void DismissAll()
 	{
 		if (_disposed)
@@ -148,6 +186,7 @@ public sealed class ToastManager : IDisposable
 		});
 	}
 
+	/// <summary>Dismisses remaining toasts, unregisters from the owner, and is idempotent.</summary>
 	public void Dispose()
 	{
 		if (_disposed)

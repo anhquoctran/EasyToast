@@ -20,12 +20,22 @@ public sealed class ToastHandle : IDisposable
 			_dismissedTcs.TrySetResult(true);
 	}
 
+	/// <summary>Stable identifier for this show attempt (hex GUID without dashes).</summary>
 	public string Id { get; }
+
+	/// <summary>Options snapshot used for this toast.</summary>
 	public ToastOptions Options { get; }
+
+	/// <summary>Current lifecycle state.</summary>
 	public ToastHandleState State => _state;
 
+	/// <summary><see langword="true"/> when <see cref="State"/> is <see cref="ToastHandleState.Visible"/>.</summary>
 	public bool IsVisible => _state == ToastHandleState.Visible;
+
+	/// <summary><see langword="true"/> when the toast has closed.</summary>
 	public bool IsDismissed => _state == ToastHandleState.Dismissed;
+
+	/// <summary><see langword="true"/> when show was rejected by capacity policy.</summary>
 	public bool WasRejected => _state == ToastHandleState.RejectedCapacity;
 
 	/// <summary>
@@ -42,11 +52,13 @@ public sealed class ToastHandle : IDisposable
 	/// <summary>Raised when the user submits input on an inputable toast (before dismiss).</summary>
 	public event EventHandler<ToastSubmittedEventArgs>? Submitted;
 
+	/// <summary>Raised once when transitioning to <see cref="ToastHandleState.Dismissed"/>. Not raised for rejected handles.</summary>
 	public event EventHandler? Dismissed;
 
 	/// <summary>Last submitted text (if any).</summary>
 	public string? SubmittedText { get; private set; }
 
+	/// <summary>Closes the toast if it is visible. Safe no-op when already closed or rejected.</summary>
 	public void Dismiss()
 	{
 		if (_state != ToastHandleState.Visible)
@@ -54,9 +66,11 @@ public sealed class ToastHandle : IDisposable
 		_manager?.DismissInternal(this);
 	}
 
+	/// <summary>Obsolete alias of <see cref="Dismiss"/>. Does not throw when the toast is not shown.</summary>
 	[Obsolete("Use Dismiss(). No longer throws when not shown.")]
 	public void Cancel() => Dismiss();
 
+	/// <summary>Dismisses if visible and detaches from the manager. Idempotent.</summary>
 	public void Dispose()
 	{
 		if (_disposed)
