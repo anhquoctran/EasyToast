@@ -12,7 +12,9 @@ Live site (after Pages is enabled on `master` / `docs`):
 | `api-reference.md` | Public API (types, methods, enums) |
 | `migration.md` | v1 → v2/v3 |
 | `design.md` | v2 technical design |
-| `_config.yml` | Jekyll (Cayman) |
+| `_config.yml` | Jekyll config (`baseurl: /FuzzyToast`) |
+| `_layouts/docs.html` | Sidebar layout |
+| `assets/css/docs.css` | Docs theme |
 | `assets/icon.png` | Site icon |
 
 Enable in the repo: **Settings → Pages → Deploy from a branch → `master` / `/docs`**.
