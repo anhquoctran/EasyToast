@@ -19,7 +19,9 @@ dotnet test $proj -c Release `
   "/p:Include=[FuzzyToast]*" `
   "/p:Threshold=95" `
   "/p:ThresholdType=line" `
-  "/p:ThresholdStat=total"
+  "/p:ThresholdStat=total" `
+  "/p:DeterministicSourcePaths=false" `
+  "/p:UseSharedCompilation=false"
 
 if ($LASTEXITCODE -ne 0) {
   Write-Error "Tests or coverage threshold failed (exit $LASTEXITCODE)."
