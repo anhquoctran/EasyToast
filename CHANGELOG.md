@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.2
+
+### Added
+
+- Tests to keep **line coverage ≥ 95%** (Coverlet threshold raised from 85%)
+- GitHub Actions **CI** (Windows, Release build, xUnit, coverage gate) and **Release** workflow (tag `v*` → pack + GitHub Release + NuGet)
+- NuGet package icon, SourceLink, and symbol package (`snupkg`)
+- Contributor / security docs, issue & PR templates, Dependabot, `.editorconfig`
+
 ## 3.0.1
 
 ### Changed

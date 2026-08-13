@@ -29,7 +29,7 @@
 
   <PropertyGroup>
     <ExcludeByFile>**/Properties/**/*.cs,**/*Designer.cs</ExcludeByFile>
-    <Threshold>85</Threshold>
+    <Threshold>95</Threshold>
     <ThresholdType>line</ThresholdType>
     <ThresholdStat>total</ThresholdStat>
   </PropertyGroup>

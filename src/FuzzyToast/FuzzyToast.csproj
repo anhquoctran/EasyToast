@@ -16,19 +16,30 @@
     <PackageId>FuzzyToast</PackageId>
     <Title>FuzzyToast</Title>
     <Authors>anhquoctran</Authors>
+    <Company>anhquoctran</Company>
+    <Copyright>Copyright © 2018–2026 anhquoctran</Copyright>
     <Description>Toast notifications for Windows Forms on Windows 10/11 (.NET 8+). Android-style API, inputable toasts with submit, DPI-aware layout, four-corner stacking.</Description>
     <PackageProjectUrl>https://github.com/anhquoctran/FuzzyToast</PackageProjectUrl>
     <RepositoryUrl>https://github.com/anhquoctran/FuzzyToast</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DebugType>portable</DebugType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageTags>winforms;toast;notification;ui;windows10;windows11;net8;input</PackageTags>
-    <Version>3.0.1</Version>
+    <PackageReleaseNotes>See https://github.com/anhquoctran/FuzzyToast/blob/master/CHANGELOG.md</PackageReleaseNotes>
+    <Version>3.0.2</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\CHANGELOG.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

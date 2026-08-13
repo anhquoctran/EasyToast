@@ -1,0 +1,56 @@
+name: Bug report
+description: Something is not working as documented
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please fill in the sections so we can reproduce it on Windows.
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead? Include stack traces if any.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: Short WinForms snippet or steps starting from Toast.Build / ToastManager.
+      render: csharp
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: FuzzyToast version
+      placeholder: "3.0.1"
+    validations:
+      required: true
+
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime / OS
+      placeholder: ".NET 8, Windows 11 24H2"
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Screenshots, DPI scale, multi-monitor layout, inputable vs normal toast, etc.
