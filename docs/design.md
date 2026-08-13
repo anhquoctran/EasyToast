@@ -4,7 +4,7 @@ title: Design
 
 # FuzzyToast / EasyToast v2 — Technical Design Document
 
-[Home](index.md) · [Getting started](getting-started.md) · [Migration](migration.md)
+[Home](index.md) · [Getting started](getting-started.md) · [API reference](api-reference.md) · [Migration](migration.md) · [Design](design.md)
 
 | Field | Value |
 |-------|--------|

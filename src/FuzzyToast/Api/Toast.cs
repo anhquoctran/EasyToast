@@ -43,48 +43,56 @@ public sealed class Toast
 	/// <summary>Handle created by the last <see cref="Show"/> / <see cref="ShowAsync"/>; null if not shown or rejected without store.</summary>
 	public ToastHandle? Handle => _handle;
 
+	/// <summary>Title line shown in bold. Required before <see cref="Show"/>.</summary>
 	public string Caption
 	{
 		get => _caption;
 		set => _caption = value ?? string.Empty;
 	}
 
+	/// <summary>Optional secondary line. Leading/trailing whitespace is trimmed.</summary>
 	public string Description
 	{
 		get => _description;
 		set => _description = value?.Trim() ?? string.Empty;
 	}
 
+	/// <summary>Preset auto-dismiss length. Overridden by <see cref="SetDurationMs"/>.</summary>
 	public Duration Duration
 	{
 		get => _duration;
 		set => _duration = value;
 	}
 
+	/// <summary>Appear / dismiss animation. Default is <see cref="Animation.Fade"/>.</summary>
 	public Animation Animation
 	{
 		get => _animation;
 		set => _animation = value;
 	}
 
+	/// <summary>Corner stack. Each corner is independent.</summary>
 	public ToastPosition Position
 	{
 		get => _position;
 		set => _position = value;
 	}
 
+	/// <summary>Built-in palette. Use <see cref="SetCustomColors"/> for <see cref="ToastTheme.Custom"/>.</summary>
 	public ToastTheme Theme
 	{
 		get => _theme;
 		set => _theme = value;
 	}
 
+	/// <summary>When <see langword="true"/>, the notification sound is not played.</summary>
 	public bool IsMuted
 	{
 		get => _isMuted;
 		set => _isMuted = value;
 	}
 
+	/// <summary>Optional thumbnail shown on the left. Must stay within <see cref="ToastLimits"/> if set.</summary>
 	public Image? Thumbnail
 	{
 		get => _thumbnail;
@@ -98,7 +106,7 @@ public sealed class Toast
 		set => _tag = value;
 	}
 
-	/// <summary>Snapshot of key/value metadata set via <see cref="SetMetadata"/> / <see cref="SetExtData"/>.</summary>
+	/// <summary>Snapshot of key/value metadata set via <see cref="SetMetadata(string, object?)"/> / <see cref="SetExtData(string, object?)"/>.</summary>
 	public IReadOnlyDictionary<string, object?> Metadata => _metadata;
 
 	/// <summary>Click on toast body. <see cref="ToastInteractionEventArgs"/> exposes Tag + Metadata.</summary>
@@ -110,46 +118,56 @@ public sealed class Toast
 	/// <summary>User submitted text from an inputable toast (<see cref="EnableInput"/>).</summary>
 	public event EventHandler<ToastSubmittedEventArgs>? OnSubmit;
 
+	/// <summary>Raised after the toast is dismissed (timer, user, or <see cref="Dismiss"/>).</summary>
 	public event EventHandler? OnClosed;
 
 	#region Fluent setters (optional; Build overloads cover common cases)
 
+	/// <summary>Sets <see cref="Caption"/> and returns this instance for chaining.</summary>
+	/// <param name="caption">Title text. <see langword="null"/> becomes empty.</param>
 	public Toast SetCaption(string caption)
 	{
 		Caption = caption;
 		return this;
 	}
 
+	/// <summary>Sets <see cref="Description"/> and returns this instance.</summary>
+	/// <param name="description">Secondary text; trimmed. <see langword="null"/> clears it.</param>
 	public Toast SetDescription(string? description)
 	{
 		Description = description ?? string.Empty;
 		return this;
 	}
 
+	/// <summary>Sets the preset <see cref="Duration"/>.</summary>
 	public Toast SetDuration(Duration duration)
 	{
 		Duration = duration;
 		return this;
 	}
 
+	/// <summary>Sets the appear / dismiss <see cref="Animation"/>.</summary>
 	public Toast SetAnimation(Animation animation)
 	{
 		Animation = animation;
 		return this;
 	}
 
+	/// <summary>Sets the corner <see cref="Position"/>.</summary>
 	public Toast SetPosition(ToastPosition position)
 	{
 		Position = position;
 		return this;
 	}
 
+	/// <summary>Sets the built-in <see cref="Theme"/>.</summary>
 	public Toast SetTheme(ToastTheme theme)
 	{
 		Theme = theme;
 		return this;
 	}
 
+	/// <summary>Uses <see cref="ToastTheme.Custom"/> with the given background and foreground colors.</summary>
 	public Toast SetCustomColors(Color background, Color foreground)
 	{
 		_theme = ToastTheme.Custom;
@@ -157,18 +175,24 @@ public sealed class Toast
 		return this;
 	}
 
+	/// <summary>Sets how the user can dismiss the toast.</summary>
 	public Toast SetCloseStyle(CloseStyle style)
 	{
 		_closeStyle = style;
 		return this;
 	}
 
+	/// <summary>Mutes the notification sound. Pass <see langword="false"/> to allow sound again.</summary>
+	/// <param name="muted">Default <see langword="true"/>.</param>
 	public Toast SetMuting(bool muted = true)
 	{
 		IsMuted = muted;
 		return this;
 	}
 
+	/// <summary>Sets the left thumbnail.</summary>
+	/// <param name="image">Image to display; <see langword="null"/> hides the thumbnail panel.</param>
+	/// <param name="ownsImage">When <see langword="true"/>, the toast disposes <paramref name="image"/> after close.</param>
 	public Toast SetThumbnail(Image? image, bool ownsImage = false)
 	{
 		_thumbnail = image;
@@ -221,6 +245,10 @@ public sealed class Toast
 	/// By default stays open until Submit/Esc/close (<c>DurationMs = 0</c>).
 	/// Call <see cref="SetDurationMs"/> if you want a safety auto-timeout.
 	/// </summary>
+	/// <param name="placeholder">Cue text inside the empty text box.</param>
+	/// <param name="defaultText">Initial contents of the text box.</param>
+	/// <param name="submitButtonText">Button label (blank falls back to <c>OK</c>).</param>
+	/// <param name="allowEmptySubmit">When <see langword="false"/>, empty/whitespace submit is ignored.</param>
 	public Toast EnableInput(
 		string? placeholder = null,
 		string? defaultText = null,
@@ -252,6 +280,8 @@ public sealed class Toast
 	/// Override auto-dismiss duration in milliseconds.
 	/// Use <c>0</c> to disable auto-dismiss (toast stays until Submit / Esc / close).
 	/// </summary>
+	/// <param name="milliseconds">Must be ≥ 0 and ≤ <see cref="ToastLimits.MaxDurationMs"/> when shown.</param>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="milliseconds"/> is negative.</exception>
 	public Toast SetDurationMs(int milliseconds)
 	{
 		if (milliseconds < 0)
@@ -262,7 +292,11 @@ public sealed class Toast
 
 	#endregion
 
-	/// <summary>Display the toast (Android-style <c>show()</c>).</summary>
+	/// <summary>
+	/// Displays the toast on the owner's stack (Android-style <c>show()</c>).
+	/// Uses the shared <see cref="ToastManager"/> for <c>owner</c>.
+	/// </summary>
+	/// <exception cref="ArgumentException">Caption is missing or options fail <see cref="ToastOptions.Validate"/>.</exception>
 	public void Show()
 	{
 		var manager = ToastManagerRegistry.GetOrCreate(_owner);
@@ -271,8 +305,10 @@ public sealed class Toast
 	}
 
 	/// <summary>
-	/// Display asynchronously. Completes when the toast is shown (or rejected), not when dismissed.
+	/// Displays the toast asynchronously. The task completes when the toast is <em>shown</em>
+	/// (or rejected), not when it is dismissed — use <see cref="ToastHandle.WhenDismissed"/> for that.
 	/// </summary>
+	/// <param name="cancellationToken">If cancelled after show, the toast is dismissed.</param>
 	public async Task ShowAsync(CancellationToken cancellationToken = default)
 	{
 		var manager = ToastManagerRegistry.GetOrCreate(_owner);
@@ -285,6 +321,7 @@ public sealed class Toast
 	/// </summary>
 	public void Cancel() => _handle?.Dismiss();
 
+	/// <summary>Same as <see cref="Cancel"/>.</summary>
 	public void Dismiss() => Cancel();
 
 	private void WireHandle(ToastHandle handle)
@@ -335,7 +372,9 @@ public sealed class Toast
 
 	#region Build overloads (Android-style factory — same surface as FuzzyToast 1.x)
 
-	/// <summary>Build a simplest toast with caption only.</summary>
+	/// <summary>Creates a toast with a caption only. Call <see cref="Show"/> to display it.</summary>
+	/// <param name="window">Owner form (must be a <see cref="Control"/>).</param>
+	/// <param name="caption">Title text.</param>
 	public static Toast Build(IWin32Window window, string caption)
 	{
 		return new Toast(RequireControl(window))

@@ -3,7 +3,7 @@ using System.Drawing;
 namespace FuzzyToast.Layout;
 
 /// <summary>
-/// Pure toast positioning. Uses per-position <paramref name="stackIndex"/> (0 = oldest at corner).
+/// Pure toast positioning. Uses a per-position stack index (0 = oldest at the corner).
 /// Never uses a global toast count for a single corner (v1 BottomRight bug).
 /// </summary>
 public static class ToastLayoutEngine
@@ -49,7 +49,12 @@ public static class ToastLayoutEngine
 		};
 	}
 
-	/// <summary>Locations for a full stack of <paramref name="count"/> toasts at one corner.</summary>
+	/// <summary>Computes locations for a full stack of <paramref name="count"/> toasts at one corner.</summary>
+	/// <param name="position">Corner stack.</param>
+	/// <param name="count">Number of toasts (must be ≥ 0).</param>
+	/// <param name="metrics">Size and margins.</param>
+	/// <param name="area">Working area for the target screen.</param>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="count"/> is negative.</exception>
 	public static IReadOnlyList<Point> ComputeStack(
 		ToastPosition position,
 		int count,

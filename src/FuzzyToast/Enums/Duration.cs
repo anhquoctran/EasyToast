@@ -12,7 +12,7 @@ public enum Duration
 	Long = 1,
 
 	/// <summary>
-	/// Extended wait for inputable toasts (~30s by default via <see cref="ToastManagerOptions.InputDurationMs"/>).
+	/// Extended wait for inputable toasts (default via <see cref="ToastManagerOptions.InputDurationMs"/>).
 	/// Same as <see cref="LENGTH_INPUT"/>.
 	/// </summary>
 	Input = 2,

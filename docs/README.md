@@ -9,6 +9,7 @@ Live site (after Pages is enabled on `master` / `docs`):
 |------|------|
 | `index.md` | Home |
 | `getting-started.md` | Install & first toast |
+| `api-reference.md` | Public API (types, methods, enums) |
 | `migration.md` | v1 → v2/v3 |
 | `design.md` | v2 technical design |
 | `_config.yml` | Jekyll (Cayman) |
