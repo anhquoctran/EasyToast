@@ -1,5 +1,6 @@
 ---
 title: Migration
+permalink: /migration.html
 ---
 
 # Migrating to FuzzyToast 2.0
