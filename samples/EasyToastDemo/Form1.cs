@@ -14,8 +14,8 @@ namespace EasyToastDemo;
 public partial class Form1 : Form
 {
 	private static readonly Size DesignClientSize = new(1080, 720);
-	private static readonly Font UiFont = new("Segoe UI", 9F);
-	private static readonly Font HintFont = new("Segoe UI", 8.25F);
+	private static readonly Font UiFont = UiTheme.Ui;
+	private static readonly Font HintFont = UiTheme.Hint;
 
 	private ToastManager _toasts = null!;
 	private Toast? _lastToast;
@@ -101,6 +101,8 @@ public partial class Form1 : Form
 		StartPosition = FormStartPosition.CenterScreen;
 		Text = "FuzzyToast Demo v3 — full public API";
 		Font = UiFont;
+		BackColor = UiTheme.Canvas;
+		ForeColor = UiTheme.Text;
 		BuildUi();
 	}
 
@@ -136,6 +138,7 @@ public partial class Form1 : Form
 		}
 
 		RecreateManager(announce: false);
+		RefreshThemePreview();
 		Log("Demo ready — FuzzyToast v3 catalog · every public API has a button on these tabs.");
 		UpdateStatus();
 	}
@@ -144,7 +147,14 @@ public partial class Form1 : Form
 
 	private void BuildUi()
 	{
-		var menu = new MenuStrip { BackColor = SystemColors.Control };
+		var menu = new MenuStrip
+		{
+			BackColor = UiTheme.Card,
+			ForeColor = UiTheme.Text,
+			Font = UiFont,
+			Renderer = new FlatToolStripRenderer(),
+			Padding = new Padding(6, 2, 0, 2)
+		};
 		var help = new ToolStripMenuItem("Help");
 		var about = new ToolStripMenuItem("About");
 		about.Click += About_Click;
@@ -155,47 +165,37 @@ public partial class Form1 : Form
 		var defaults = BuildDefaultsBar();
 		defaults.Dock = DockStyle.Top;
 
-		var logHost = new Panel { Dock = DockStyle.Bottom, Height = 188, Padding = new Padding(12, 0, 12, 10) };
-		var logBox = new GroupBox
+		var logHost = new Panel { Dock = DockStyle.Bottom, Height = 164, Padding = new Padding(12, 0, 12, 10), BackColor = UiTheme.Canvas };
+		var logBox = new FlatCard("Live event log  ·  ToastAdded / Removed / Rejected / click / hover / submit")
 		{
-			Text = "Live event log  (ToastAdded / Removed / Rejected / click / hover / submit)",
 			Dock = DockStyle.Fill
 		};
 		_log = new RichTextBox
 		{
 			Dock = DockStyle.Fill,
 			ReadOnly = true,
-			BackColor = Color.White,
+			BackColor = UiTheme.Card,
+			ForeColor = UiTheme.Text,
 			Font = new Font("Consolas", 8.25F),
 			BorderStyle = BorderStyle.None
 		};
-		var logToolbar = new Panel { Dock = DockStyle.Top, Height = 28 };
-		var btnClear = new Button
-		{
-			Text = "Clear log",
-			Size = new Size(88, 24),
-			Location = new Point(0, 2),
-			UseVisualStyleBackColor = true
-		};
-		btnClear.Click += (_, _) => _log.Clear();
-		logToolbar.Controls.Add(btnClear);
 		logBox.Controls.Add(_log);
-		logBox.Controls.Add(logToolbar);
+		logBox.SetHeaderAction(Btn("Clear log", 0, 0, 124, 24, (_, _) => _log.Clear(), BtnKind.Ghost));
 		logHost.Controls.Add(logBox);
 
-		var tabHost = new Panel { Dock = DockStyle.Fill, Padding = new Padding(12, 6, 12, 6) };
-		var tabs = new TabControl { Dock = DockStyle.Fill };
-		tabs.TabPages.Add(BuildBasicsTab());
-		tabs.TabPages.Add(BuildAppearanceTab());
-		tabs.TabPages.Add(BuildStackTab());
-		tabs.TabPages.Add(BuildInputTab());
-		tabs.TabPages.Add(BuildLifecycleTab());
-		tabs.TabPages.Add(BuildUtilitiesTab());
-		tabHost.Controls.Add(tabs);
+		var tabHost = new Panel { Dock = DockStyle.Fill, Padding = new Padding(12, 8, 12, 8), BackColor = UiTheme.Canvas };
+		var tabs = new FlatTabStrip(tabHost);
+		tabs.Add("Basics", BuildBasicsTab());
+		tabs.Add("Appearance", BuildAppearanceTab());
+		tabs.Add("Stack & manager", BuildStackTab());
+		tabs.Add("Inputable", BuildInputTab());
+		tabs.Add("Lifecycle", BuildLifecycleTab());
+		tabs.Add("Utilities", BuildUtilitiesTab());
 
-		// Dock z-order: Fill first, then Bottom, then Top, MenuStrip last so it sits at the very top.
+		// Dock z-order: Fill first, then Bottom, then Top (tab strip, defaults), MenuStrip last.
 		Controls.Add(tabHost);
 		Controls.Add(logHost);
+		Controls.Add(tabs);
 		Controls.Add(defaults);
 		Controls.Add(menu);
 	}
@@ -205,37 +205,32 @@ public partial class Form1 : Form
 		var bar = new Panel
 		{
 			Height = 68,
-			BackColor = Color.FromArgb(248, 248, 248),
+			BackColor = UiTheme.Card,
 			Padding = new Padding(12, 8, 12, 8)
+		};
+		bar.Paint += (_, e) =>
+		{
+			using var pen = new Pen(UiTheme.Border);
+			e.Graphics.DrawLine(pen, 0, bar.Height - 1, bar.Width, bar.Height - 1);
 		};
 
 		bar.Controls.Add(Lbl("Theme", 12, 10));
 		_cbTheme = Combo(70, 6, 170);
-		_cbTheme.DataSource = Enum.GetValues<ToastTheme>();
-		_cbTheme.SelectedItem = ToastTheme.Dark;
+		FillEnum(_cbTheme, ToastTheme.Dark);
 		_cbTheme.SelectedIndexChanged += (_, _) => RefreshThemePreview();
 		bar.Controls.Add(_cbTheme);
 
 		bar.Controls.Add(Lbl("Close style", 256, 10));
 		_cbClose = Combo(332, 6, 180);
-		_cbClose.DataSource = Enum.GetValues<CloseStyle>();
-		_cbClose.SelectedItem = CloseStyle.ButtonAndClickEntire;
+		FillEnum(_cbClose, CloseStyle.ButtonAndClickEntire);
 		bar.Controls.Add(_cbClose);
 
 		bar.Controls.Add(Lbl("Position", 528, 10));
 		_cbPosition = Combo(586, 6, 130);
-		_cbPosition.DataSource = Enum.GetValues<ToastPosition>();
-		_cbPosition.SelectedItem = ToastPosition.BottomRight;
+		FillEnum(_cbPosition, ToastPosition.BottomRight);
 		bar.Controls.Add(_cbPosition);
 
-		_chkMute = new CheckBox
-		{
-			AutoSize = true,
-			Location = new Point(736, 9),
-			Text = "Mute this toast",
-			Checked = true,
-			Font = UiFont
-		};
+		_chkMute = Chk("Mute this toast", 736, 9, on: true);
 		bar.Controls.Add(_chkMute);
 
 		_lblStatus = new Label
@@ -243,18 +238,18 @@ public partial class Form1 : Form
 			AutoSize = false,
 			Location = new Point(12, 38),
 			Size = new Size(1050, 22),
-			ForeColor = Color.DimGray,
+			ForeColor = UiTheme.Muted,
 			Font = HintFont,
+			BackColor = UiTheme.Card,
 			Text = "Shared defaults apply to most Show buttons. Recreate the manager on the Stack tab to change capacity / sound."
 		};
 		bar.Controls.Add(_lblStatus);
 		return bar;
 	}
 
-	private TabPage BuildBasicsTab()
+	private Panel BuildBasicsTab()
 	{
-		var page = ScrollPage("Basics");
-		var host = (Panel)page.Controls[0];
+		var host = ScrollHost();
 
 		var gBuild = Box("Toast.Build + Show / ShowAsync", 8, 8, 500, 210);
 		_txtCaption = Txt(12, 42, 476, "Hello, I am Toast!");
@@ -263,8 +258,8 @@ public partial class Form1 : Form
 		gBuild.Controls.Add(_txtCaption);
 		gBuild.Controls.Add(Lbl("Description  (Build(owner, caption, description))", 12, 70));
 		gBuild.Controls.Add(_txtDescription);
-		gBuild.Controls.Add(Btn("Show()", 12, 126, 150, 28, BtnShow_Click));
-		gBuild.Controls.Add(Btn("ShowAsync()", 170, 126, 150, 28, BtnShowAsync_Click));
+		gBuild.Controls.Add(Btn("Show()", 12, 126, 150, 28, BtnShow_Click, BtnKind.Primary));
+		gBuild.Controls.Add(Btn("ShowAsync()", 170, 126, 150, 28, BtnShowAsync_Click, BtnKind.Primary));
 		gBuild.Controls.Add(Btn("Build(caption, muting)", 328, 126, 160, 28, BtnShowMutingOverload_Click));
 		gBuild.Controls.Add(Hint("Also wires OnClick, OnHover, OnClosed, SetTag/SetData, SetMetadata/SetExtData.", 12, 162, 476));
 		host.Controls.Add(gBuild);
@@ -275,7 +270,7 @@ public partial class Form1 : Form
 		_rInput = Radio("Input  (InputDurationMs)", 250, 24, false);
 		_rFade = Radio("Fade", 12, 54, true);
 		_rSlide = Radio("Slide", 90, 54, false);
-		_chkUseMs = new CheckBox { AutoSize = true, Location = new Point(200, 54), Text = "SetDurationMs", Font = UiFont };
+		_chkUseMs = Chk("SetDurationMs", 200, 54);
 		_numDurationMs = Num(330, 50, 90, 0, ToastLimits.MaxDurationMs, 4000);
 		gDur.Controls.Add(_rShort);
 		gDur.Controls.Add(_rLong);
@@ -286,43 +281,53 @@ public partial class Form1 : Form
 		gDur.Controls.Add(_numDurationMs);
 		gDur.Controls.Add(Btn("Build(caption, Duration)", 12, 92, 240, 28, BtnShowDuration_Click));
 		gDur.Controls.Add(Btn("Build(caption, Animation)", 264, 92, 236, 28, BtnShowAnimation_Click));
-		gDur.Controls.Add(Btn("Build(caption, Duration, Animation)", 12, 128, 488, 28, BtnShowDurationAndAnimation_Click));
+		gDur.Controls.Add(Btn("Build(caption, Duration, Animation)", 12, 128, 488, 28, BtnShowDurationAndAnimation_Click, BtnKind.Primary));
 		gDur.Controls.Add(Hint("SetDurationMs(0) stays open. Negative values throw before show.", 12, 164, 488));
 		host.Controls.Add(gDur);
 
-		var gImg = Box("Thumbnail + ImageValidation", 8, 226, 1028, 168);
+		// Keep this block compact: the Basics tab is the tallest, and a 168px box
+		// clipped the second hint against the GroupBox border (looked faded / cut off).
+		var gImg = Box("Thumbnail + ImageValidation", 8, 226, 1028, 154);
 		_picThumb = new PictureBox
 		{
-			BorderStyle = BorderStyle.FixedSingle,
-			Location = new Point(12, 28),
+			BorderStyle = BorderStyle.None,
+			BackColor = UiTheme.Canvas,
+			Location = new Point(12, 24),
 			Size = new Size(80, 80),
-			SizeMode = PictureBoxSizeMode.StretchImage
+			SizeMode = PictureBoxSizeMode.Zoom
 		};
-		_txtThumbCaption = Txt(104, 28, 420, "Hello! I'm Toast :)");
+		_picThumb.Paint += (_, e) =>
+		{
+			using var pen = new Pen(UiTheme.Border);
+			e.Graphics.DrawRectangle(pen, 0, 0, _picThumb.Width - 1, _picThumb.Height - 1);
+		};
+		_txtThumbCaption = Txt(104, 24, 908, "Hello! I'm Toast :)");
 		gImg.Controls.Add(_picThumb);
 		gImg.Controls.Add(_txtThumbCaption);
-		gImg.Controls.Add(Btn("Choose image…", 104, 60, 140, 28, BtnChooseImage_Click));
-		gImg.Controls.Add(Btn("Build(caption, Image)", 254, 60, 180, 28, BtnShowThumbnail_Click));
-		gImg.Controls.Add(Btn("Build(caption, Image, Duration, Animation, mute)", 444, 60, 360, 28, BtnShowThumbnailFull_Click));
+		gImg.Controls.Add(Btn("Choose image…", 104, 54, 140, 28, BtnChooseImage_Click));
+		gImg.Controls.Add(Btn("Build(caption, Image)", 254, 54, 180, 28, BtnShowThumbnail_Click, BtnKind.Primary));
+		gImg.Controls.Add(Btn("Build(caption, Image, Duration, Animation, mute)", 444, 54, 360, 28, BtnShowThumbnailFull_Click));
 		gImg.Controls.Add(Hint(
-			"ValidateImagePath (PNG/JPEG magic only) · ValidateImageSize (min 64×64, max ToastLimits.MaxImageDimension) · SetThumbnail(ownsImage: true).",
-			104, 100, 900));
-		gImg.Controls.Add(Hint("Required minimum 64×64. Recommended 80×80 square. JPEG and PNG.", 104, 124, 900));
+			"ValidateImagePath (PNG/JPEG magic) · ValidateImageSize · SetThumbnail(ownsImage: true).",
+			104, 90, 908, 18));
+		gImg.Controls.Add(Hint(
+			"Required minimum 64×64. Recommended 80×80 square. Max ToastLimits.MaxImageDimension. JPEG and PNG.",
+			104, 110, 908, 18));
 		host.Controls.Add(gImg);
-		return page;
+		FinishScrollPage(host);
+		return host;
 	}
 
-	private TabPage BuildAppearanceTab()
+	private Panel BuildAppearanceTab()
 	{
-		var page = ScrollPage("Appearance");
-		var host = (Panel)page.Controls[0];
+		var host = ScrollHost();
 
 		var gTheme = Box("ThemeCatalog + ToastTheme.Custom", 8, 8, 1028, 220);
 		_pnlPreview = new Panel
 		{
 			Location = new Point(12, 28),
 			Size = new Size(280, 80),
-			BorderStyle = BorderStyle.FixedSingle,
+			BorderStyle = BorderStyle.None,
 			BackColor = Color.FromArgb(33, 33, 33)
 		};
 		_lblPreview = new Label
@@ -335,7 +340,7 @@ public partial class Form1 : Form
 		};
 		_pnlPreview.Controls.Add(_lblPreview);
 		gTheme.Controls.Add(_pnlPreview);
-		gTheme.Controls.Add(Hint("Uses ThemeCatalog.Resolve(theme, custom). Custom requires a ColorScheme.", 12, 116, 280));
+		gTheme.Controls.Add(Hint("Uses ThemeCatalog.Resolve(theme, custom). Custom requires a ColorScheme.", 12, 116, 280, 36));
 
 		_btnPickBg = Btn("Background…", 310, 28, 140, 28, (_, _) => PickColor(ref _customBg, _btnPickBg));
 		_btnPickFg = Btn("Foreground…", 310, 64, 140, 28, (_, _) => PickColor(ref _customFg, _btnPickFg));
@@ -347,10 +352,10 @@ public partial class Form1 : Form
 		gTheme.Controls.Add(Btn("SetCustomColors(ColorScheme)", 460, 64, 250, 28, BtnShowCustomScheme_Click));
 		gTheme.Controls.Add(Btn("ColorScheme(byte r,g,b…)", 720, 28, 220, 28, BtnShowRgbCtor_Click));
 		gTheme.Controls.Add(Btn("Resolve every ToastTheme", 720, 64, 220, 28, BtnResolveAllThemes_Click));
-		gTheme.Controls.Add(Btn("Build(caption, ToastTheme)", 460, 100, 250, 28, BtnBuildWithTheme_Click));
+		gTheme.Controls.Add(Btn("Build(caption, ToastTheme)", 460, 100, 250, 28, BtnBuildWithTheme_Click, BtnKind.Primary));
 		gTheme.Controls.Add(Hint(
 			"Toast.SetCustomColors(Color, Color) and ToastBuilder.SetCustomColors(ColorScheme) both set Theme = Custom. Pick Custom in the top Theme combo to apply these colors on other Show buttons.",
-			310, 136, 690));
+			310, 136, 690, 36));
 		host.Controls.Add(gTheme);
 
 		var gClose = Box("CloseStyle", 8, 236, 500, 130);
@@ -363,15 +368,15 @@ public partial class Form1 : Form
 		var gSound = Box("Sound  (SetMuting + manager PlaySound)", 520, 236, 516, 130);
 		gSound.Controls.Add(Btn("Muted toast", 12, 28, 150, 28, (_, _) => ShowSound(muted: true)));
 		gSound.Controls.Add(Btn("Unmuted toast", 174, 28, 150, 28, (_, _) => ShowSound(muted: false)));
-		gSound.Controls.Add(Hint("Sound plays only when manager PlaySound is true and the toast is not muted. Apply PlaySound on the Stack tab.", 12, 68, 488));
+		gSound.Controls.Add(Hint("Sound plays only when manager PlaySound is true and the toast is not muted. Apply PlaySound on the Stack tab.", 12, 68, 488, 36));
 		host.Controls.Add(gSound);
-		return page;
+		FinishScrollPage(host);
+		return host;
 	}
 
-	private TabPage BuildStackTab()
+	private Panel BuildStackTab()
 	{
-		var page = ScrollPage("Stack & manager");
-		var host = (Panel)page.Controls[0];
+		var host = ScrollHost();
 
 		var gPos = Box("ToastPosition — four independent stacks", 8, 8, 500, 150);
 		gPos.Controls.Add(Btn("TopLeft", 12, 28, 110, 32, (_, _) => ShowPositioned(ToastPosition.TopLeft)));
@@ -381,15 +386,14 @@ public partial class Form1 : Form
 		gPos.Controls.Add(Lbl("Stack count", 12, 76));
 		_numStack = Num(100, 72, 60, 1, 8, 3);
 		gPos.Controls.Add(_numStack);
-		gPos.Controls.Add(Btn("Show N stacked (BottomRight)", 176, 70, 306, 28, BtnShowStack_Click));
+		gPos.Controls.Add(Btn("Show N stacked (BottomRight)", 176, 70, 306, 28, BtnShowStack_Click, BtnKind.Primary));
 		gPos.Controls.Add(Hint("Each corner is its own stack. Per-corner cap is MaxToastsPerPosition.", 12, 110, 470));
 		host.Controls.Add(gPos);
 
 		var gOpt = Box("ToastManagerOptions  (recreate manager to apply)", 520, 8, 516, 360);
 		gOpt.Controls.Add(Lbl("Overflow", 12, 28));
 		_cbOverflow = Combo(90, 24, 160);
-		_cbOverflow.DataSource = Enum.GetValues<ToastOverflowPolicy>();
-		_cbOverflow.SelectedItem = ToastOverflowPolicy.DropNewest;
+		FillEnum(_cbOverflow, ToastOverflowPolicy.DropNewest);
 		gOpt.Controls.Add(_cbOverflow);
 		gOpt.Controls.Add(Lbl("MaxToasts", 266, 28));
 		_numMaxToasts = Num(350, 24, 60, 1, 20, 6);
@@ -397,9 +401,9 @@ public partial class Form1 : Form
 		gOpt.Controls.Add(Lbl("Per corner", 12, 62));
 		_numMaxPerPos = Num(90, 58, 60, 1, 10, 3);
 		gOpt.Controls.Add(_numMaxPerPos);
-		_chkPauseHover = new CheckBox { AutoSize = true, Location = new Point(170, 62), Text = "PauseOnHover", Checked = true, Font = UiFont };
-		_chkPlaySound = new CheckBox { AutoSize = true, Location = new Point(300, 62), Text = "PlaySound", Checked = true, Font = UiFont };
-		_chkHideImage = new CheckBox { AutoSize = true, Location = new Point(12, 94), Text = "HideImagePanelWhenEmpty", Checked = true, Font = UiFont };
+		_chkPauseHover = Chk("PauseOnHover", 170, 62, on: true);
+		_chkPlaySound = Chk("PlaySound", 300, 62, on: true);
+		_chkHideImage = Chk("HideImagePanelWhenEmpty", 12, 94, on: true);
 		gOpt.Controls.Add(_chkPauseHover);
 		gOpt.Controls.Add(_chkPlaySound);
 		gOpt.Controls.Add(_chkHideImage);
@@ -432,23 +436,23 @@ public partial class Form1 : Form
 		gOpt.Controls.Add(Lbl("InputExtraHeight", 210, 230));
 		_numInputExtra = Num(330, 226, 60, 0, 120, 36);
 		gOpt.Controls.Add(_numInputExtra);
-		gOpt.Controls.Add(Btn("Apply — recreate ToastManager", 12, 264, 250, 28, BtnApplyManager_Click));
+		gOpt.Controls.Add(Btn("Apply — recreate ToastManager", 12, 264, 250, 28, BtnApplyManager_Click, BtnKind.Primary));
 		gOpt.Controls.Add(Btn("DismissAll()", 272, 264, 220, 28, BtnDismissAll_Click));
-		_lblActive = new Label { AutoSize = false, Location = new Point(12, 300), Size = new Size(480, 48), Font = HintFont, ForeColor = Color.DimGray };
+		_lblActive = new Label { AutoSize = false, Location = new Point(12, 300), Size = new Size(480, 48), Font = HintFont, ForeColor = UiTheme.Muted, BackColor = UiTheme.Card };
 		gOpt.Controls.Add(_lblActive);
 		host.Controls.Add(gOpt);
 
 		var gFill = Box("Overflow drill", 8, 166, 500, 122);
 		gFill.Controls.Add(Btn("Fill to cap (DropNewest → ToastRejected)", 12, 28, 470, 28, BtnFillNewest_Click));
-		gFill.Controls.Add(Hint("DropOldest dismisses the victim then shows the new toast. Throw raises InvalidOperationException.", 12, 66, 470));
+		gFill.Controls.Add(Hint("DropOldest dismisses the victim then shows the new toast. Throw raises InvalidOperationException.", 12, 66, 470, 36));
 		host.Controls.Add(gFill);
-		return page;
+		FinishScrollPage(host);
+		return host;
 	}
 
-	private TabPage BuildInputTab()
+	private Panel BuildInputTab()
 	{
-		var page = ScrollPage("Inputable");
-		var host = (Panel)page.Controls[0];
+		var host = ScrollHost();
 
 		var g = Box("EnableInput / SetInputable / Duration.Input", 8, 8, 1028, 300);
 		g.Controls.Add(Lbl("Caption", 12, 24));
@@ -465,16 +469,16 @@ public partial class Form1 : Form
 		_txtInSubmit = Txt(12, 94, 160, "Send");
 		_txtInSubmit.MaxLength = ToastLimits.MaxSubmitButtonTextLength;
 		g.Controls.Add(_txtInSubmit);
-		_chkAllowEmpty = new CheckBox { AutoSize = true, Location = new Point(190, 98), Text = "AllowEmptySubmit", Font = UiFont };
-		_chkStayOpen = new CheckBox { AutoSize = true, Location = new Point(360, 98), Text = "DurationMs = 0  (stay open)", Checked = true, Font = UiFont };
-		_chkThenDisableInput = new CheckBox { AutoSize = true, Location = new Point(600, 98), Text = "then SetInputable(false)", Font = UiFont };
+		_chkAllowEmpty = Chk("AllowEmptySubmit", 190, 98);
+		_chkStayOpen = Chk("DurationMs = 0  (stay open)", 360, 98, on: true);
+		_chkThenDisableInput = Chk("then SetInputable(false)", 600, 98);
 		g.Controls.Add(_chkAllowEmpty);
 		g.Controls.Add(_chkStayOpen);
 		g.Controls.Add(_chkThenDisableInput);
 		g.Controls.Add(Lbl("Timeout ms  (used when stay-open is off)", 12, 134));
 		_numInputTimeout = Num(12, 154, 100, 0, ToastLimits.MaxDurationMs, 15_000);
 		g.Controls.Add(_numInputTimeout);
-		g.Controls.Add(Btn("EnableInput(…).Show()", 130, 152, 240, 28, BtnShowInputable_Click));
+		g.Controls.Add(Btn("EnableInput(…).Show()", 130, 152, 240, 28, BtnShowInputable_Click, BtnKind.Primary));
 		g.Controls.Add(Btn("Duration.Input only (no text box)", 382, 152, 280, 28, BtnShowDurationInput_Click));
 		g.Controls.Add(Btn("SetInputable(true) without EnableInput", 674, 152, 330, 28, BtnSetInputableOnly_Click));
 		g.Controls.Add(Hint(
@@ -482,24 +486,24 @@ public partial class Form1 : Form
 			12, 198, 990));
 		g.Controls.Add(Hint(
 			"SetInputable toggles the text box without resetting placeholder / default / submit label. Duration.Input uses manager InputDurationMs unless DurationMs is set.",
-			12, 222, 990));
+			12, 222, 990, 36));
 		host.Controls.Add(g);
-		return page;
+		FinishScrollPage(host);
+		return host;
 	}
 
-	private TabPage BuildLifecycleTab()
+	private Panel BuildLifecycleTab()
 	{
-		var page = ScrollPage("Lifecycle");
-		var host = (Panel)page.Controls[0];
+		var host = ScrollHost();
 
 		var gHandle = Box("Toast + ToastHandle  (last shown toast)", 8, 8, 500, 220);
-		gHandle.Controls.Add(Btn("Show sticky (8s) and keep handle", 12, 28, 470, 28, BtnShowSticky_Click));
+		gHandle.Controls.Add(Btn("Show sticky (8s) and keep handle", 12, 28, 470, 28, BtnShowSticky_Click, BtnKind.Primary));
 		gHandle.Controls.Add(Btn("Toast.Dismiss()", 12, 64, 150, 28, (_, _) => DismissLastToast("Toast.Dismiss()")));
 		gHandle.Controls.Add(Btn("Toast.Cancel()", 170, 64, 150, 28, (_, _) => CancelLastToast()));
 		gHandle.Controls.Add(Btn("Handle.Dismiss()", 328, 64, 154, 28, (_, _) => DismissLastHandle()));
-		gHandle.Controls.Add(Btn("Handle.Cancel()  [obsolete]", 12, 100, 220, 28, (_, _) => CancelLastHandle()));
-		gHandle.Controls.Add(Btn("Handle.Dispose()", 240, 100, 118, 28, (_, _) => DisposeLastHandle()));
-		gHandle.Controls.Add(Btn("await WhenDismissed", 366, 100, 116, 28, BtnAwaitDismissed_Click));
+		gHandle.Controls.Add(Btn("Handle.Cancel()  [obsolete]", 12, 100, 200, 28, (_, _) => CancelLastHandle()));
+		gHandle.Controls.Add(Btn("Handle.Dispose()", 220, 100, 118, 28, (_, _) => DisposeLastHandle()));
+		gHandle.Controls.Add(Btn("await WhenDismissed", 346, 100, 136, 28, BtnAwaitDismissed_Click));
 		gHandle.Controls.Add(Btn("Dump handle / ActiveToasts / Count", 12, 136, 470, 28, BtnDumpState_Click));
 		gHandle.Controls.Add(Hint("ShowAsync completes when shown or rejected — not when dismissed. Use WhenDismissed for that.", 12, 172, 470));
 		host.Controls.Add(gHandle);
@@ -511,7 +515,7 @@ public partial class Form1 : Form
 		host.Controls.Add(gAsync);
 
 		var gMgr = Box("ToastManager.Create / Show(ToastOptions)", 520, 156, 516, 180);
-		gMgr.Controls.Add(Btn("manager.Create().Show()", 12, 28, 240, 28, BtnManagerCreate_Click));
+		gMgr.Controls.Add(Btn("manager.Create().Show()", 12, 28, 240, 28, BtnManagerCreate_Click, BtnKind.Primary));
 		gMgr.Controls.Add(Btn("Create().Build() → Show(options)", 260, 28, 236, 28, BtnManagerShowOptions_Click));
 		gMgr.Controls.Add(Btn("manager.ShowAsync(options)", 12, 64, 240, 28, BtnManagerShowAsync_Click));
 		gMgr.Controls.Add(Btn("Open second owner window", 260, 64, 236, 28, BtnOpenSecondOwner_Click));
@@ -522,13 +526,13 @@ public partial class Form1 : Form
 		gHover.Controls.Add(Btn("Show toast that logs hover + click", 12, 28, 470, 28, BtnHoverToast_Click));
 		gHover.Controls.Add(Hint("Pointer enter raises OnHover / Hovered. Body click raises OnClick / Clicked.", 12, 64, 470));
 		host.Controls.Add(gHover);
-		return page;
+		FinishScrollPage(host);
+		return host;
 	}
 
-	private TabPage BuildUtilitiesTab()
+	private Panel BuildUtilitiesTab()
 	{
-		var page = ScrollPage("Utilities");
-		var host = (Panel)page.Controls[0];
+		var host = ScrollHost();
 
 		var gLim = Box("ToastLimits + ToastOptions.Validate + FreezeMetadata", 8, 8, 500, 180);
 		gLim.Controls.Add(Btn("Dump ToastLimits", 12, 28, 230, 28, BtnDumpLimits_Click));
@@ -555,16 +559,19 @@ public partial class Form1 : Form
 			Location = new Point(12, 24),
 			Size = new Size(480, 40),
 			Font = HintFont,
+			ForeColor = UiTheme.Muted,
+			BackColor = UiTheme.Card,
 			Text = "No timer. Start a 5s countdown to see Pause / Resume (remaining is not reset)."
 		};
 		gTimer.Controls.Add(_lblTimer);
-		gTimer.Controls.Add(Btn("Start 5s", 12, 72, 110, 28, BtnTimerStart_Click));
+		gTimer.Controls.Add(Btn("Start 5s", 12, 72, 110, 28, BtnTimerStart_Click, BtnKind.Primary));
 		gTimer.Controls.Add(Btn("Pause", 132, 72, 110, 28, BtnTimerPause_Click));
 		gTimer.Controls.Add(Btn("Resume", 252, 72, 110, 28, BtnTimerResume_Click));
 		gTimer.Controls.Add(Btn("OnTimerElapsed", 372, 72, 120, 28, BtnTimerElapsed_Click));
-		gTimer.Controls.Add(Hint("This is the same countdown the toast UI uses. Hover pause subtracts elapsed; resume keeps the remainder.", 12, 112, 480));
+		gTimer.Controls.Add(Hint("This is the same countdown the toast UI uses. Hover pause subtracts elapsed; resume keeps the remainder.", 12, 112, 480, 36));
 		host.Controls.Add(gTimer);
-		return page;
+		FinishScrollPage(host);
+		return host;
 	}
 
 	// --- Shared apply / manager ---
@@ -1297,23 +1304,20 @@ public partial class Form1 : Form
 			FormBorderStyle = FormBorderStyle.FixedSingle,
 			MaximizeBox = false,
 			StartPosition = FormStartPosition.CenterScreen,
-			Font = UiFont
+			Font = UiFont,
+			BackColor = UiTheme.Canvas,
+			ForeColor = UiTheme.Text
 		};
 		var hint = new Label
 		{
 			Location = new Point(16, 16),
 			Size = new Size(348, 48),
-			Text = "Toast.Build(this) registers a separate ToastManager for this form — an independent stack."
-		};
-		var btn = new Button
-		{
-			Location = new Point(16, 76),
-			Size = new Size(348, 32),
-			Text = "Toast.Build(this, \"Second owner\").Show()",
-			UseVisualStyleBackColor = true
+			Text = "Toast.Build(this) registers a separate ToastManager for this form — an independent stack.",
+			ForeColor = UiTheme.Muted,
+			BackColor = UiTheme.Canvas
 		};
 		var owner = _secondOwner;
-		btn.Click += (_, _) =>
+		var btn = Btn("Toast.Build(this, \"Second owner\").Show()", 16, 76, 348, 32, (_, _) =>
 		{
 			Toast.Build(owner, "Second owner", "Independent per-owner stack")
 				.SetTheme(ToastTheme.PrimaryLight)
@@ -1321,7 +1325,7 @@ public partial class Form1 : Form
 				.SetMuting(_chkMute.Checked)
 				.Show();
 			Log("Toast shown on second owner (its own manager / stack).");
-		};
+		}, BtnKind.Primary);
 		_secondOwner.Controls.Add(hint);
 		_secondOwner.Controls.Add(btn);
 		_secondOwner.FormClosed += (_, _) => _secondOwner = null;
@@ -1629,8 +1633,12 @@ public partial class Form1 : Form
 
 	private static void PaintColorButton(Button button, Color color)
 	{
+		button.Tag = "swatch";
 		button.BackColor = color;
 		button.ForeColor = color.GetBrightness() < 0.5f ? Color.White : Color.Black;
+		button.FlatAppearance.BorderColor = UiTheme.Border;
+		button.FlatAppearance.MouseOverBackColor = color;
+		button.FlatAppearance.MouseDownBackColor = color;
 	}
 
 	private void RefreshThemePreview()
@@ -1712,50 +1720,142 @@ public partial class Form1 : Form
 
 	// --- tiny control factories ---
 
-	private static TabPage ScrollPage(string title)
-	{
-		var page = new TabPage(title);
-		var panel = new Panel { Dock = DockStyle.Fill, AutoScroll = true };
-		page.Controls.Add(panel);
-		return page;
-	}
+	private static Panel ScrollHost() =>
+		new()
+		{
+			Dock = DockStyle.Fill,
+			AutoScroll = true,
+			BackColor = UiTheme.Canvas
+		};
 
-	private static GroupBox Box(string title, int x, int y, int w, int h) =>
-		new() { Text = title, Location = new Point(x, y), Size = new Size(w, h), Font = UiFont };
+	private static FlatCard Box(string title, int x, int y, int w, int h) =>
+		new(title) { Location = new Point(x, y), Size = new Size(w, h) };
 
 	private static Label Lbl(string text, int x, int y) =>
-		new() { AutoSize = true, Text = text, Location = new Point(x, y), Font = HintFont };
+		new()
+		{
+			AutoSize = true,
+			Text = text,
+			Location = new Point(x, y),
+			Font = HintFont,
+			ForeColor = UiTheme.Muted,
+			BackColor = Color.Transparent
+		};
 
-	private static Label Hint(string text, int x, int y, int w) =>
+	private static Label Hint(string text, int x, int y, int w, int h = 32) =>
 		new()
 		{
 			AutoSize = false,
 			Text = text,
 			Location = new Point(x, y),
-			Size = new Size(w, 32),
-			ForeColor = Color.DimGray,
-			Font = HintFont
+			Size = new Size(w, h),
+			ForeColor = UiTheme.Muted,
+			BackColor = Color.Transparent,
+			Font = HintFont,
+			AutoEllipsis = true
 		};
 
-	private static TextBox Txt(int x, int y, int w, string text) =>
-		new() { Location = new Point(x, y), Size = new Size(w, 23), Text = text, MaxLength = 512, Font = UiFont };
-
-	private static Button Btn(string text, int x, int y, int w, int h, EventHandler onClick)
+	/// <summary>
+	/// WinForms AutoScroll only sees overflowing children if MinSize is set —
+	/// otherwise the last few pixels of a card get clipped with no scrollbar.
+	/// </summary>
+	private static void FinishScrollPage(Panel host)
 	{
+		var bottom = 0;
+		var right = 0;
+		foreach (Control c in host.Controls)
+		{
+			bottom = Math.Max(bottom, c.Bottom);
+			right = Math.Max(right, c.Right);
+		}
+
+		host.AutoScroll = true;
+		host.AutoScrollMinSize = new Size(right + 8, bottom + 12);
+	}
+
+	private static TextBox Txt(int x, int y, int w, string text) =>
+		new()
+		{
+			Location = new Point(x, y),
+			Size = new Size(w, 23),
+			Text = text,
+			MaxLength = 512,
+			Font = UiFont,
+			BorderStyle = BorderStyle.FixedSingle,
+			BackColor = UiTheme.Input,
+			ForeColor = UiTheme.Text
+		};
+
+	private enum BtnKind { Secondary, Primary, Ghost }
+
+	private static Button Btn(string text, int x, int y, int w, int h, EventHandler onClick, BtnKind kind = BtnKind.Secondary)
+	{
+		var primary = kind == BtnKind.Primary;
+		var ghost = kind == BtnKind.Ghost;
 		var b = new Button
 		{
 			Text = text,
 			Location = new Point(x, y),
 			Size = new Size(w, h),
-			UseVisualStyleBackColor = true,
-			Font = UiFont
+			UseVisualStyleBackColor = false,
+			Font = primary ? UiTheme.Title : UiFont,
+			FlatStyle = FlatStyle.Flat,
+			BackColor = primary ? UiTheme.Accent : ghost ? UiTheme.Card : UiTheme.Button,
+			ForeColor = primary ? Color.White : UiTheme.Text,
+			Cursor = Cursors.Hand,
+			UseMnemonic = false
+		};
+		b.FlatAppearance.BorderSize = 1;
+		b.FlatAppearance.BorderColor = primary ? UiTheme.Accent : ghost ? UiTheme.ButtonBorder : UiTheme.ButtonBorder;
+		b.FlatAppearance.MouseOverBackColor = primary ? UiTheme.AccentHot : ghost ? UiTheme.AccentSoft : UiTheme.ButtonHot;
+		b.FlatAppearance.MouseDownBackColor = primary ? UiTheme.AccentDown : UiTheme.ButtonDown;
+		b.MouseEnter += (_, _) =>
+		{
+			if (b.Tag as string == "swatch")
+				return;
+			b.FlatAppearance.BorderColor = primary ? UiTheme.AccentHot : UiTheme.Accent;
+			if (primary)
+				b.BackColor = UiTheme.AccentHot;
+		};
+		b.MouseLeave += (_, _) =>
+		{
+			if (b.Tag as string == "swatch")
+				return;
+			b.FlatAppearance.BorderColor = primary ? UiTheme.Accent : UiTheme.ButtonBorder;
+			if (primary)
+				b.BackColor = UiTheme.Accent;
 		};
 		b.Click += onClick;
 		return b;
 	}
 
+	private static CheckBox Chk(string text, int x, int y, bool on = false) =>
+		new()
+		{
+			AutoSize = true,
+			Text = text,
+			Location = new Point(x, y),
+			Checked = on,
+			Font = UiFont,
+			FlatStyle = FlatStyle.Flat,
+			ForeColor = UiTheme.Text,
+			BackColor = Color.Transparent,
+			Cursor = Cursors.Hand
+		};
+
 	private static RadioButton Radio(string text, int x, int y, bool on) =>
-		new() { AutoSize = true, Text = text, Location = new Point(x, y), Checked = on, Font = UiFont };
+		new()
+		{
+			AutoSize = true,
+			Text = text,
+			Location = new Point(x, y),
+			Checked = on,
+			Font = UiFont,
+			FlatStyle = FlatStyle.Flat,
+			ForeColor = UiTheme.Text,
+			BackColor = Color.Transparent,
+			Cursor = Cursors.Hand
+		};
 
 	private static ComboBox Combo(int x, int y, int w) =>
 		new()
@@ -1763,8 +1863,21 @@ public partial class Form1 : Form
 			DropDownStyle = ComboBoxStyle.DropDownList,
 			Location = new Point(x, y),
 			Size = new Size(w, 23),
-			Font = UiFont
+			Font = UiFont,
+			FlatStyle = FlatStyle.Flat,
+			BackColor = UiTheme.Input,
+			ForeColor = UiTheme.Text
 		};
+
+	private static void FillEnum<T>(ComboBox combo, T selected) where T : struct, Enum
+	{
+		combo.BeginUpdate();
+		combo.Items.Clear();
+		foreach (var value in Enum.GetValues<T>())
+			combo.Items.Add(value);
+		combo.EndUpdate();
+		combo.SelectedItem = selected;
+	}
 
 	private static NumericUpDown Num(int x, int y, int w, decimal min, decimal max, decimal value) =>
 		new()
@@ -1775,6 +1888,9 @@ public partial class Form1 : Form
 			Maximum = max,
 			Value = Math.Min(max, Math.Max(min, value)),
 			ThousandsSeparator = true,
-			Font = UiFont
+			Font = UiFont,
+			BorderStyle = BorderStyle.FixedSingle,
+			BackColor = UiTheme.Input,
+			ForeColor = UiTheme.Text
 		};
 }
