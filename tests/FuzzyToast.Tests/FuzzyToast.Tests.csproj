@@ -35,7 +35,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FuzzyToast\FuzzyToast.csproj" />
+    <ProjectReference Include="..\..\src\FuzzyToast\FuzzyToast.csproj">
+      <SetTargetFramework>TargetFramework=net8.0-windows</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>
