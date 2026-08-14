@@ -306,4 +306,85 @@ public class CoverageGapTests
 		var second = mgr.Show(new ToastOptions { Caption = "2" });
 		Assert.True(second.IsVisible);
 	}
+
+	[Fact]
+	public void DpiAndScreenFallbacks_ExerciseGuardBranches()
+	{
+		Assert.Equal(1f, DpiScaling.GetScale((Control?)null));
+		Assert.Equal(1f, DpiScaling.GetScale(0));
+		Assert.Equal(1f, DpiScaling.GetScale((Control?)null));
+
+		using var form = new Form();
+		form.Dispose();
+		Assert.Equal(1f, DpiScaling.GetScale(form));
+		Assert.Equal(96, NativeMethods.GetDeviceDpi(null));
+		Assert.Equal(96, NativeMethods.GetDeviceDpi(form));
+
+		var textBox = new TextBox();
+		NativeMethods.SetCueBanner(textBox, null);
+		NativeMethods.SetCueBanner(textBox, "placeholder");
+
+		var provider = new WinFormsScreenProvider(null);
+		var primary = provider.GetOwnerOrPrimaryWorkingArea();
+		Assert.True(primary.Width > 0 && primary.Height > 0);
+
+		using var owner = new Form();
+		var ownerProvider = new WinFormsScreenProvider(owner);
+		Assert.True(ownerProvider.GetOwnerOrPrimaryWorkingArea().Width > 0);
+		Assert.True(ownerProvider.GetRightmostWorkingArea().Width > 0);
+		Assert.True(ownerProvider.GetLeftmostWorkingArea().Width > 0);
+	}
+
+	[Fact]
+	public void Toast_And_ToastBuilder_ProgressBar_Setters_AreExercised()
+	{
+		using var owner = new Form();
+		var toast = Toast.Build(owner, "cap");
+		Assert.False(toast.ShowProgressBar);
+		toast.SetShowProgressBar(true);
+		Assert.True(toast.ShowProgressBar);
+		toast.SetShowProgressBar(false);
+		Assert.False(toast.ShowProgressBar);
+
+		var area = new ScreenWorkingArea(0, 0, 800, 600);
+		using var manager = new ToastManager(
+			null,
+			new ToastManagerOptions { PlaySound = false },
+			new FixedScreenProvider(area),
+			new ImmediateUiMarshaler(),
+			(opts, handle) => new FakeToastView(handle));
+
+		var builder = manager.Create().SetDurationMs(123).SetShowProgressBar(true);
+		Assert.Equal(123, builder.Build().DurationMs);
+		Assert.True(builder.Build().ShowProgressBar);
+	}
+
+	[Fact]
+	public void NativeMethods_And_ScreenProvider_CoverFallbacksAcrossBranches()
+	{
+		using var form = new Form();
+		form.Show();
+		var dpi = NativeMethods.GetDeviceDpi(form);
+		Assert.True(dpi > 0);
+		Assert.Equal(96, NativeMethods.GetDeviceDpi(null));
+
+		var box = new TextBox();
+		NativeMethods.SetCueBanner(box, "placeholder");
+		Assert.Equal("placeholder", box.PlaceholderText);
+
+		var screenProvider = new WinFormsScreenProvider(form);
+		var near = screenProvider.GetWorkingAreaNear(new LayoutRect(0, 0, 50, 50));
+		Assert.True(near.Width > 0 && near.Height > 0);
+
+		using var other = new Form();
+		var ownerProvider = new WinFormsScreenProvider(other);
+		Assert.True(ownerProvider.GetOwnerOrPrimaryWorkingArea().Width > 0);
+		Assert.True(ownerProvider.GetRightmostWorkingArea().Width > 0);
+		Assert.True(ownerProvider.GetLeftmostWorkingArea().Width > 0);
+
+		var disposedForm = new Form();
+		disposedForm.Dispose();
+		var disposedProvider = new WinFormsScreenProvider(disposedForm);
+		Assert.True(disposedProvider.GetOwnerOrPrimaryWorkingArea().Width > 0);
+	}
 }

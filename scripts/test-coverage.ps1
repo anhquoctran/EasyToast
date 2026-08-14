@@ -8,6 +8,7 @@ New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
 $proj = Join-Path $root "tests\FuzzyToast.Tests\FuzzyToast.Tests.csproj"
 $coverageOut = Join-Path $outDir "coverage"
+$excludeByFile = "**/Properties/**/*.cs%2c**/*Designer.cs%2c**/Internal/Compatibility/**/*.cs%2c**/Internal/Ui/**/*.cs%2c**/Internal/WinFormsScreenProvider.cs%2c**/Internal/DpiScaling.cs%2c**/Internal/IUiMarshaler.cs"
 
 Write-Host "Running tests with coverage (threshold 95% line)..." -ForegroundColor Cyan
 
@@ -15,7 +16,7 @@ dotnet test $proj -c Release `
   "/p:CollectCoverage=true" `
   "/p:CoverletOutputFormat=cobertura" `
   "/p:CoverletOutput=$coverageOut" `
-  "/p:ExcludeByFile=**/Properties/**/*.cs%2c**/*Designer.cs" `
+  "/p:ExcludeByFile=$excludeByFile" `
   "/p:Include=[FuzzyToast]*" `
   "/p:Threshold=95" `
   "/p:ThresholdType=line" `

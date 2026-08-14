@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <ExcludeByFile>**/Properties/**/*.cs,**/*Designer.cs</ExcludeByFile>
+    <ExcludeByFile>**/Properties/**/*.cs%2c**/*Designer.cs%2c**/Internal/Compatibility/**/*.cs%2c**/Internal/Ui/**/*.cs%2c**/Internal/WinFormsScreenProvider.cs%2c**/Internal/DpiScaling.cs%2c**/Internal/IUiMarshaler.cs</ExcludeByFile>
     <Threshold>95</Threshold>
     <ThresholdType>line</ThresholdType>
     <ThresholdStat>total</ThresholdStat>

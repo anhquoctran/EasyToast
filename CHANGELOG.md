@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.4
+
+### Changed
+
+- Package version **3.0.4**
+- Release packaging update for the next NuGet publication
+
 ## 3.0.3
 
 ### Added
