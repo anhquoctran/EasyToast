@@ -39,6 +39,7 @@ internal sealed partial class ToastForm : Form, IToastView
 	private bool _showProgressBar;
 	private int _initialDurationMs;
 
+	private Panel? _progressPanel;
 	private Panel? _inputPanel;
 	private TextBox? _txtInput;
 	private Button? _btnSubmit;
@@ -166,6 +167,29 @@ internal sealed partial class ToastForm : Form, IToastView
 		}
 
 		ApplyScheme(scheme);
+
+		if (_showProgressBar && durationMs > 0)
+		{
+			if (_progressPanel is null)
+			{
+				_progressPanel = new Panel
+				{
+					Height = 4,
+					Anchor = AnchorStyles.Bottom | AnchorStyles.Left,
+					Left = 0,
+					BackColor = scheme.Foreground
+				};
+				Controls.Add(_progressPanel);
+				_progressPanel.BringToFront();
+			}
+			_progressPanel.Top = ClientSize.Height - 4;
+			_progressPanel.Width = ClientSize.Width;
+			_progressPanel.Visible = true;
+		}
+		else if (_progressPanel is not null)
+		{
+			_progressPanel.Visible = false;
+		}
 
 		// durationMs == 0 → stay open until Submit / Esc / close (typical for inputable).
 		_autoDismissEnabled = durationMs > 0;
@@ -455,8 +479,11 @@ internal sealed partial class ToastForm : Form, IToastView
 
 		_remainingMs -= CountdownTickMs;
 
-		if (_showProgressBar)
-			Invalidate();
+		if (_showProgressBar && _progressPanel is not null && _initialDurationMs > 0)
+		{
+			var ratio = Math.Max(0.0, (double)_remainingMs / _initialDurationMs);
+			_progressPanel.Width = Math.Max(0, (int)(ClientSize.Width * ratio));
+		}
 
 		if (_remainingMs > 0)
 			return;
@@ -563,22 +590,10 @@ internal sealed partial class ToastForm : Form, IToastView
 	{
 		base.OnResize(e);
 		LayoutInputPanel();
-	}
-
-	protected override void OnPaint(PaintEventArgs e)
-	{
-		base.OnPaint(e);
-
-		if (!_showProgressBar || !_autoDismissEnabled || _initialDurationMs <= 0)
-			return;
-
-		var remaining = Math.Max(0, _remainingMs);
-		var ratio = (double)remaining / _initialDurationMs;
-		var w = (int)(ClientRectangle.Width * ratio);
-		if (w <= 0) return;
-
-		using var brush = new SolidBrush(lblCaption.ForeColor);
-		e.Graphics.FillRectangle(brush, 0, ClientRectangle.Height - 4, w, 4);
+		if (_progressPanel is not null)
+		{
+			_progressPanel.Top = ClientSize.Height - 4;
+		}
 	}
 
 	private async Task FadeInAsync()
