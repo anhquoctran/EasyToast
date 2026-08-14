@@ -16,12 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FuzzyToast\FuzzyToast.csproj">
-      <SetTargetFramework>TargetFramework=net8.0-windows</SetTargetFramework>
-    </ProjectReference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
@@ -44,6 +38,7 @@
 
   <ItemGroup>
     <PackageReference Include="FCTB" Version="2.16.24" />
+    <PackageReference Include="FuzzyToast" Version="3.0.4" />
   </ItemGroup>
 
   <ItemGroup>
