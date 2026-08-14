@@ -42,4 +42,14 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FCTB" Version="2.16.24" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Fonts\CascadiaCode.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

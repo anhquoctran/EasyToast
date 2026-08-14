@@ -3,6 +3,7 @@ using System.Runtime.Versioning;
 using FuzzyToast;
 using FuzzyToast.Internal;
 using FuzzyToast.Layout;
+using FastColoredTextBoxNS;
 
 namespace EasyToastDemo;
 
@@ -36,6 +37,9 @@ public partial class Form1 : Form
 	private CheckBox _chkShowProgressBar = null!;
 	private Label _lblStatus = null!;
 	private RichTextBox _log = null!;
+	private FastColoredTextBox _codeBox = null!;
+
+	private System.Drawing.Text.PrivateFontCollection _pfc = new();
 
 	// Basics
 	private TextBox _txtCaption = null!;
@@ -116,6 +120,7 @@ public partial class Form1 : Form
 		try { _secondOwner?.Close(); } catch { /* ignore */ }
 		try { _toasts?.Dispose(); } catch { /* ignore dispose races */ }
 		DisposeThumbnail();
+		_pfc?.Dispose();
 		base.OnFormClosed(e);
 	}
 
@@ -141,6 +146,7 @@ public partial class Form1 : Form
 		RecreateManager(announce: false);
 		RefreshThemePreview();
 		Log("Demo ready — FuzzyToast v3 catalog · every public API has a button on these tabs.");
+		HookAllControls(this);
 		UpdateStatus();
 	}
 
@@ -166,7 +172,26 @@ public partial class Form1 : Form
 		var defaults = BuildDefaultsBar();
 		defaults.Dock = DockStyle.Top;
 
-		var logHost = new Panel { Dock = DockStyle.Bottom, Height = 164, Padding = new Padding(12, 0, 12, 10), BackColor = UiTheme.Canvas };
+		var logHost = new Panel { Dock = DockStyle.Bottom, Height = 184, Padding = new Padding(12, 0, 12, 10), BackColor = UiTheme.Canvas };
+		
+		var splitLogAndCode = new SplitContainer
+		{
+			Dock = DockStyle.Fill,
+			Orientation = Orientation.Vertical,
+			BackColor = UiTheme.Canvas
+		};
+		
+		// Set 50/50 split once the control is actually sized
+		bool firstResize = true;
+		splitLogAndCode.Resize += (s, e) =>
+		{
+			if (firstResize && splitLogAndCode.Width > 150)
+			{
+				splitLogAndCode.SplitterDistance = splitLogAndCode.Width / 2;
+				firstResize = false;
+			}
+		};
+
 		var logBox = new FlatCard("Live event log  ·  ToastAdded / Removed / Rejected / click / hover / submit")
 		{
 			Dock = DockStyle.Fill
@@ -182,7 +207,45 @@ public partial class Form1 : Form
 		};
 		logBox.Controls.Add(_log);
 		logBox.SetHeaderAction(Btn("Clear log", 0, 0, 124, 24, (_, _) => _log.Clear(), BtnKind.Ghost));
-		logHost.Controls.Add(logBox);
+		
+		var codeBoxContainer = new FlatCard("Live code sample (C#)")
+		{
+			Dock = DockStyle.Fill
+		};
+		codeBoxContainer.SetHeaderAction(Btn("Copy code", 0, 0, 100, 24, (_, _) => {
+			if (!string.IsNullOrEmpty(_codeBox.Text)) Clipboard.SetText(_codeBox.Text);
+		}, BtnKind.Ghost));
+		
+		_codeBox = new FastColoredTextBox
+		{
+			Dock = DockStyle.Fill,
+			Language = Language.CSharp,
+			ReadOnly = true,
+			CaretVisible = false,
+			BackColor = UiTheme.Card,
+			ForeColor = UiTheme.Text,
+			LineNumberColor = UiTheme.Muted,
+			IndentBackColor = UiTheme.Card,
+			ServiceLinesColor = UiTheme.Card,
+			BorderStyle = BorderStyle.None,
+			ShowLineNumbers = true
+		};
+
+		try
+		{
+			_pfc.AddFontFile(Path.Combine(Application.StartupPath, "Fonts", "CascadiaCode.ttf"));
+			_codeBox.Font = new Font(_pfc.Families[0], 9.5F);
+		}
+		catch
+		{
+			_codeBox.Font = new Font("Consolas", 9.5F);
+		}
+
+		codeBoxContainer.Controls.Add(_codeBox);
+
+		splitLogAndCode.Panel1.Controls.Add(logBox);
+		splitLogAndCode.Panel2.Controls.Add(codeBoxContainer);
+		logHost.Controls.Add(splitLogAndCode);
 
 		var tabHost = new Panel { Dock = DockStyle.Fill, Padding = new Padding(12, 8, 12, 8), BackColor = UiTheme.Canvas };
 		var tabs = new FlatTabStrip(tabHost);
@@ -218,23 +281,27 @@ public partial class Form1 : Form
 		bar.Controls.Add(Lbl("Theme", 12, 10));
 		_cbTheme = Combo(70, 6, 170);
 		FillEnum(_cbTheme, ToastTheme.Dark);
-		_cbTheme.SelectedIndexChanged += (_, _) => RefreshThemePreview();
+		_cbTheme.SelectedIndexChanged += (_, _) => { RefreshThemePreview(); UpdateLiveCode(); };
 		bar.Controls.Add(_cbTheme);
 
 		bar.Controls.Add(Lbl("Close style", 256, 10));
 		_cbClose = Combo(332, 6, 180);
 		FillEnum(_cbClose, CloseStyle.ButtonAndClickEntire);
+		_cbClose.SelectedIndexChanged += (_, _) => UpdateLiveCode();
 		bar.Controls.Add(_cbClose);
 
 		bar.Controls.Add(Lbl("Position", 528, 10));
 		_cbPosition = Combo(586, 6, 130);
 		FillEnum(_cbPosition, ToastPosition.BottomRight);
+		_cbPosition.SelectedIndexChanged += (_, _) => UpdateLiveCode();
 		bar.Controls.Add(_cbPosition);
 
 		_chkMute = Chk("Mute this toast", 736, 9, on: true);
+		_chkMute.CheckedChanged += (_, _) => UpdateLiveCode();
 		bar.Controls.Add(_chkMute);
 
 		_chkShowProgressBar = Chk("Progress bar", 866, 9, on: true);
+		_chkShowProgressBar.CheckedChanged += (_, _) => UpdateLiveCode();
 		bar.Controls.Add(_chkShowProgressBar);
 
 		_lblStatus = new Label
@@ -257,7 +324,9 @@ public partial class Form1 : Form
 
 		var gBuild = Box("Toast.Build + Show / ShowAsync", 8, 8, 500, 210);
 		_txtCaption = Txt(12, 42, 476, "Hello, I am Toast!");
+		_txtCaption.TextChanged += (_, _) => UpdateLiveCode();
 		_txtDescription = Txt(12, 90, 476, "Click me — Tag + Metadata are returned in OnClick");
+		_txtDescription.TextChanged += (_, _) => UpdateLiveCode();
 		gBuild.Controls.Add(Lbl("Caption  (Build overloads set this)", 12, 22));
 		gBuild.Controls.Add(_txtCaption);
 		gBuild.Controls.Add(Lbl("Description  (Build(owner, caption, description))", 12, 70));
@@ -1641,6 +1710,7 @@ public partial class Form1 : Form
 		current = dlg.Color;
 		PaintColorButton(button, current);
 		RefreshThemePreview();
+		UpdateLiveCode();
 	}
 
 	private static void PaintColorButton(Button button, Color color)
@@ -1721,6 +1791,109 @@ public partial class Form1 : Form
 			$"theme={SelectedTheme}  close={SelectedCloseStyle}  pos={SelectedPosition}";
 		if (_lblActive is { IsDisposed: false })
 			_lblActive.Text = $"ActiveToasts={_toasts.Count}  IsDisposed={_toasts.IsDisposed}  Owner={_toasts.Owner.Name}";
+
+		UpdateLiveCode();
+	}
+
+	private void HookAllControls(Control parent)
+	{
+		foreach (Control c in parent.Controls)
+		{
+			switch (c)
+			{
+				case TextBox txt:
+					txt.TextChanged += (_, _) => UpdateLiveCode();
+					break;
+				case CheckBox chk:
+					chk.CheckedChanged += (_, _) => UpdateLiveCode();
+					break;
+				case RadioButton rad:
+					rad.CheckedChanged += (_, _) => UpdateLiveCode();
+					break;
+				case ComboBox cb:
+					cb.SelectedIndexChanged += (_, _) => UpdateLiveCode();
+					break;
+				case NumericUpDown num:
+					num.ValueChanged += (_, _) => UpdateLiveCode();
+					break;
+			}
+			if (c.HasChildren)
+				HookAllControls(c);
+		}
+	}
+
+	private void UpdateLiveCode()
+	{
+		if (_codeBox is null || _codeBox.IsDisposed) return;
+		var sb = new System.Text.StringBuilder();
+		
+		// 1. ToastManagerOptions
+		sb.AppendLine("// 1. Setup ToastManager (only once per window)");
+		sb.AppendLine("var options = new ToastManagerOptions {");
+		sb.AppendLine($"    MaxToasts = {_numMaxToasts?.Value ?? 6},");
+		sb.AppendLine($"    MaxToastsPerPosition = {_numMaxPerPos?.Value ?? 3},");
+		sb.AppendLine($"    OverflowPolicy = ToastOverflowPolicy.{_cbOverflow?.SelectedItem ?? ToastOverflowPolicy.DropNewest},");
+		sb.AppendLine($"    PauseOnHover = {(_chkPauseHover?.Checked == true ? "true" : "false")},");
+		sb.AppendLine($"    PlaySound = {(_chkPlaySound?.Checked == true ? "true" : "false")},");
+		sb.AppendLine($"    HideImagePanelWhenEmpty = {(_chkHideImage?.Checked == true ? "true" : "false")},");
+		sb.AppendLine($"    ShortDurationMs = {_numShortMs?.Value ?? 2000},");
+		sb.AppendLine($"    LongDurationMs = {_numLongMs?.Value ?? 3000},");
+		sb.AppendLine($"    InputDurationMs = {_numInputMs?.Value ?? 300000},");
+		sb.AppendLine($"    ToastWidth = {_numToastW?.Value ?? 380},");
+		sb.AppendLine($"    ToastHeight = {_numToastH?.Value ?? 100},");
+		sb.AppendLine($"    HorizontalMargin = {_numHMargin?.Value ?? 12},");
+		sb.AppendLine($"    VerticalMargin = {_numVMargin?.Value ?? 10},");
+		sb.AppendLine($"    StackGap = {_numStackGap?.Value ?? 10},");
+		sb.AppendLine($"    InputToastHeight = {_numInputHeight?.Value ?? 132},");
+		sb.AppendLine($"    InputExtraHeight = {_numInputExtra?.Value ?? 36}");
+		sb.AppendLine("};");
+		sb.AppendLine("var manager = new ToastManager(this, options);");
+		sb.AppendLine();
+		
+		// 2. Toast Builder
+		sb.AppendLine("// 2. Build and Show a Toast");
+		var caption = string.IsNullOrWhiteSpace(_txtCaption?.Text) ? "Hello, I am Toast!" : _txtCaption.Text.Trim();
+		var desc = _txtDescription?.Text?.Trim() ?? string.Empty;
+		
+		// Use Create() from manager if generating code like a real usage
+		sb.AppendLine($"manager.Create()");
+		sb.AppendLine($"    .SetCaption(\"{caption}\")");
+		
+		if (!string.IsNullOrEmpty(desc))
+			sb.AppendLine($"    .SetDescription(\"{desc}\")");
+
+		if (SelectedDuration != Duration.Short)
+			sb.AppendLine($"    .SetDuration(Duration.{SelectedDuration})");
+
+		if (_chkUseMs?.Checked == true)
+			sb.AppendLine($"    .SetDurationMs((int){_numDurationMs?.Value ?? 4000})");
+
+		if (SelectedAnimation != Animation.Fade)
+			sb.AppendLine($"    .SetAnimation(Animation.{SelectedAnimation})");
+
+		if (SelectedTheme == ToastTheme.Custom)
+		{
+			sb.AppendLine($"    .SetCustomColors(Color.FromArgb({_customBg.R}, {_customBg.G}, {_customBg.B}), Color.FromArgb({_customFg.R}, {_customFg.G}, {_customFg.B}))");
+		}
+		else if (SelectedTheme != ToastTheme.Dark)
+		{
+			sb.AppendLine($"    .SetTheme(ToastTheme.{SelectedTheme})");
+		}
+		
+		if (SelectedCloseStyle != CloseStyle.ButtonAndClickEntire)
+			sb.AppendLine($"    .SetCloseStyle(CloseStyle.{SelectedCloseStyle})");
+		
+		if (SelectedPosition != ToastPosition.BottomRight)
+			sb.AppendLine($"    .SetPosition(ToastPosition.{SelectedPosition})");
+		
+		if (_chkMute?.Checked == true)
+			sb.AppendLine("    .SetMuting(true)");
+		
+		if (_chkShowProgressBar?.Checked == false)
+			sb.AppendLine("    .SetShowProgressBar(false)");
+		
+		sb.AppendLine("    .Show();");
+		_codeBox.Text = sb.ToString();
 	}
 
 	private static string ShortId(string id) =>
