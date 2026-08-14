@@ -8,8 +8,8 @@
     <RootNamespace>EasyToastDemo</RootNamespace>
     <AssemblyName>EasyToastDemo</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <!-- SystemAware: scales the whole window uniformly. PerMonitorV2 + absolute designer coords blew up this form. -->
-    <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
+    <!-- PerMonitorV2: scales automatically per screen. -->
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FuzzyToast" Version="3.0.4" />
+    <ProjectReference Include="..\..\src\FuzzyToast\FuzzyToast.csproj" />
     <PackageReference Include="Vax-FCTB" Version="2.17.0.204" />
   </ItemGroup>
 

@@ -105,7 +105,7 @@ internal sealed partial class ToastForm : Form, IToastView
 		_initialDurationMs = durationMs;
 
 		lblCaption.Text = options.Caption?.Trim() ?? string.Empty;
-		lblDescription.Text = options.Description?.Trim() ?? string.Empty;
+		var desc = options.Description?.Trim() ?? string.Empty;
 
 		var hasImage = options.Thumbnail is not null;
 		picImage.Image = options.Thumbnail;
@@ -147,7 +147,6 @@ internal sealed partial class ToastForm : Form, IToastView
 			textContainer.SplitterDistance = 28;
 			textContainer.Panel1.Padding = new Padding(2, 0, 0, 2);
 			textContainer.Panel2.Padding = new Padding(2, 2, 2, 0);
-			lblDescription.AutoEllipsis = true;
 		}
 		else
 		{
@@ -167,6 +166,11 @@ internal sealed partial class ToastForm : Form, IToastView
 		}
 
 		ApplyScheme(scheme);
+
+		if (desc.StartsWith(@"{\rtf"))
+			lblDescription.Rtf = desc;
+		else
+			lblDescription.Text = desc;
 
 		if (_showProgressBar && durationMs > 0)
 		{
@@ -365,6 +369,7 @@ internal sealed partial class ToastForm : Form, IToastView
 		var desc = Color.FromArgb(fg.A, (fg.R * 3 + bg.R) / 4, (fg.G * 3 + bg.G) / 4, (fg.B * 3 + bg.B) / 4);
 		lblCaption.ForeColor = fg;
 		lblDescription.ForeColor = desc;
+		lblDescription.BackColor = bg;
 		btnClose.ForeColor = fg;
 		BackColor = bg;
 		btnClose.FlatAppearance.BorderColor = bg;

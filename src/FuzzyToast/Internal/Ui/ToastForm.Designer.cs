@@ -27,7 +27,7 @@ partial class ToastForm
 		picImage = new PictureBox();
 		textContainer = new SplitContainer();
 		btnClose = new Button();
-		lblDescription = new Label();
+		lblDescription = new RichTextBox();
 		lblCaption = new Label();
 		tmrClose = new System.Windows.Forms.Timer(components);
 
@@ -92,7 +92,7 @@ partial class ToastForm
 		textContainer.SplitterWidth = 1;
 
 		// btnClose
-		btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+		btnClose.Dock = DockStyle.Right;
 		btnClose.Cursor = Cursors.Hand;
 		btnClose.FlatAppearance.BorderSize = 0;
 		btnClose.FlatStyle = FlatStyle.Flat;
@@ -107,20 +107,21 @@ partial class ToastForm
 		btnClose.Margin = new Padding(0);
 
 		// lblDescription
-		lblDescription.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-		lblDescription.AutoEllipsis = true;
-		lblDescription.BackColor = Color.Transparent;
+		lblDescription.Dock = DockStyle.Fill;
+		lblDescription.BorderStyle = BorderStyle.None;
+		lblDescription.ReadOnly = true;
+		lblDescription.ScrollBars = RichTextBoxScrollBars.None;
+		lblDescription.Cursor = Cursors.Default;
 		lblDescription.Font = new Font("Segoe UI", 8.5F, FontStyle.Regular, GraphicsUnit.Point);
 		lblDescription.ForeColor = Color.Silver;
 		lblDescription.Location = new Point(0, 0);
 		lblDescription.Name = "lblDescription";
-		lblDescription.Padding = new Padding(0, 0, 4, 0);
 		lblDescription.Size = new Size(260, 32);
 		lblDescription.Click += ToastContentClick;
 		lblDescription.Margin = new Padding(0);
 
 		// lblCaption
-		lblCaption.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+		lblCaption.Dock = DockStyle.Fill;
 		lblCaption.AutoEllipsis = true;
 		lblCaption.BackColor = Color.Transparent;
 		lblCaption.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold, GraphicsUnit.Point);
@@ -198,5 +199,5 @@ partial class ToastForm
 	private System.Windows.Forms.Timer tmrClose = null!;
 	private SplitContainer textContainer = null!;
 	private Button btnClose = null!;
-	private Label lblDescription = null!;
+	private RichTextBox lblDescription = null!;
 }

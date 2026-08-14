@@ -158,13 +158,14 @@ toast.Show();
 |---------|--------|
 | **Android-style API** | `Toast.Build(this, "…").Show()` |
 | **Windows 10/11** | Taskbar-aware `WorkingArea`, owner monitor, no focus steal |
-| **DPI-aware layout** | Scales with host `DeviceDpi` (100%–200%+) |
+| **DPI-aware layout** | Multi-monitor `PerMonitorV2` support, scales with host `DeviceDpi` (100%–200%+) |
 | **Four corners** | `TopLeft`, `TopRight`, `BottomLeft`, `BottomRight` |
 | **Themes** | Dark/Light + semantic light/dark + custom RGB |
+| **Rich Text** | Supports colors, bold, emojis (🎉🚀) via C#-generated RTF descriptions |
 | **Capacity** | Max global / per-corner; `DropNewest` / `DropOldest` / `Throw` |
 | **Hover pause** | Remaining time preserved (not full reset) |
 | **Touchable UI** | 44×44 close target, 420×140 @ 96 DPI, content padding |
-| **UI-thread safe** | Background `Show` marshaled to the owner form thread |
+| **UI-thread safe** | **Automatic marshaling:** background `Show()` and `Task.Run` safely marshaled to the UI thread (No `Invoke` needed!) |
 
 ## Manager options
 

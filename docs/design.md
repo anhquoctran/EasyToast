@@ -36,10 +36,11 @@ This document specifies a **v2 breaking refactor** that:
 1. Moves all public types out of `System.*` into a proper `FuzzyToast` namespace.
 2. Replaces the static `ToastManager` / `Toast.Window` / `CurrentToast` model with an **instance-based manager** scoped to an owner `Control`/`Form`.
 3. Completes a first-class **builder + options** API covering Theme, Position, Animation, CloseStyle, Duration, muting, thumbnail, and custom colors (margins remain manager-level — see G3).
-4. Fixes all known P0/P1 defects as part of migration, including layout reflow, max-capacity policy, hover-pause, disposal, and UI-thread marshaling.
+4. Fixes all known P0/P1 defects as part of migration, including layout reflow, max-capacity policy, hover-pause, disposal, and **100% UI-thread marshaling (Zero-Invoke requirement from background threads like `Task.Run`)**.
 5. Positions toasts at **all four screen corners** in v2.0 (`TopLeft`, `TopRight`, `BottomLeft`, `BottomRight`).
 6. Introduces a mandatory **xUnit** test project with pure-logic extraction for layout, capacity policy, auto-dismiss timer state, colors, and collections, plus a defined STA/UI test boundary.
 7. Ships via an incremental, independently mergeable **PR plan** that lands **correct layout math early** and implements **async completion in the manager PR** with fakes.
+8. Adds support for **DPI Awareness (PerMonitorV2)** scaling and **Rich Text Format (RTF)** string description generated cleanly via Code.
 
 The Form-based toast UI (`FrmToast`) is retained and hardened rather than rewritten as WPF/WinUI or native Action Center toasts.
 

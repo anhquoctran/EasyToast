@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.5
+
+### Added
+- **Multi-Monitor DPI Awareness**: Enhanced layout rendering natively supports `PerMonitorV2`. Toasts now scale automatically and properly when dragged across monitors of different scaling factors.
+- **Rich Text Format (RTF) Descriptions**: Added support for Emojis, colors, and font styling via natively generated RTF code directly in `Toast.Description`.
+- **Automatic Thread Marshaling**: `Toast.Build(...).Show()` is now guaranteed to be 100% thread-safe. Developers can invoke Toasts from background threads (`Task.Run`) without manually using `Invoke` or `BeginInvoke`.
+
 ## 3.0.4
 
 ### Changed

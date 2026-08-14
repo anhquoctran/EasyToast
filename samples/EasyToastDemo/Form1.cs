@@ -322,7 +322,7 @@ public partial class Form1 : Form
 	{
 		var host = ScrollHost();
 
-		var gBuild = Box("Toast.Build + Show / ShowAsync", 8, 8, 500, 210);
+		var gBuild = Box("Toast.Build + Show / ShowAsync", 8, 8, 500, 250);
 		_txtCaption = Txt(12, 42, 476, "Hello, I am Toast!");
 		_txtCaption.TextChanged += (_, _) => UpdateLiveCode();
 		_txtDescription = Txt(12, 90, 476, "Click me — Tag + Metadata are returned in OnClick");
@@ -334,10 +334,12 @@ public partial class Form1 : Form
 		gBuild.Controls.Add(Btn("Show()", 12, 126, 150, 28, BtnShow_Click, BtnKind.Primary));
 		gBuild.Controls.Add(Btn("ShowAsync()", 170, 126, 150, 28, BtnShowAsync_Click, BtnKind.Primary));
 		gBuild.Controls.Add(Btn("Build(caption, muting)", 328, 126, 160, 28, BtnShowMutingOverload_Click));
-		gBuild.Controls.Add(Hint("Also wires OnClick, OnHover, OnClosed, SetTag/SetData, SetMetadata/SetExtData.", 12, 162, 476));
+		gBuild.Controls.Add(Btn("Show Rich Text (RTF)", 12, 162, 200, 28, BtnShowRichText_Click));
+		gBuild.Controls.Add(Btn("Show from Background Thread", 220, 162, 268, 28, BtnShowBackground_Click));
+		gBuild.Controls.Add(Hint("Also wires OnClick, OnHover, OnClosed, SetTag/SetData, SetMetadata/SetExtData.", 12, 200, 476));
 		host.Controls.Add(gBuild);
 
-		var gDur = Box("Duration + Animation", 520, 8, 516, 210);
+		var gDur = Box("Duration + Animation", 520, 8, 516, 250);
 		var pnlDur = new Panel { Location = new Point(0, 16), Size = new Size(500, 30) };
 		_rShort = Radio("Short  (~2s)", 12, 8, true);
 		_rLong = Radio("Long  (~3s)", 130, 8, false);
@@ -366,7 +368,7 @@ public partial class Form1 : Form
 
 		// Keep this block compact: the Basics tab is the tallest, and a 168px box
 		// clipped the second hint against the GroupBox border (looked faded / cut off).
-		var gImg = Box("Thumbnail + ImageValidation", 8, 226, 1028, 154);
+		var gImg = Box("Thumbnail + ImageValidation", 8, 266, 1028, 154);
 		_picThumb = new PictureBox
 		{
 			BorderStyle = BorderStyle.None,
@@ -762,6 +764,73 @@ public partial class Form1 : Form
 	}
 
 	// --- Basics handlers ---
+
+	private void BtnShowRichText_Click(object? sender, EventArgs e)
+	{
+		Run("Show() with RTF description", () =>
+		{
+			using var temp = new RichTextBox();
+			temp.Font = new Font("Segoe UI", 9F);
+			temp.Text = "This is a rich text description! 🚀\nIt supports colors, italics, and underlines.\nAWESOME! 🎉";
+			
+			// Format "rich text"
+			temp.Select(10, 9);
+			temp.SelectionFont = new Font(temp.Font, FontStyle.Bold);
+			
+			// Format "colors"
+			temp.Select(48, 6);
+			temp.SelectionColor = Color.Yellow;
+			
+			// Format "italics"
+			temp.Select(56, 7);
+			temp.SelectionFont = new Font(temp.Font, FontStyle.Italic);
+			
+			// Format "underlines"
+			temp.Select(69, 10);
+			temp.SelectionFont = new Font(temp.Font, FontStyle.Underline);
+			
+			// Format "AWESOME!"
+			temp.Select(81, 8);
+			temp.SelectionFont = new Font(temp.Font.FontFamily, 12F, FontStyle.Bold);
+			temp.SelectionColor = Color.Cyan;
+
+			var rtf = temp.Rtf;
+			var toast = ApplyCommon(Toast.Build(this, CaptionOrDefault(), rtf))
+				.SetMetadata("feature", "rich-text");
+			WireInteractions(toast);
+			toast.Show();
+			Remember(toast, toast.Handle);
+		});
+	}
+
+	private void BtnShowBackground_Click(object? sender, EventArgs e)
+	{
+		Run("Task.Run(() => Toast.Build(...).Show())", () =>
+		{
+			// Demonstrate Thread-Safety by creating and showing Toast entirely from a background thread
+			Task.Run(() =>
+			{
+				try
+				{
+					// Safe to Build() and set properties on background thread
+					var toast = ApplyCommon(Toast.Build(this, CaptionOrDefault(), "Shown from Task.Run() thread id: " + Environment.CurrentManagedThreadId))
+						.SetDescription("Shown safely from a background Task without using Invoke.");
+					
+					WireInteractions(toast);
+
+					// Safe to Show() from background thread - it marshals itself to UI thread!
+					toast.Show();
+
+					// Updating demo UI requires Invoke
+					this.Invoke(new Action(() => Remember(toast, toast.Handle)));
+				}
+				catch (Exception ex)
+				{
+					this.Invoke(new Action(() => Fail(ex)));
+				}
+			});
+		});
+	}
 
 	private void BtnShow_Click(object? sender, EventArgs e)
 	{

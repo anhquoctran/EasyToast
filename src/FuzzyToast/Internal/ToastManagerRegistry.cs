@@ -17,7 +17,16 @@ internal static class ToastManagerRegistry
 		if (owner.IsDisposed)
 			throw new ObjectDisposedException(nameof(owner));
 
-		return Managers.GetValue(owner, static c => new ToastManager(c));
+		lock (Managers)
+		{
+			if (Managers.TryGetValue(owner, out var existing))
+				return existing;
+				
+			// Create inline to ensure exactly one manager per owner.
+			// owner.Disposed subscription happens safely within this lock.
+			var manager = new ToastManager(owner);
+			return manager;
+		}
 	}
 
 	/// <summary>
@@ -28,8 +37,10 @@ internal static class ToastManagerRegistry
 	{
 		Guard.NotNull(owner, nameof(owner));
 		Guard.NotNull(manager, nameof(manager));
-		// ConditionalWeakTable has no replace; remove + add
-		Managers.Remove(owner);
-		Managers.Add(owner, manager);
+		lock (Managers)
+		{
+			Managers.Remove(owner);
+			Managers.Add(owner, manager);
+		}
 	}
 }

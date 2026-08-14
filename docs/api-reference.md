@@ -14,7 +14,7 @@ Public surface of **FuzzyToast 3.0.3** (`net461` + `net8.0-windows`). Internal t
 
 `public sealed class Toast`
 
-Android-style entry point: `Toast.Build(owner, "Hello").Show()`. Uses the per-owner `ToastManager` (created on first use).
+Android-style entry point: `Toast.Build(owner, "Hello").Show()`. Uses the per-owner `ToastManager` (created on first use). **Thread-safe**: `Build()` and `Show()` can be safely called from background threads (`Task.Run`); the library automatically marshals execution to the owner's UI thread without needing `Invoke`.
 
 **Owner** must be a `System.Windows.Forms.Control` (typically your `Form`). A bare `IWin32Window` that is not a `Control` throws `ArgumentException`. A disposed control throws `ObjectDisposedException`.
 
@@ -45,7 +45,7 @@ All overloads return a `Toast` that is **not shown** until `Show()` / `ShowAsync
 | `Guid` | `string` | Id after show; empty before `Show`. |
 | `Handle` | `ToastHandle?` | Handle from the last show; `null` if not shown. |
 | `Caption` | `string` | Title (required when shown). |
-| `Description` | `string` | Secondary line (trimmed). |
+| `Description` | `string` | Secondary line (trimmed). Supports Rich Text Format (RTF) string generated natively by RichTextBox for styling and emojis. |
 | `Duration` | `Duration` | Preset length. Overridden by `SetDurationMs`. |
 | `Animation` | `Animation` | Fade (default) or Slide. |
 | `Position` | `ToastPosition` | Corner stack (default `BottomRight`). |
