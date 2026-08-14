@@ -279,4 +279,8 @@ a:hover { color: var(--cayman-green); }
     background: rgba(21, 87, 153, 0.35);
     z-index: 15;
   }
+
+  .backdrop[hidden] {
+    display: none !important;
+  }
 }
