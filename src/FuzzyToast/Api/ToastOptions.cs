@@ -51,6 +51,24 @@ public sealed class ToastOptions
 	/// <summary>When true, displays a progress bar that slides to 0 over the duration.</summary>
 	public bool ShowProgressBar { get; init; }
 
+	/// <summary>
+	/// Optional group identifier for toast grouping and queue management.
+	/// Toasts with the same GroupId can be grouped together or managed as a batch.
+	/// </summary>
+	public string? GroupId { get; init; }
+
+	/// <summary>
+	/// Optional list of interactive actions displayed as buttons on the toast.
+	/// Actions allow users to perform quick operations without opening the app.
+	/// </summary>
+	public IReadOnlyList<ToastAction>? Actions { get; init; }
+
+	/// <summary>
+	/// Optional custom content to display in the toast instead of standard caption/description.
+	/// Use this for rich media, markdown rendering, or custom WinForms controls.
+	/// </summary>
+	public ToastContent? CustomContent { get; init; }
+
 	// --- Inputable toast (v3) ---
 
 	/// <summary>When true, toast shows a text box + submit button for quick input.</summary>

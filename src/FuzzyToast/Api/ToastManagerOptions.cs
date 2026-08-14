@@ -59,6 +59,24 @@ public sealed class ToastManagerOptions
 	/// <summary>When <see langword="true"/>, collapse the thumbnail column if no image is set.</summary>
 	public bool HideImagePanelWhenEmpty { get; init; } = true;
 
+	/// <summary>
+	/// When true, enables Dark Mode detection and automatic theme switching on Windows 10/11.
+	/// The toast will follow the system app mode setting.
+	/// </summary>
+	public bool EnableDarkModeDetection { get; init; } = true;
+
+	/// <summary>
+	/// Gets or sets the default group policy for toast grouping.
+	/// When enabled, toasts with the same GroupId are grouped together in the stack.
+	/// </summary>
+	public bool EnableGrouping { get; init; } = false;
+
+	/// <summary>
+	/// Maximum number of toasts per group when grouping is enabled.
+	/// Excess toasts in a group are collapsed into a "+N more" indicator.
+	/// </summary>
+	public int MaxToastsPerGroup { get; init; } = 5;
+
 	internal ToastLayoutMetrics ToLayoutMetrics(bool inputable = false)
 	{
 		// Inputable: use dedicated compact height (not base+extra which left empty space).

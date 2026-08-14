@@ -33,7 +33,7 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageTags>winforms;toast;notification;ui;windows10;windows11;net8;net461;net48;input</PackageTags>
     <PackageReleaseNotes>See https://github.com/anhquoctran/FuzzyToast/blob/master/CHANGELOG.md</PackageReleaseNotes>
-    <Version>3.0.3</Version>
+    <Version>3.0.4</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
