@@ -28,6 +28,7 @@ public sealed class Toast
 	private string _submitButtonText = "OK";
 	private bool _allowEmptySubmit;
 	private int? _durationMs;
+	private bool _showProgressBar;
 	private ToastHandle? _handle;
 
 	private Toast(Control owner)
@@ -106,6 +107,13 @@ public sealed class Toast
 
 	/// <summary>Snapshot of key/value metadata set via <see cref="SetMetadata(string, object?)"/> / <see cref="SetExtData(string, object?)"/>.</summary>
 	public IReadOnlyDictionary<string, object?> Metadata => _metadata;
+
+	/// <summary>When true, displays a progress bar that slides to 0 over the duration.</summary>
+	public bool ShowProgressBar
+	{
+		get => _showProgressBar;
+		set => _showProgressBar = value;
+	}
 
 	/// <summary>Click on toast body. <see cref="ToastInteractionEventArgs"/> exposes Tag + Metadata.</summary>
 	public event EventHandler<ToastInteractionEventArgs>? OnClick;
@@ -288,6 +296,13 @@ public sealed class Toast
 		return this;
 	}
 
+	/// <summary>Enables or disables the auto-dismiss progress bar.</summary>
+	public Toast SetShowProgressBar(bool show = true)
+	{
+		_showProgressBar = show;
+		return this;
+	}
+
 	#endregion
 
 	/// <summary>
@@ -350,7 +365,8 @@ public sealed class Toast
 		InputDefaultText = _inputDefaultText,
 		SubmitButtonText = _submitButtonText,
 		AllowEmptySubmit = _allowEmptySubmit,
-		DurationMs = _durationMs
+		DurationMs = _durationMs,
+		ShowProgressBar = _showProgressBar
 	};
 
 	private static Control RequireControl(IWin32Window window)

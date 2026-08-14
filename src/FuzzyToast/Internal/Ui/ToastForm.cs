@@ -35,7 +35,9 @@ internal sealed partial class ToastForm : Form, IToastView
 	private bool _autoDismissEnabled;
 	private int _remainingMs;
 	private bool _countdownPaused;
-	private const int CountdownTickMs = 250;
+	private const int CountdownTickMs = 15;
+	private bool _showProgressBar;
+	private int _initialDurationMs;
 
 	private Panel? _inputPanel;
 	private TextBox? _txtInput;
@@ -98,6 +100,8 @@ internal sealed partial class ToastForm : Form, IToastView
 		_inputMode = options.EnableInput;
 		_allowEmptySubmit = options.AllowEmptySubmit;
 		_activateForInput = options.EnableInput;
+		_showProgressBar = options.ShowProgressBar;
+		_initialDurationMs = durationMs;
 
 		lblCaption.Text = options.Caption?.Trim() ?? string.Empty;
 		lblDescription.Text = options.Description?.Trim() ?? string.Empty;
@@ -450,6 +454,10 @@ internal sealed partial class ToastForm : Form, IToastView
 			return;
 
 		_remainingMs -= CountdownTickMs;
+
+		if (_showProgressBar)
+			Invalidate();
+
 		if (_remainingMs > 0)
 			return;
 
@@ -555,6 +563,22 @@ internal sealed partial class ToastForm : Form, IToastView
 	{
 		base.OnResize(e);
 		LayoutInputPanel();
+	}
+
+	protected override void OnPaint(PaintEventArgs e)
+	{
+		base.OnPaint(e);
+
+		if (!_showProgressBar || !_autoDismissEnabled || _initialDurationMs <= 0)
+			return;
+
+		var remaining = Math.Max(0, _remainingMs);
+		var ratio = (double)remaining / _initialDurationMs;
+		var w = (int)(ClientRectangle.Width * ratio);
+		if (w <= 0) return;
+
+		using var brush = new SolidBrush(lblCaption.ForeColor);
+		e.Graphics.FillRectangle(brush, 0, ClientRectangle.Height - 4, w, 4);
 	}
 
 	private async Task FadeInAsync()
