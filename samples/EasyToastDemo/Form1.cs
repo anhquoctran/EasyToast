@@ -33,6 +33,7 @@ public partial class Form1 : Form
 	private ComboBox _cbClose = null!;
 	private ComboBox _cbPosition = null!;
 	private CheckBox _chkMute = null!;
+	private CheckBox _chkShowProgressBar = null!;
 	private Label _lblStatus = null!;
 	private RichTextBox _log = null!;
 
@@ -232,6 +233,9 @@ public partial class Form1 : Form
 
 		_chkMute = Chk("Mute this toast", 736, 9, on: true);
 		bar.Controls.Add(_chkMute);
+
+		_chkShowProgressBar = Chk("Progress bar", 866, 9, on: true);
+		bar.Controls.Add(_chkShowProgressBar);
 
 		_lblStatus = new Label
 		{
@@ -652,7 +656,8 @@ public partial class Form1 : Form
 
 		toast.SetCloseStyle(SelectedCloseStyle)
 			.SetPosition(SelectedPosition)
-			.SetMuting(_chkMute.Checked);
+			.SetMuting(_chkMute.Checked)
+			.SetShowProgressBar(_chkShowProgressBar.Checked);
 		return toast;
 	}
 
@@ -666,7 +671,8 @@ public partial class Form1 : Form
 		return builder
 			.SetCloseStyle(SelectedCloseStyle)
 			.SetPosition(SelectedPosition)
-			.SetMuting(_chkMute.Checked);
+			.SetMuting(_chkMute.Checked)
+			.SetShowProgressBar(_chkShowProgressBar.Checked);
 	}
 
 	private void Remember(Toast? toast, ToastHandle? handle)

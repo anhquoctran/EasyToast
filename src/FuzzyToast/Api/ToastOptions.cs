@@ -48,6 +48,9 @@ public sealed class ToastOptions
 	/// <summary>Key/value extension metadata (snapshot).</summary>
 	public IReadOnlyDictionary<string, object?> Metadata { get; init; } = EmptyMetadata;
 
+	/// <summary>When true, displays a progress bar that slides to 0 over the duration.</summary>
+	public bool ShowProgressBar { get; init; }
+
 	// --- Inputable toast (v3) ---
 
 	/// <summary>When true, toast shows a text box + submit button for quick input.</summary>

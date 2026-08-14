@@ -36,6 +36,7 @@ public sealed class ToastBuilder
 	private string _submitButtonText = "OK";
 	private bool _allowEmptySubmit;
 	private int? _durationMs;
+	private bool _showProgressBar;
 
 	internal ToastBuilder(ToastManager manager) => _manager = manager;
 
@@ -133,12 +134,18 @@ public sealed class ToastBuilder
 	/// <summary>Sets one metadata entry. Empty keys throw; keys longer than <see cref="ToastLimits.MaxMetadataKeyLength"/> throw.</summary>
 	public ToastBuilder SetMetadata(string key, object? value)
 	{
-		if (string.IsNullOrWhiteSpace(key))
-			throw new ArgumentException("Metadata key is required.", nameof(key));
-		if (key.Length > ToastLimits.MaxMetadataKeyLength)
-			throw new ArgumentException($"Metadata key must be <= {ToastLimits.MaxMetadataKeyLength} characters.", nameof(key));
-		_metadata[key] = value;
-		return this;
+		if (!string.IsNullOrWhiteSpace(key))
+		{
+			if (key.Length > ToastLimits.MaxMetadataKeyLength)
+			{
+				throw new ArgumentException($"Metadata key must be <= {ToastLimits.MaxMetadataKeyLength} characters.", nameof(key));
+			}
+
+			_metadata[key] = value;
+			return this;
+		}
+
+		throw new ArgumentException("Metadata key is required.", nameof(key));
 	}
 
 	/// <summary>Merges metadata entries (overwrites existing keys). Blank keys are skipped.</summary>
@@ -148,7 +155,10 @@ public sealed class ToastBuilder
 		foreach (var pair in entries)
 		{
 			if (string.IsNullOrWhiteSpace(pair.Key))
+			{
 				continue;
+			}
+
 			_metadata[pair.Key] = pair.Value;
 		}
 		return this;
@@ -195,8 +205,18 @@ public sealed class ToastBuilder
 	public ToastBuilder SetDurationMs(int milliseconds)
 	{
 		if (milliseconds < 0)
+		{
 			throw new ArgumentOutOfRangeException(nameof(milliseconds));
+		}
+
 		_durationMs = milliseconds;
+		return this;
+	}
+
+	/// <summary>Enables or disables the auto-dismiss progress bar.</summary>
+	public ToastBuilder SetShowProgressBar(bool show = true)
+	{
+		_showProgressBar = show;
 		return this;
 	}
 
@@ -230,6 +250,7 @@ public sealed class ToastBuilder
 		InputDefaultText = _inputDefaultText,
 		SubmitButtonText = _submitButtonText,
 		AllowEmptySubmit = _allowEmptySubmit,
-		DurationMs = _durationMs
+		DurationMs = _durationMs,
+		ShowProgressBar = _showProgressBar
 	};
 }
