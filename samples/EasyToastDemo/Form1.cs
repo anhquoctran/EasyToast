@@ -219,7 +219,7 @@ public partial class Form1 : Form
 		_codeBox = new FastColoredTextBox
 		{
 			Dock = DockStyle.Fill,
-			Language = Language.CSharp,
+			Language = FastColoredTextBoxNS.Text.Language.CSharp,
 			ReadOnly = true,
 			CaretVisible = false,
 			BackColor = UiTheme.Card,

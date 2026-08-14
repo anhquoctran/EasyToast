@@ -37,8 +37,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FCTB" Version="2.16.24" />
     <PackageReference Include="FuzzyToast" Version="3.0.4" />
+    <PackageReference Include="Vax-FCTB" Version="2.17.0.204" />
   </ItemGroup>
 
   <ItemGroup>
