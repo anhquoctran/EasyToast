@@ -14,7 +14,7 @@ Public surface of **FuzzyToast 3.0.3** (`net461` + `net8.0-windows`). Internal t
 
 `public sealed class Toast`
 
-Android-style entry point: `Toast.Build(owner, "Hello").Show()`. Uses the per-owner `ToastManager` (created on first use). **Thread-safe**: `Build()` and `Show()` can be safely called from background threads (`Task.Run`); the library automatically marshals execution to the owner's UI thread without needing `Invoke`.
+Android-style entry point: `Toast.MakeText(owner, "Hello").Show()`. Uses the per-owner `ToastManager` (created on first use). **Thread-safe**: `Build()` and `Show()` can be safely called from background threads (`Task.Run`); the library automatically marshals execution to the owner's UI thread without needing `Invoke`.
 
 **Owner** must be a `System.Windows.Forms.Control` (typically your `Form`). A bare `IWin32Window` that is not a `Control` throws `ArgumentException`. A disposed control throws `ObjectDisposedException`.
 
@@ -133,17 +133,23 @@ manager.Create()
 
 `public sealed class ToastManager : IDisposable`
 
-One manager per owner form. `Toast.Build` reuses the instance registered for that owner.
-
-### Constructor
+The core engine backing toast queues, capacities, and rendering. By default, there should be one `ToastManager` per owner `Form` or a single global `ToastManager.Default`.
 
 ```csharp
-public ToastManager(Control owner, ToastManagerOptions? options = null)
+// Global default manager for quick toasts
+ToastManager.Default.Options = new ToastManagerOptions { MaxToasts = 3 };
+
+// Or create a per-form custom manager
+var manager = new ToastManager(this, new ToastManagerOptions
+{
+    MaxToasts = 10,
+    MaxToastsPerPosition = 5
+});
 ```
 
 - `owner` must not be `null` or disposed.
 - Disposing `owner` disposes the manager.
-- Registers itself so `Toast.Build(owner, …)` shares the same stack.
+- Registers itself so `Toast.MakeText(owner, …)` shares the same stack.
 
 ### Properties
 
@@ -265,6 +271,7 @@ Manager-wide defaults (`init`).
 | `StackGap` | `10` | Gap between stacked toasts. |
 | `PauseOnHover` | `true` | Pause countdown on hover (non-input). |
 | `PlaySound` | `true` | Play sound unless the toast is muted. |
+| `CustomSoundFilePath` | `null` | Absolute or relative path to a custom `.wav` file to play. |
 | `HideImagePanelWhenEmpty` | `true` | Collapse thumbnail column. |
 
 ---

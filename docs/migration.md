@@ -10,7 +10,7 @@ permalink: /migration.html
 | v1 | v2 |
 |----|----|
 | `using System.UI.Widget` / `System.Enums` | `using FuzzyToast` |
-| `Toast.Build(this, "…").Show()` | **Unchanged** — still `Toast.Build(this, "…").Show()` |
+| `Toast.MakeText(this, "…").Show()` | **Unchanged** — still `Toast.MakeText(this, "…").Show()` |
 | `Duration.LENGTH_SHORT` / `LENGTH_LONG` | **Kept** (also `Short` / `Long`) |
 | `Animation.FADE` / `SLIDE` | **Kept** (also `Fade` / `Slide`) |
 | Static global collection | Per-owner manager (automatic for `Build`) |
@@ -25,10 +25,10 @@ permalink: /migration.html
 
 ```csharp
 // Still valid in 2.0
-Toast.Build(this, "Hello").Show();
-Toast.Build(this, "Hello", "Description").Show();
-Toast.Build(this, "Hello", Duration.LENGTH_LONG).Show();
-Toast.Build(this, "Hello", Animation.SLIDE).Show();
+Toast.MakeText(this, "Hello").Show();
+Toast.MakeText(this, "Hello", "Description").Show();
+Toast.MakeText(this, "Hello", Duration.LENGTH_LONG).Show();
+Toast.MakeText(this, "Hello", Animation.SLIDE).Show();
 ```
 
 Namespace only:
@@ -49,9 +49,9 @@ manager.Create().SetCaption("Hi").Show();
 ## Async
 
 ```csharp
-await Toast.Build(this, "Hi").ShowAsync(); // completes when shown
+await Toast.MakeText(this, "Hi").ShowAsync(); // completes when shown
 // or:
-var toast = Toast.Build(this, "Hi");
+var toast = Toast.MakeText(this, "Hi");
 await toast.ShowAsync();
 await toast.Handle!.WhenDismissed; // wait until dismissed
 ```

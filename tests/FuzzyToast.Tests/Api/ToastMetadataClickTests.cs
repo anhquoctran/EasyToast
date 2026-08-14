@@ -54,7 +54,7 @@ public class ToastMetadataClickTests
 			using var form = StaHelper.CreateVisibleOwner();
 			ToastInteractionEventArgs? args = null;
 
-			var toast = Toast.Build(form, "Notify", "tap me")
+			var toast = Toast.MakeText(form, "Notify", "tap me")
 				.SetMuting(true)
 				.SetData(new { UserId = 7 })
 				.SetExtData("action", "open-profile")
@@ -84,7 +84,7 @@ public class ToastMetadataClickTests
 	public void SetMetadata_Rejects_EmptyKey()
 	{
 		using var form = new Form();
-		var toast = Toast.Build(form, "x");
+		var toast = Toast.MakeText(form, "x");
 		Assert.Throws<ArgumentException>(() => toast.SetMetadata("  ", 1));
 	}
 

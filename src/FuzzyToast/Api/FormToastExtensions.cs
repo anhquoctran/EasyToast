@@ -5,7 +5,7 @@ using FuzzyToast.Internal;
 namespace FuzzyToast;
 
 /// <summary>
-/// Form helpers that show a toast without <c>Toast.Build(this, …).Show()</c>.
+/// Form helpers that show a toast without <c>Toast.MakeText(this, …).Show()</c>.
 /// </summary>
 /// <example>
 /// <code>
@@ -117,22 +117,22 @@ public static class FormToastExtensions
 
 	/// <summary>
 	/// Creates a toast bound to this form. Call <see cref="Toast.Show"/> to display it.
-	/// Same as <see cref="Toast.Build(IWin32Window, string)"/>.
+	/// Same as <see cref="Toast.MakeText(IWin32Window, string)"/>.
 	/// </summary>
 	public static Toast Toast(this Form form, string caption)
 	{
 		Guard.NotNull(form, nameof(form));
-		return FuzzyToast.Toast.Build(form, caption);
+		return FuzzyToast.Toast.MakeText(form, caption);
 	}
 
 	/// <summary>
 	/// Creates a toast with caption and description. Call <see cref="Toast.Show"/> to display it.
-	/// Same as <see cref="Toast.Build(IWin32Window, string, string)"/>.
+	/// Same as <see cref="Toast.MakeText(IWin32Window, string, string)"/>.
 	/// </summary>
 	public static Toast Toast(this Form form, string caption, string description)
 	{
 		Guard.NotNull(form, nameof(form));
-		return FuzzyToast.Toast.Build(form, caption, description);
+		return FuzzyToast.Toast.MakeText(form, caption, description);
 	}
 
 	private static ToastHandle ShowCore(
@@ -146,7 +146,7 @@ public static class FormToastExtensions
 	{
 		Guard.NotNull(form, nameof(form));
 
-		var toast = FuzzyToast.Toast.Build(form, caption);
+		var toast = FuzzyToast.Toast.MakeText(form, caption);
 		if (description is not null)
 		{
 			toast.SetDescription(description);

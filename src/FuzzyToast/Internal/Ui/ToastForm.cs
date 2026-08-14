@@ -22,6 +22,7 @@ internal sealed partial class ToastForm : Form, IToastView
 	private CloseStyle _closeStyle = CloseStyle.ButtonAndClickEntire;
 	private bool _pauseOnHover;
 	private bool _playSound;
+	private string? _customSoundFilePath;
 	private bool _ownsThumbnail;
 	private Image? _thumbnail;
 	private AutoDismissTimerState? _timerState;
@@ -90,12 +91,13 @@ internal sealed partial class ToastForm : Form, IToastView
 		}
 	}
 
-	public void Apply(ToastOptions options, ColorScheme scheme, int durationMs, bool pauseOnHover, bool playSound)
+	public void Apply(ToastOptions options, ColorScheme scheme, int durationMs, bool pauseOnHover, bool playSound, string? customSoundFilePath)
 	{
 		_animation = options.Animation;
 		_closeStyle = options.CloseStyle;
 		_pauseOnHover = pauseOnHover && !options.EnableInput; // keep timer running while typing; long duration instead
 		_playSound = playSound;
+		_customSoundFilePath = customSoundFilePath;
 		_ownsThumbnail = options.OwnsThumbnail;
 		_thumbnail = options.Thumbnail;
 		_inputMode = options.EnableInput;
@@ -626,6 +628,14 @@ internal sealed partial class ToastForm : Form, IToastView
 	{
 		try
 		{
+			if (!string.IsNullOrEmpty(_customSoundFilePath) && File.Exists(_customSoundFilePath))
+			{
+				var player = new SoundPlayer(_customSoundFilePath);
+				player.Play();
+				GC.KeepAlive(player);
+				return;
+			}
+
 			var stream = Properties.Resources.notificationSound;
 			if (stream is null)
 				return;
@@ -634,9 +644,9 @@ internal sealed partial class ToastForm : Form, IToastView
 			stream.Position = 0;
 			stream.CopyTo(copy);
 			copy.Position = 0;
-			var player = new SoundPlayer(copy);
-			player.Play();
-			GC.KeepAlive(player);
+			var playerBuiltIn = new SoundPlayer(copy);
+			playerBuiltIn.Play();
+			GC.KeepAlive(playerBuiltIn);
 		}
 		catch
 		{

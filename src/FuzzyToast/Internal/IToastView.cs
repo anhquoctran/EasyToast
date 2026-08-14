@@ -6,7 +6,7 @@ namespace FuzzyToast.Internal;
 internal interface IToastView : IDisposable
 {
 	ToastHandle ToastHandle { get; }
-	void Apply(ToastOptions options, ColorScheme scheme, int durationMs, bool pauseOnHover, bool playSound);
+	void Apply(ToastOptions options, ColorScheme scheme, int durationMs, bool pauseOnHover, bool playSound, string? customSoundFilePath);
 	void SetBounds(Rectangle bounds);
 	void Show(IWin32Window? owner);
 	void BeginDismiss();

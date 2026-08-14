@@ -23,9 +23,9 @@ Target **.NET Framework 4.6.1+** or **.NET 8+** Windows Forms.
 ```csharp
 using FuzzyToast;
 
-Toast.Build(this, "Hello, I am Toast!").Show();
-Toast.Build(this, "Saved", "All changes written.").Show();
-Toast.Build(this, "Sliding in", Animation.SLIDE).Show();
+Toast.MakeText(this, "Hello, I am Toast!").Show();
+Toast.MakeText(this, "Saved", "All changes written.").Show();
+Toast.MakeText(this, "Sliding in", Animation.SLIDE).Show();
 ```
 
 `this` must be a `Control` (typically your `Form`).
@@ -33,7 +33,7 @@ Toast.Build(this, "Sliding in", Animation.SLIDE).Show();
 ## Theme, position, events
 
 ```csharp
-var toast = Toast.Build(this, "Order #42 ready", "Tap to open")
+var toast = Toast.MakeText(this, "Order #42 ready", "Tap to open")
     .SetTheme(ToastTheme.SuccessDark)
     .SetPosition(ToastPosition.TopRight)
     .SetMuting(true)
@@ -52,7 +52,7 @@ toast.Show();
 Stays open until Submit, Escape, or close:
 
 ```csharp
-var toast = Toast.Build(this, "Quick reply", "Type a short note")
+var toast = Toast.MakeText(this, "Quick reply", "Type a short note")
     .EnableInput(placeholder: "Your message…", submitButtonText: "Send");
 
 toast.OnSubmit += (_, e) =>

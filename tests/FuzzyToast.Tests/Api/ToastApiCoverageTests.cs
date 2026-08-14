@@ -4,7 +4,7 @@ using Xunit;
 
 namespace FuzzyToast.Tests;
 
-/// <summary>Broad coverage of public Toast.Build overloads and fluent API (STA).</summary>
+/// <summary>Broad coverage of public Toast.MakeText overloads and fluent API (STA).</summary>
 public class ToastApiCoverageTests
 {
 	[Fact]
@@ -15,19 +15,19 @@ public class ToastApiCoverageTests
 			using var form = new Form();
 			using var bmp = new Bitmap(80, 80);
 
-			Assert.NotNull(Toast.Build(form, "a"));
-			Assert.NotNull(Toast.Build(form, "a", "d"));
-			Assert.NotNull(Toast.Build(form, "a", Duration.LENGTH_SHORT));
-			Assert.NotNull(Toast.Build(form, "a", Duration.LENGTH_LONG, Animation.FADE));
-			Assert.NotNull(Toast.Build(form, "a", "d", Duration.LENGTH_LONG));
-			Assert.NotNull(Toast.Build(form, "a", Animation.SLIDE, Duration.LENGTH_SHORT, true));
-			Assert.NotNull(Toast.Build(form, "a", Animation.FADE));
-			Assert.NotNull(Toast.Build(form, "a", true));
-			Assert.NotNull(Toast.Build(form, "a", bmp, Duration.LENGTH_SHORT, Animation.SLIDE));
-			Assert.NotNull(Toast.Build(form, "a", bmp, Duration.LENGTH_SHORT, Animation.FADE, true));
-			Assert.NotNull(Toast.Build(form, "a", bmp));
-			Assert.NotNull(Toast.Build(form, "a", bmp, Duration.LENGTH_LONG));
-			Assert.NotNull(Toast.Build(form, "a", ToastTheme.SuccessLight));
+			Assert.NotNull(Toast.MakeText(form, "a"));
+			Assert.NotNull(Toast.MakeText(form, "a", "d"));
+			Assert.NotNull(Toast.MakeText(form, "a", Duration.LENGTH_SHORT));
+			Assert.NotNull(Toast.MakeText(form, "a", Duration.LENGTH_LONG, Animation.FADE));
+			Assert.NotNull(Toast.MakeText(form, "a", "d", Duration.LENGTH_LONG));
+			Assert.NotNull(Toast.MakeText(form, "a", Animation.SLIDE, Duration.LENGTH_SHORT, true));
+			Assert.NotNull(Toast.MakeText(form, "a", Animation.FADE));
+			Assert.NotNull(Toast.MakeText(form, "a", true));
+			Assert.NotNull(Toast.MakeText(form, "a", bmp, Duration.LENGTH_SHORT, Animation.SLIDE));
+			Assert.NotNull(Toast.MakeText(form, "a", bmp, Duration.LENGTH_SHORT, Animation.FADE, true));
+			Assert.NotNull(Toast.MakeText(form, "a", bmp));
+			Assert.NotNull(Toast.MakeText(form, "a", bmp, Duration.LENGTH_LONG));
+			Assert.NotNull(Toast.MakeText(form, "a", ToastTheme.SuccessLight));
 		});
 	}
 
@@ -39,7 +39,7 @@ public class ToastApiCoverageTests
 			using var form = StaHelper.CreateVisibleOwner();
 			try
 			{
-				var toast = Toast.Build(form, "Coverage toast", "description")
+				var toast = Toast.MakeText(form, "Coverage toast", "description")
 					.SetTheme(ToastTheme.Dark)
 					.SetPosition(ToastPosition.BottomRight)
 					.SetAnimation(Animation.FADE)
@@ -92,7 +92,7 @@ public class ToastApiCoverageTests
 			using var form = StaHelper.CreateVisibleOwner();
 			try
 			{
-				var toast = Toast.Build(form, "Async coverage").SetMuting(true);
+				var toast = Toast.MakeText(form, "Async coverage").SetMuting(true);
 				await toast.ShowAsync();
 				Application.DoEvents();
 				Assert.NotNull(toast.Handle);
@@ -113,7 +113,7 @@ public class ToastApiCoverageTests
 		{
 			using var form = new Form();
 			using var bmp = new Bitmap(64, 64);
-			var t = Toast.Build(form, "x")
+			var t = Toast.MakeText(form, "x")
 				.SetCaption("C")
 				.SetDescription("D")
 				.SetDuration(Duration.Long)
@@ -141,7 +141,7 @@ public class ToastApiCoverageTests
 	public void Build_Requires_Control_Owner()
 	{
 		var fake = new NonControlWindow();
-		Assert.Throws<ArgumentException>(() => Toast.Build(fake, "x"));
+		Assert.Throws<ArgumentException>(() => Toast.MakeText(fake, "x"));
 	}
 
 	private sealed class NonControlWindow : IWin32Window

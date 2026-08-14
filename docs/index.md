@@ -18,7 +18,7 @@ Toast notifications for **Windows Forms** on **.NET Framework 4.6.1+** and **.NE
 ```csharp
 using FuzzyToast;
 
-Toast.Build(this, "Hello, I am Toast!").Show();
+Toast.MakeText(this, "Hello, I am Toast!").Show();
 ```
 
 ```bash
@@ -29,7 +29,7 @@ dotnet add package FuzzyToast
 
 | | |
 |--|--|
-| **Android-style API** | `Toast.Build(owner, "…").Show()` |
+| **Android-style API** | `Toast.MakeText(owner, "…").Show()` |
 | **Two runtimes** | `net461` and `net8.0-windows` in one package |
 | **Four corners** | TopLeft, TopRight, BottomLeft, BottomRight |
 | **Inputable toasts** | Text box + Submit, stays open until the user acts |

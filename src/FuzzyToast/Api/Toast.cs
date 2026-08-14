@@ -3,12 +3,12 @@ using FuzzyToast.Internal;
 namespace FuzzyToast;
 
 /// <summary>
-/// Android-style toast entry point: <c>Toast.Build(owner, "Hello").Show()</c>.
+/// Android-style toast entry point: <c>Toast.MakeText(owner, "Hello").Show()</c>.
 /// Backed by a per-owner <see cref="ToastManager"/> (v2 layout, capacity, themes).
 /// </summary>
 public sealed class Toast
 {
-	private readonly Control _owner;
+	private readonly Control? _owner;
 	private string _caption = string.Empty;
 	private string _description = string.Empty;
 	private Duration _duration = Duration.LENGTH_SHORT;
@@ -31,7 +31,7 @@ public sealed class Toast
 	private bool _showProgressBar;
 	private ToastHandle? _handle;
 
-	private Toast(Control owner)
+	private Toast(Control? owner)
 	{
 		_owner = owner;
 	}
@@ -312,7 +312,7 @@ public sealed class Toast
 	/// <exception cref="ArgumentException">Caption is missing or options fail <see cref="ToastOptions.Validate"/>.</exception>
 	public void Show()
 	{
-		var manager = ToastManagerRegistry.GetOrCreate(_owner);
+		var manager = _owner != null ? ToastManagerRegistry.GetOrCreate(_owner) : ToastManager.Default;
 		_handle = manager.Show(ToOptions());
 		WireHandle(_handle);
 	}
@@ -324,7 +324,7 @@ public sealed class Toast
 	/// <param name="cancellationToken">If cancelled after show, the toast is dismissed.</param>
 	public async Task ShowAsync(CancellationToken cancellationToken = default)
 	{
-		var manager = ToastManagerRegistry.GetOrCreate(_owner);
+		var manager = _owner != null ? ToastManagerRegistry.GetOrCreate(_owner) : ToastManager.Default;
 		_handle = await manager.ShowAsync(ToOptions(), cancellationToken).ConfigureAwait(true);
 		WireHandle(_handle);
 	}
@@ -389,7 +389,7 @@ public sealed class Toast
 	/// <summary>Creates a toast with a caption only. Call <see cref="Show"/> to display it.</summary>
 	/// <param name="window">Owner form (must be a <see cref="Control"/>).</param>
 	/// <param name="caption">Title text.</param>
-	public static Toast Build(IWin32Window window, string caption)
+	public static Toast MakeText(IWin32Window window, string caption)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -398,8 +398,11 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption) => MakeText(window, caption);
+
 	/// <summary>Build a toast with caption and description.</summary>
-	public static Toast Build(IWin32Window window, string caption, string description)
+	public static Toast MakeText(IWin32Window window, string caption, string description)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -408,8 +411,11 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption, string description) => MakeText(window, caption, description);
+
 	/// <summary>Build with duration and animation.</summary>
-	public static Toast Build(IWin32Window window, string caption, Duration duration, Animation animation)
+	public static Toast MakeText(IWin32Window window, string caption, Duration duration, Animation animation)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -419,8 +425,11 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption, Duration duration, Animation animation) => MakeText(window, caption, duration, animation);
+
 	/// <summary>Build with description and duration.</summary>
-	public static Toast Build(IWin32Window window, string caption, string description, Duration duration)
+	public static Toast MakeText(IWin32Window window, string caption, string description, Duration duration)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -430,8 +439,11 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption, string description, Duration duration) => MakeText(window, caption, description, duration);
+
 	/// <summary>Build with animation, duration, and mute flag.</summary>
-	public static Toast Build(IWin32Window window, string caption, Animation animation, Duration duration, bool muting)
+	public static Toast MakeText(IWin32Window window, string caption, Animation animation, Duration duration, bool muting)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -442,8 +454,11 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption, Animation animation, Duration duration, bool muting) => MakeText(window, caption, animation, duration, muting);
+
 	/// <summary>Build with custom animation.</summary>
-	public static Toast Build(IWin32Window window, string caption, Animation animation)
+	public static Toast MakeText(IWin32Window window, string caption, Animation animation)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -452,8 +467,11 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption, Animation animation) => MakeText(window, caption, animation);
+
 	/// <summary>Build with mute flag.</summary>
-	public static Toast Build(IWin32Window window, string caption, bool muting)
+	public static Toast MakeText(IWin32Window window, string caption, bool muting)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -462,8 +480,11 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption, bool muting) => MakeText(window, caption, muting);
+
 	/// <summary>Build with thumbnail, duration, and animation.</summary>
-	public static Toast Build(IWin32Window window, string caption, Image thumbnail, Duration duration, Animation animation)
+	public static Toast MakeText(IWin32Window window, string caption, Image thumbnail, Duration duration, Animation animation)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -474,7 +495,24 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption, Image thumbnail, Duration duration, Animation animation) => MakeText(window, caption, thumbnail, duration, animation);
+
 	/// <summary>Build with thumbnail, duration, animation, and mute.</summary>
+	public static Toast MakeText(IWin32Window window, string caption, Image thumbnail, Duration duration,
+		Animation animation, bool muting)
+	{
+		return new Toast(RequireControl(window))
+		{
+			Caption = caption ?? string.Empty,
+			Thumbnail = thumbnail,
+			Duration = duration,
+			Animation = animation,
+			IsMuted = muting
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
 	public static Toast Build(IWin32Window window, string caption, Image thumbnail, Duration duration,
 		Animation animation, bool muting)
 	{
@@ -489,7 +527,7 @@ public sealed class Toast
 	}
 
 	/// <summary>Build with thumbnail.</summary>
-	public static Toast Build(IWin32Window window, string caption, Image thumbnail)
+	public static Toast MakeText(IWin32Window window, string caption, Image thumbnail)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -498,8 +536,11 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption, Image thumbnail) => MakeText(window, caption, thumbnail);
+
 	/// <summary>Build with thumbnail and duration.</summary>
-	public static Toast Build(IWin32Window window, string caption, Image thumbnail, Duration duration)
+	public static Toast MakeText(IWin32Window window, string caption, Image thumbnail, Duration duration)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -509,8 +550,11 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption, Image thumbnail, Duration duration) => MakeText(window, caption, thumbnail, duration);
+
 	/// <summary>Build with duration only (Android LENGTH_SHORT / LENGTH_LONG style).</summary>
-	public static Toast Build(IWin32Window window, string caption, Duration duration)
+	public static Toast MakeText(IWin32Window window, string caption, Duration duration)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -519,8 +563,11 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption, Duration duration) => MakeText(window, caption, duration);
+
 	/// <summary>Build with theme.</summary>
-	public static Toast Build(IWin32Window window, string caption, ToastTheme theme)
+	public static Toast MakeText(IWin32Window window, string caption, ToastTheme theme)
 	{
 		return new Toast(RequireControl(window))
 		{
@@ -529,5 +576,189 @@ public sealed class Toast
 		};
 	}
 
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(IWin32Window window, string caption, ToastTheme theme) => MakeText(window, caption, theme);
+
 	#endregion
+
+	#region Build overloads (Global default manager)
+
+	/// <summary>Creates a toast using the global <see cref="ToastManager.Default"/>. Call <see cref="Show"/> to display it.</summary>
+	public static Toast MakeText(string caption)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Description = string.Empty
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption) => MakeText(caption);
+
+	/// <summary>Build a global toast with caption and description.</summary>
+	public static Toast MakeText(string caption, string description)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Description = description?.Trim() ?? string.Empty
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, string description) => MakeText(caption, description);
+
+	/// <summary>Build a global toast with duration and animation.</summary>
+	public static Toast MakeText(string caption, Duration duration, Animation animation)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Duration = duration,
+			Animation = animation
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, Duration duration, Animation animation) => MakeText(caption, duration, animation);
+
+	/// <summary>Build a global toast with description and duration.</summary>
+	public static Toast MakeText(string caption, string description, Duration duration)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Description = description?.Trim() ?? string.Empty,
+			Duration = duration
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, string description, Duration duration) => MakeText(caption, description, duration);
+
+	/// <summary>Build a global toast with animation, duration, and mute flag.</summary>
+	public static Toast MakeText(string caption, Animation animation, Duration duration, bool muting)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Animation = animation,
+			Duration = duration,
+			IsMuted = muting
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, Animation animation, Duration duration, bool muting) => MakeText(caption, animation, duration, muting);
+
+	/// <summary>Build a global toast with custom animation.</summary>
+	public static Toast MakeText(string caption, Animation animation)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Animation = animation
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, Animation animation) => MakeText(caption, animation);
+
+	/// <summary>Build a global toast with mute flag.</summary>
+	public static Toast MakeText(string caption, bool muting)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			IsMuted = muting
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, bool muting) => MakeText(caption, muting);
+
+	/// <summary>Build a global toast with thumbnail, duration, and animation.</summary>
+	public static Toast MakeText(string caption, Image thumbnail, Duration duration, Animation animation)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Thumbnail = thumbnail,
+			Duration = duration,
+			Animation = animation
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, Image thumbnail, Duration duration, Animation animation) => MakeText(caption, thumbnail, duration, animation);
+
+	/// <summary>Build a global toast with thumbnail, duration, animation, and mute.</summary>
+	public static Toast MakeText(string caption, Image thumbnail, Duration duration, Animation animation, bool muting)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Thumbnail = thumbnail,
+			Duration = duration,
+			Animation = animation,
+			IsMuted = muting
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, Image thumbnail, Duration duration, Animation animation, bool muting) => MakeText(caption, thumbnail, duration, animation, muting);
+
+	/// <summary>Build a global toast with thumbnail.</summary>
+	public static Toast MakeText(string caption, Image thumbnail)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Thumbnail = thumbnail
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, Image thumbnail) => MakeText(caption, thumbnail);
+
+	/// <summary>Build a global toast with thumbnail and duration.</summary>
+	public static Toast MakeText(string caption, Image thumbnail, Duration duration)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Thumbnail = thumbnail,
+			Duration = duration
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, Image thumbnail, Duration duration) => MakeText(caption, thumbnail, duration);
+
+	/// <summary>Build a global toast with duration only.</summary>
+	public static Toast MakeText(string caption, Duration duration)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Duration = duration
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, Duration duration) => MakeText(caption, duration);
+
+	/// <summary>Build a global toast with theme.</summary>
+	public static Toast MakeText(string caption, ToastTheme theme)
+	{
+		return new Toast(null)
+		{
+			Caption = caption ?? string.Empty,
+			Theme = theme
+		};
+	}
+
+	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
+	public static Toast Build(string caption, ToastTheme theme) => MakeText(caption, theme);
 }

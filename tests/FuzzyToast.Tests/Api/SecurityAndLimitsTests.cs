@@ -82,7 +82,7 @@ public class SecurityAndLimitsTests
 	public void SetMetadata_RejectsOversizedKey()
 	{
 		using var form = new Form();
-		var toast = Toast.Build(form, "x");
+		var toast = Toast.MakeText(form, "x");
 		Assert.Throws<ArgumentException>(() =>
 			toast.SetMetadata(new string('k', ToastLimits.MaxMetadataKeyLength + 1), 1));
 	}

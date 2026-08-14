@@ -79,7 +79,7 @@ These three contracts are **normative** for implementation; later sections expan
 ### Confirmed P0 bugs (must fix in v2)
 
 1. **Description setter bug** — `FrmToast.Description` set → `lblCaption.Text` instead of `lblDescription.Text` (`frmToast.cs` ~99–103).
-2. **Missing public Theme/Position API** — Properties `internal set`; no `Toast.Build(..., Theme)` overload despite README; `ToastBuilder` lacks setters.
+2. **Missing public Theme/Position API** — Properties `internal set`; no `Toast.MakeText(..., Theme)` overload despite README; `ToastBuilder` lacks setters.
 3. **`ShowAsync()` returns `void`** — README documents `await ...ShowAsync()`; implementation is fire-and-forget (`Toast.cs` ~99–102).
 4. **`ToastCollection.Contains` always true** — compares `toast.Guid.Contains(toast.Guid)` (self) (`ToastManager.cs` ~209–221).
 5. **Custom theme G/B channel bug** — `CreateCustomScheme(bg, fg)` calls `new ColorScheme(bg.R, bg.B, bg.G, …)` while getters use `Color.FromArgb(RBg, BBg, GBg)` (parameter names B/G are swapped relative to standard R,G,B). Builtin scheme literals happen to be authored so `FromArgb` receives intended R,G,B for Material-like colors; custom schemes are **single-swap broken**. Fix: standard R,G,B naming end-to-end; re-author builtins as true RGB constants.
@@ -574,7 +574,7 @@ public sealed class ToastHandle : IDisposable
 }
 ```
 
-Static `Toast.Build(...)` overloads are **removed** from the primary API.
+Static `Toast.MakeText(...)` overloads are **removed** from the primary API.
 
 #### ToastManager (instance model)
 
@@ -1104,7 +1104,7 @@ bool Contains(ToastHandle item) => item is not null && _list.Exists(t => t.Id ==
 ```csharp
 // v1
 using System.UI.Widget;
-Toast.Build(this, "Hello").Show();
+Toast.MakeText(this, "Hello").Show();
 
 // v2
 using FuzzyToast;
@@ -1131,7 +1131,7 @@ _toasts.Create()
 
 ```csharp
 // v1 (misleading — ShowAsync is void)
-await Toast.Build(this, "Hello", Duration.LENGTH_SHORT).ShowAsync();
+await Toast.MakeText(this, "Hello", Duration.LENGTH_SHORT).ShowAsync();
 
 // v2 — await show, then optionally await dismiss
 ToastHandle h = await _toasts.Create()
@@ -1188,7 +1188,7 @@ _toasts.CollectionCleared += (_, _) => log("empty");
 | `Theme` | `ToastTheme` | Rename |
 | `Duration.LENGTH_SHORT/LONG` | `Duration.Short/Long` | Naming |
 | `Animation.FADE/SLIDE` | `Animation.Fade/Slide` | Names change; **values 1/0 unchanged** |
-| Static `Toast.Build` | `manager.Create()` / `Show(options)` | Removed |
+| Static `Toast.MakeText` | `manager.Create()` / `Show(options)` | Removed |
 | `new ToastBuilder(IWin32Window)` | `manager.Create()` | Builder is manager-owned; no public window-only ctor |
 | Static `ToastManager` | Instance `new ToastManager(Control)` | Required |
 | `ToastManager.MAX_TOASTS_ALLOWED` | `ToastManagerOptions.MaxToasts` | Relocated |
@@ -1206,7 +1206,7 @@ _toasts.CollectionCleared += (_, _) => log("empty");
 1. Bump package to `FuzzyToast` `2.0.0` or `2.0.0-preview.N`.
 2. Replace usings.
 3. Create one `ToastManager` field on main form; dispose with form.
-4. Replace `Toast.Build(...).Show()` with `manager.Create()...Show()`.
+4. Replace `Toast.MakeText(...).Show()` with `manager.Create()...Show()`.
 5. Replace `await ShowAsync()` with live-handle pattern + optional `WhenDismissed`.
 6. Wire events on the manager instance (`ToastAdded` etc.).
 7. Map `MAX_TOASTS_ALLOWED` usage to options.
@@ -1414,7 +1414,7 @@ dotnet test EasyToast.slnx -c Release   # full, including UI when stable
 | Approach | Pros | Cons |
 |----------|------|------|
 | **Instance `new ToastManager(owner)` (chosen)** | Explicit lifetime; easy fakes; no hidden globals; multiple isolated stacks if host wants; matches DI “create service” mental model | Migration requires field on form; hosts must dispose |
-| **Static `ToastManager.For(owner)` dictionary** | Closer to v1 `Toast.Build(this,…)` one-liners; auto-find manager by owner | Hidden static state; hard to test in parallel; ambiguous dispose; second “policy” for weak-table leaks; multi-manager still unclear |
+| **Static `ToastManager.For(owner)` dictionary** | Closer to v1 `Toast.MakeText(this,…)` one-liners; auto-find manager by owner | Hidden static state; hard to test in parallel; ambiguous dispose; second “policy” for weak-table leaks; multi-manager still unclear |
 | **`IToastService` interface only** | DI-friendly | Still need a concrete manager; extra abstraction for a small library — can add interface later without cost if instance exists |
 
 **Chosen: explicit instance (A6 row 1).** Hosts that want static sugar can write their own `Form` extension later; library stays free of static registries.
@@ -1589,7 +1589,7 @@ All product/architecture questions that blocked implementation are **resolved** 
 | **Title** | `breaking: move types to FuzzyToast; RootNamespace; Version 2.0.0-preview.1` |
 | **Files/components** | All namespaces; csproj RootNamespace/Version; demo + tests usings; optional csproj rename |
 | **Depends on** | PR 2–3 recommended |
-| **Description** | Leave `System.*`. Set Version **`2.0.0-preview.1`**. Update demo to new namespaces while **keeping** static `Toast.Build` compiling until PR6. Folder may remain EasyToast. |
+| **Description** | Leave `System.*`. Set Version **`2.0.0-preview.1`**. Update demo to new namespaces while **keeping** static `Toast.MakeText` compiling until PR6. Folder may remain EasyToast. |
 
 ---
 
@@ -1600,7 +1600,7 @@ All product/architecture questions that blocked implementation are **resolved** 
 | **Title** | `feat: ToastOptions, full ToastBuilder, enum renames (CloseStyle/ToastTheme/…)` |
 | **Files/components** | `ToastOptions.cs`; rewrite `ToastBuilder` to produce **options only** + call manager when available; enums; `ThemeCatalog`; tests T13–T14 |
 | **Depends on** | PR 4 |
-| **Description** | **No dual path producing v1 Toast from builder.** Until PR6 lands manager.Show, builder may only `Build()` options in tests; demo can keep using static Toast.Build for display. Introduce event arg types early if useful. |
+| **Description** | **No dual path producing v1 Toast from builder.** Until PR6 lands manager.Show, builder may only `Build()` options in tests; demo can keep using static Toast.MakeText for display. Introduce event arg types early if useful. |
 
 ---
 

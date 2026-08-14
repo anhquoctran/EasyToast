@@ -322,7 +322,7 @@ public partial class Form1 : Form
 	{
 		var host = ScrollHost();
 
-		var gBuild = Box("Toast.Build + Show / ShowAsync", 8, 8, 500, 250);
+		var gBuild = Box("Toast.MakeText + Show / ShowAsync", 8, 8, 500, 250);
 		_txtCaption = Txt(12, 42, 476, "Hello, I am Toast!");
 		_txtCaption.TextChanged += (_, _) => UpdateLiveCode();
 		_txtDescription = Txt(12, 90, 476, "Click me — Tag + Metadata are returned in OnClick");
@@ -600,7 +600,7 @@ public partial class Form1 : Form
 		gMgr.Controls.Add(Btn("Create().Build() → Show(options)", 260, 28, 236, 28, BtnManagerShowOptions_Click));
 		gMgr.Controls.Add(Btn("manager.ShowAsync(options)", 12, 64, 240, 28, BtnManagerShowAsync_Click));
 		gMgr.Controls.Add(Btn("Open second owner window", 260, 64, 236, 28, BtnOpenSecondOwner_Click));
-		gMgr.Controls.Add(Hint("Create() is the fluent path on an existing manager. A second Form gets its own ToastManager via Toast.Build.", 12, 104, 488));
+		gMgr.Controls.Add(Hint("Create() is the fluent path on an existing manager. A second Form gets its own ToastManager via Toast.MakeText.", 12, 104, 488));
 		host.Controls.Add(gMgr);
 
 		var gHover = Box("OnHover / handle.Hovered / handle.Clicked", 8, 236, 500, 100);
@@ -795,7 +795,7 @@ public partial class Form1 : Form
 			temp.SelectionColor = Color.Cyan;
 
 			var rtf = temp.Rtf;
-			var toast = ApplyCommon(Toast.Build(this, CaptionOrDefault(), rtf))
+			var toast = ApplyCommon(Toast.MakeText(this, CaptionOrDefault(), rtf))
 				.SetMetadata("feature", "rich-text");
 			WireInteractions(toast);
 			toast.Show();
@@ -805,7 +805,7 @@ public partial class Form1 : Form
 
 	private void BtnShowBackground_Click(object? sender, EventArgs e)
 	{
-		Run("Task.Run(() => Toast.Build(...).Show())", () =>
+		Run("Task.Run(() => Toast.MakeText(...).Show())", () =>
 		{
 			// Demonstrate Thread-Safety by creating and showing Toast entirely from a background thread
 			Task.Run(() =>
@@ -813,7 +813,7 @@ public partial class Form1 : Form
 				try
 				{
 					// Safe to Build() and set properties on background thread
-					var toast = ApplyCommon(Toast.Build(this, CaptionOrDefault(), "Shown from Task.Run() thread id: " + Environment.CurrentManagedThreadId))
+					var toast = ApplyCommon(Toast.MakeText(this, CaptionOrDefault(), "Shown from Task.Run() thread id: " + Environment.CurrentManagedThreadId))
 						.SetDescription("Shown safely from a background Task without using Invoke.");
 					
 					WireInteractions(toast);
@@ -836,7 +836,7 @@ public partial class Form1 : Form
 	{
 		Run("Show()", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, CaptionOrDefault(), DescriptionOrDefault()))
+			var toast = ApplyCommon(Toast.MakeText(this, CaptionOrDefault(), DescriptionOrDefault()))
 				.SetData(new DemoPayload(1001, "welcome"))
 				.SetExtData("action", "open-home")
 				.SetMetadata("feature", "simple-demo")
@@ -852,7 +852,7 @@ public partial class Form1 : Form
 	{
 		try
 		{
-			var toast = ApplyCommon(Toast.Build(this, CaptionOrDefault(), DescriptionOrDefault()))
+			var toast = ApplyCommon(Toast.MakeText(this, CaptionOrDefault(), DescriptionOrDefault()))
 				.SetMetadata("feature", "show-async");
 			WireInteractions(toast);
 			await toast.ShowAsync();
@@ -869,7 +869,7 @@ public partial class Form1 : Form
 	{
 		Run("Build(caption, muting)", () =>
 		{
-			var toast = Toast.Build(this, CaptionOrDefault(), _chkMute.Checked)
+			var toast = Toast.MakeText(this, CaptionOrDefault(), _chkMute.Checked)
 				.SetDescription("Build(window, caption, bool muting)")
 				.SetCloseStyle(SelectedCloseStyle)
 				.SetPosition(SelectedPosition);
@@ -887,7 +887,7 @@ public partial class Form1 : Form
 	{
 		Run("Build(caption, Duration)", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, CaptionOrDefault(), SelectedDuration))
+			var toast = ApplyCommon(Toast.MakeText(this, CaptionOrDefault(), SelectedDuration))
 				.SetDescription($"Duration={SelectedDuration}" + (_chkUseMs.Checked ? $" · DurationMs={_numDurationMs.Value}" : ""));
 			if (_chkUseMs.Checked)
 				toast.SetDurationMs((int)_numDurationMs.Value);
@@ -901,7 +901,7 @@ public partial class Form1 : Form
 	{
 		Run("Build(caption, Animation)", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, CaptionOrDefault(), SelectedAnimation))
+			var toast = ApplyCommon(Toast.MakeText(this, CaptionOrDefault(), SelectedAnimation))
 				.SetDescription($"Animation={SelectedAnimation}");
 			WireInteractions(toast);
 			toast.Show();
@@ -913,7 +913,7 @@ public partial class Form1 : Form
 	{
 		Run("Build(caption, Duration, Animation)", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, CaptionOrDefault(), SelectedDuration, SelectedAnimation))
+			var toast = ApplyCommon(Toast.MakeText(this, CaptionOrDefault(), SelectedDuration, SelectedAnimation))
 				.SetDescription($"{SelectedDuration} + {SelectedAnimation}");
 			WireInteractions(toast);
 			toast.Show();
@@ -972,7 +972,7 @@ public partial class Form1 : Form
 			return;
 		Run("Build(caption, Image)", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, ThumbCaption(), thumb))
+			var toast = ApplyCommon(Toast.MakeText(this, ThumbCaption(), thumb))
 				.SetDescription("With thumbnail")
 				.SetThumbnail(thumb, ownsImage: true)
 				.SetTag(ThumbCaption())
@@ -989,7 +989,7 @@ public partial class Form1 : Form
 			return;
 		Run("Build(caption, Image, Duration, Animation, mute)", () =>
 		{
-			var toast = Toast.Build(this, ThumbCaption(), thumb, SelectedDuration, SelectedAnimation, _chkMute.Checked)
+			var toast = Toast.MakeText(this, ThumbCaption(), thumb, SelectedDuration, SelectedAnimation, _chkMute.Checked)
 				.SetDescription("Full thumbnail overload")
 				.SetThumbnail(thumb, ownsImage: true)
 				.SetCloseStyle(SelectedCloseStyle)
@@ -1012,7 +1012,7 @@ public partial class Form1 : Form
 		{
 			if (SelectedTheme == ToastTheme.Custom)
 			{
-				var toast = Toast.Build(this, "Build + Custom", SelectedTheme)
+				var toast = Toast.MakeText(this, "Build + Custom", SelectedTheme)
 					.SetCustomColors(_customBg, _customFg)
 					.SetDescription("Build(window, caption, ToastTheme.Custom) + SetCustomColors")
 					.SetCloseStyle(SelectedCloseStyle)
@@ -1024,7 +1024,7 @@ public partial class Form1 : Form
 				return;
 			}
 
-			var themed = Toast.Build(this, $"Theme {SelectedTheme}", SelectedTheme)
+			var themed = Toast.MakeText(this, $"Theme {SelectedTheme}", SelectedTheme)
 				.SetDescription("Build(window, caption, ToastTheme)")
 				.SetCloseStyle(SelectedCloseStyle)
 				.SetPosition(SelectedPosition)
@@ -1039,7 +1039,7 @@ public partial class Form1 : Form
 	{
 		Run("SetCustomColors(bg, fg)", () =>
 		{
-			var toast = Toast.Build(this, "Custom RGB", "Toast.SetCustomColors(Color, Color)")
+			var toast = Toast.MakeText(this, "Custom RGB", "Toast.SetCustomColors(Color, Color)")
 				.SetCustomColors(_customBg, _customFg)
 				.SetCloseStyle(SelectedCloseStyle)
 				.SetPosition(SelectedPosition)
@@ -1105,7 +1105,7 @@ public partial class Form1 : Form
 	{
 		Run($"CloseStyle.{style}", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, $"CloseStyle.{style}", "Try the body click vs the ✕ button"))
+			var toast = ApplyCommon(Toast.MakeText(this, $"CloseStyle.{style}", "Try the body click vs the ✕ button"))
 				.SetCloseStyle(style);
 			WireInteractions(toast);
 			toast.Show();
@@ -1117,7 +1117,7 @@ public partial class Form1 : Form
 	{
 		Run(muted ? "muted" : "unmuted", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, muted ? "Muted" : "Unmuted", $"SetMuting({muted.ToString().ToLowerInvariant()}) · PlaySound={_toasts.Options.PlaySound}"))
+			var toast = ApplyCommon(Toast.MakeText(this, muted ? "Muted" : "Unmuted", $"SetMuting({muted.ToString().ToLowerInvariant()}) · PlaySound={_toasts.Options.PlaySound}"))
 				.SetMuting(muted);
 			WireInteractions(toast);
 			toast.Show();
@@ -1131,7 +1131,7 @@ public partial class Form1 : Form
 	{
 		Run(position.ToString(), () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, $"{position} toast", $"Position: {position}"))
+			var toast = ApplyCommon(Toast.MakeText(this, $"{position} toast", $"Position: {position}"))
 				.SetPosition(position);
 			WireInteractions(toast);
 			toast.Show();
@@ -1147,7 +1147,7 @@ public partial class Form1 : Form
 			ToastHandle? last = null;
 			for (var i = 1; i <= count; i++)
 			{
-				var toast = ApplyCommon(Toast.Build(this, $"Toast {i}", $"Stack item {i} of {count}"))
+				var toast = ApplyCommon(Toast.MakeText(this, $"Toast {i}", $"Stack item {i} of {count}"))
 					.SetPosition(ToastPosition.BottomRight);
 				WireInteractions(toast);
 				toast.Show();
@@ -1176,7 +1176,7 @@ public partial class Form1 : Form
 			{
 				try
 				{
-					var toast = ApplyCommon(Toast.Build(this, $"Cap probe {i}", $"#{i} of {n}"))
+					var toast = ApplyCommon(Toast.MakeText(this, $"Cap probe {i}", $"#{i} of {n}"))
 						.SetPosition(SelectedPosition);
 					toast.Show();
 					if (toast.Handle?.WasRejected == true)
@@ -1197,7 +1197,7 @@ public partial class Form1 : Form
 	{
 		Run("EnableInput", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, InputCaption(), "Type below, then Send or press Enter"))
+			var toast = ApplyCommon(Toast.MakeText(this, InputCaption(), "Type below, then Send or press Enter"))
 				.EnableInput(
 					placeholder: _txtInPlaceholder.Text?.Trim() ?? "Your message…",
 					defaultText: _txtInDefault.Text ?? string.Empty,
@@ -1227,7 +1227,7 @@ public partial class Form1 : Form
 	{
 		Run("Duration.Input", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, "Duration.Input", Duration.Input))
+			var toast = ApplyCommon(Toast.MakeText(this, "Duration.Input", Duration.Input))
 				.SetDescription($"No text box · waits InputDurationMs={_toasts.Options.InputDurationMs} ms (or SetDurationMs).");
 			if (!_chkStayOpen.Checked)
 				toast.SetDurationMs((int)_numInputTimeout.Value);
@@ -1241,7 +1241,7 @@ public partial class Form1 : Form
 	{
 		Run("SetInputable(true)", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, InputCaption(), "SetInputable(true) without EnableInput — submit defaults to OK"))
+			var toast = ApplyCommon(Toast.MakeText(this, InputCaption(), "SetInputable(true) without EnableInput — submit defaults to OK"))
 				.SetInputable(true)
 				.SetCloseStyle(CloseStyle.Button);
 			WireInteractions(toast);
@@ -1256,7 +1256,7 @@ public partial class Form1 : Form
 	{
 		Run("sticky", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, "Sticky handle", "Lasts 8 seconds — use Dismiss / WhenDismissed"))
+			var toast = ApplyCommon(Toast.MakeText(this, "Sticky handle", "Lasts 8 seconds — use Dismiss / WhenDismissed"))
 				.SetDurationMs(8000);
 			WireInteractions(toast);
 			toast.Show();
@@ -1357,7 +1357,7 @@ public partial class Form1 : Form
 			_showCts?.Cancel();
 			_showCts?.Dispose();
 			_showCts = new CancellationTokenSource();
-			var toast = ApplyCommon(Toast.Build(this, "Cancellable ShowAsync", "Cancel the token to dismiss"))
+			var toast = ApplyCommon(Toast.MakeText(this, "Cancellable ShowAsync", "Cancel the token to dismiss"))
 				.SetDurationMs(15_000);
 			WireInteractions(toast);
 			await toast.ShowAsync(_showCts.Token);
@@ -1462,14 +1462,14 @@ public partial class Form1 : Form
 		{
 			Location = new Point(16, 16),
 			Size = new Size(348, 48),
-			Text = "Toast.Build(this) registers a separate ToastManager for this form — an independent stack.",
+			Text = "Toast.MakeText(this) registers a separate ToastManager for this form — an independent stack.",
 			ForeColor = UiTheme.Muted,
 			BackColor = UiTheme.Canvas
 		};
 		var owner = _secondOwner;
-		var btn = Btn("Toast.Build(this, \"Second owner\").Show()", 16, 76, 348, 32, (_, _) =>
+		var btn = Btn("Toast.MakeText(this, \"Second owner\").Show()", 16, 76, 348, 32, (_, _) =>
 		{
-			Toast.Build(owner, "Second owner", "Independent per-owner stack")
+			Toast.MakeText(owner, "Second owner", "Independent per-owner stack")
 				.SetTheme(ToastTheme.PrimaryLight)
 				.SetPosition(ToastPosition.TopLeft)
 				.SetMuting(_chkMute.Checked)
@@ -1486,7 +1486,7 @@ public partial class Form1 : Form
 	{
 		Run("hover", () =>
 		{
-			var toast = ApplyCommon(Toast.Build(this, "Hover me", "OnHover / handle.Hovered fire on pointer enter"))
+			var toast = ApplyCommon(Toast.MakeText(this, "Hover me", "OnHover / handle.Hovered fire on pointer enter"))
 				.SetDurationMs(10_000)
 				.SetMetadata("feature", "hover");
 			WireInteractions(toast);
@@ -1725,7 +1725,7 @@ public partial class Form1 : Form
 			"FuzzyToast Demo v3 — full public API catalog\n\n" +
 			"Windows Forms toast library for Windows 10/11 · .NET 8+\n\n" +
 			"Tabs:\n" +
-			"  Basics — Toast.Build overloads, Show / ShowAsync, duration, animation, thumbnail\n" +
+			"  Basics — Toast.MakeText overloads, Show / ShowAsync, duration, animation, thumbnail\n" +
 			"  Appearance — themes, ColorScheme, ThemeCatalog, CloseStyle, mute\n" +
 			"  Stack & manager — 4 corners, overflow, ToastManagerOptions, DismissAll\n" +
 			"  Inputable — EnableInput, SetInputable, Duration.Input\n" +

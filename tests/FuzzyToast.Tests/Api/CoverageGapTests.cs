@@ -43,7 +43,7 @@ public class CoverageGapTests
 	public void Toast_Fluent_Metadata_Input_And_Properties()
 	{
 		using var form = new Form();
-		var toast = Toast.Build(form, "cap");
+		var toast = Toast.MakeText(form, "cap");
 		toast.Tag = 7;
 		Assert.Equal(7, toast.Tag);
 		Assert.Empty(toast.Metadata);
@@ -73,7 +73,7 @@ public class CoverageGapTests
 	{
 		var form = new Form();
 		form.Dispose();
-		Assert.Throws<ObjectDisposedException>(() => Toast.Build(form, "x"));
+		Assert.Throws<ObjectDisposedException>(() => Toast.MakeText(form, "x"));
 	}
 
 	[Fact]
@@ -339,7 +339,7 @@ public class CoverageGapTests
 	public void Toast_And_ToastBuilder_ProgressBar_Setters_AreExercised()
 	{
 		using var owner = new Form();
-		var toast = Toast.Build(owner, "cap");
+		var toast = Toast.MakeText(owner, "cap");
 		Assert.False(toast.ShowProgressBar);
 		toast.SetShowProgressBar(true);
 		Assert.True(toast.ShowProgressBar);

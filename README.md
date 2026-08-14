@@ -26,7 +26,7 @@ A toast notification library for **Windows Forms** on **.NET Framework 4.6.1+** 
 | **OS** | **Windows 10** (1809 / build 17763+) or **Windows 11** |
 | **Runtime** | **.NET Framework 4.6.1+** or **.NET 8+** (`net461` / `net48` / `net8.0-windows` / `net9.0-windows`, …) |
 | **UI stack** | **Windows Forms** only (`UseWindowsForms`) |
-| **Threading** | Call `Toast.Build` / `Show` from the UI thread, or from a background thread (library marshals to UI) |
+| **Threading** | Call `Toast.MakeText` / `Show` from the UI thread, or from a background thread (library marshals to UI) |
 
 ### Host app DPI (recommended)
 
@@ -88,28 +88,28 @@ Same call style as classic toast libraries / the original FuzzyToast API:
 using FuzzyToast;
 
 // Simplest
-Toast.Build(this, "Hello, I am Toast!").Show();
+Toast.MakeText(this, "Hello, I am Toast!").Show();
 
 // Caption + description
-Toast.Build(this, "Hello, I am Toast!", "Details go here…").Show();
+Toast.MakeText(this, "Hello, I am Toast!", "Details go here…").Show();
 
 // Duration (LENGTH_SHORT / LENGTH_LONG — Android-style names)
-Toast.Build(this, "Saved", Duration.LENGTH_SHORT).Show();
+Toast.MakeText(this, "Saved", Duration.LENGTH_SHORT).Show();
 
 // Animation
-Toast.Build(this, "Sliding in", Animation.SLIDE).Show();
+Toast.MakeText(this, "Sliding in", Animation.SLIDE).Show();
 
 // Thumbnail
-Toast.Build(this, "With image", myImage).Show();
+Toast.MakeText(this, "With image", myImage).Show();
 
 // Optional fluent extras (theme / position) then Show
-Toast.Build(this, "Success")
+Toast.MakeText(this, "Success")
     .SetTheme(ToastTheme.SuccessDark)
     .SetPosition(ToastPosition.TopRight)
     .Show();
 
 // Events + metadata / ext data on click
-var toast = Toast.Build(this, "Order #42 ready", "Tap to open")
+var toast = Toast.MakeText(this, "Order #42 ready", "Tap to open")
     .SetTag(orderDto)                          // any object
     .SetData(orderDto)                         // alias of SetTag
     .SetExtData("orderId", 42)                 // key/value metadata
@@ -125,7 +125,7 @@ toast.OnClick += (_, e) =>
 toast.Show();
 ```
 
-`Toast.Build` uses a shared per-form manager under the hood (layout, stacking, capacity).  
+`Toast.MakeText` uses a shared per-form manager under the hood (layout, stacking, capacity).  
 Advanced hosts can still use `ToastManager` + `Create()` explicitly if they need custom options/events.
 
 ### Inputable toast (v3)
@@ -133,7 +133,7 @@ Advanced hosts can still use `ToastManager` + `Create()` explicitly if they need
 Quick text input with Submit (or Enter). **Stays open until the user acts** (Submit / Esc / ✕) by default:
 
 ```csharp
-var toast = Toast.Build(this, "Quick reply", "Type a short note")
+var toast = Toast.MakeText(this, "Quick reply", "Type a short note")
     .EnableInput(placeholder: "Your message…", submitButtonText: "Send")
     // .SetDurationMs(120_000)  // optional safety timeout (ms); 0 = no auto-dismiss
     .SetExtData("action", "reply");
@@ -156,7 +156,7 @@ toast.Show();
 
 | Feature | Notes |
 |---------|--------|
-| **Android-style API** | `Toast.Build(this, "…").Show()` |
+| **Android-style API** | `Toast.MakeText(this, "…").Show()` |
 | **Windows 10/11** | Taskbar-aware `WorkingArea`, owner monitor, no focus steal |
 | **DPI-aware layout** | Multi-monitor `PerMonitorV2` support, scales with host `DeviceDpi` (100%–200%+) |
 | **Four corners** | `TopLeft`, `TopRight`, `BottomLeft`, `BottomRight` |
@@ -187,7 +187,7 @@ var manager = new ToastManager(this, new ToastManagerOptions
 
 See [docs/migration.md](docs/migration.md) or the [GitHub Pages site](https://anhquoctran.github.io/FuzzyToast/). Full public API: [docs/api-reference.md](docs/api-reference.md).
 
-**Breaking:** namespace is now `FuzzyToast` (not `System.UI.Widget`). Use `ToastManager` + `Create()` instead of static `Toast.Build(...)`.
+**Breaking:** namespace is now `FuzzyToast` (not `System.UI.Widget`). Use `ToastManager` + `Create()` instead of static `Toast.MakeText(...)`.
 
 ## Tests & coverage
 

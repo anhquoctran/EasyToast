@@ -3,24 +3,24 @@ using Xunit;
 
 namespace FuzzyToast.Tests;
 
-/// <summary>Android-style Toast.Build(...).Show() surface.</summary>
+/// <summary>Android-style Toast.MakeText(...).Show() surface.</summary>
 public class ToastBuildApiTests
 {
 	[Fact]
 	public void Build_Overloads_SetFields()
 	{
 		using var form = new Form();
-		var t = Toast.Build(form, "Cap", "Desc", Duration.LENGTH_LONG);
+		var t = Toast.MakeText(form, "Cap", "Desc", Duration.LENGTH_LONG);
 		Assert.Equal("Cap", t.Caption);
 		Assert.Equal("Desc", t.Description);
 		Assert.Equal(Duration.LENGTH_LONG, t.Duration);
 		Assert.Equal(Duration.Long, t.Duration);
 
-		var a = Toast.Build(form, "X", Animation.FADE);
+		var a = Toast.MakeText(form, "X", Animation.FADE);
 		Assert.Equal(Animation.FADE, a.Animation);
 		Assert.Equal(Animation.Fade, a.Animation);
 
-		var d = Toast.Build(form, "Y", Duration.LENGTH_SHORT);
+		var d = Toast.MakeText(form, "Y", Duration.LENGTH_SHORT);
 		Assert.Equal(Duration.LENGTH_SHORT, d.Duration);
 	}
 
@@ -37,7 +37,7 @@ public class ToastBuildApiTests
 	public void Fluent_SetTheme_And_Position()
 	{
 		using var form = new Form();
-		var t = Toast.Build(form, "Hi")
+		var t = Toast.MakeText(form, "Hi")
 			.SetTheme(ToastTheme.PrimaryLight)
 			.SetPosition(ToastPosition.TopLeft);
 		Assert.Equal(ToastTheme.PrimaryLight, t.Theme);

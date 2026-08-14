@@ -4,7 +4,7 @@ using System.Windows.Forms;
 namespace FuzzyToast.Internal;
 
 /// <summary>
-/// One shared <see cref="ToastManager"/> per owner control for Android-style <c>Toast.Build</c> API.
+/// One shared <see cref="ToastManager"/> per owner control for Android-style <c>Toast.MakeText</c> API.
 /// Uses a weak table so managers do not pin forms forever.
 /// </summary>
 internal static class ToastManagerRegistry

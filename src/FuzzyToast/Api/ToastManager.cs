@@ -7,7 +7,7 @@ namespace FuzzyToast;
 
 /// <summary>
 /// Instance-scoped toast manager for one owner control. Prefer one manager per form.
-/// <see cref="Toast.Build(IWin32Window, string)"/> reuses the manager registered for that owner.
+/// <see cref="Toast.MakeText(IWin32Window, string)"/> reuses the manager registered for that owner.
 /// </summary>
 public sealed class ToastManager : IDisposable
 {
@@ -20,8 +20,45 @@ public sealed class ToastManager : IDisposable
 	private bool _disposed;
 	private long _sequence;
 
+	private static ToastManager? _default;
+	private static readonly object _defaultGate = new();
+
 	/// <summary>
-	/// Creates a manager bound to <paramref name="owner"/> and registers it for <see cref="Toast.Build(IWin32Window, string)"/>.
+	/// Global default manager for quick toasts. Auto-binds to the first active form upon first use.
+	/// If the bound form is closed, this instance automatically drops and rebinds to the next active form upon next use.
+	/// You can explicitly assign this to your own configured manager instance.
+	/// </summary>
+	public static ToastManager Default
+	{
+		get
+		{
+			if (_default != null && !_default.IsDisposed)
+				return _default;
+
+			lock (_defaultGate)
+			{
+				if (_default != null && !_default.IsDisposed)
+					return _default;
+
+				var owner = Application.OpenForms.Cast<Form>().FirstOrDefault(f => f.IsHandleCreated && !f.IsDisposed);
+				if (owner == null)
+					throw new InvalidOperationException("ToastManager.Default cannot be initialized automatically because no active Form exists. Either call Toast.MakeText from a UI thread after a Form is shown, or set ToastManager.Default explicitly.");
+
+				_default = new ToastManager(owner);
+				return _default;
+			}
+		}
+		set
+		{
+			lock (_defaultGate)
+			{
+				_default = value;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Creates a manager bound to <paramref name="owner"/> and registers it for <see cref="Toast.MakeText(IWin32Window, string)"/>.
 	/// Disposing the owner disposes this manager.
 	/// </summary>
 	/// <param name="owner">Host form or control. Must not be disposed.</param>
@@ -42,7 +79,7 @@ public sealed class ToastManager : IDisposable
 		_marshaler = new WinFormsUiMarshaler(owner);
 		_viewFactory = (_, handle) => new ToastForm(handle);
 		owner.Disposed += OwnerOnDisposed;
-		// Share with Toast.Build(owner, …) so one stack / one event stream per form.
+		// Share with Toast.MakeText(owner, …) so one stack / one event stream per form.
 		ToastManagerRegistry.Register(owner, this);
 	}
 
@@ -277,7 +314,7 @@ public sealed class ToastManager : IDisposable
 		view.Submitted += (_, text) => handle.RaiseSubmitted(text);
 		// Form dismisses itself after raising Submitted.
 
-		view.Apply(options, scheme, durationMs, Options.PauseOnHover, Options.PlaySound && !options.IsMuted);
+		view.Apply(options, scheme, durationMs, Options.PauseOnHover, Options.PlaySound && !options.IsMuted, Options.CustomSoundFilePath);
 
 		int stackIndex;
 		lock (_gate)

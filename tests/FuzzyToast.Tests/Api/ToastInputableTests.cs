@@ -119,7 +119,7 @@ public class ToastInputableTests
 			using var form = StaHelper.CreateVisibleOwner();
 			ToastSubmittedEventArgs? submitted = null;
 
-			var toast = Toast.Build(form, "Reply", "Type a short note")
+			var toast = Toast.MakeText(form, "Reply", "Type a short note")
 				.SetMuting(true)
 				.EnableInput(placeholder: "Message…", submitButtonText: "Send")
 				.SetExtData("action", "quick-reply");

@@ -59,6 +59,9 @@ public sealed class ToastManagerOptions
 	/// <summary>When <see langword="true"/>, collapse the thumbnail column if no image is set.</summary>
 	public bool HideImagePanelWhenEmpty { get; init; } = true;
 
+	/// <summary>Absolute or relative path to a custom .wav file to play instead of the default notification sound.</summary>
+	public string? CustomSoundFilePath { get; init; }
+
 	internal ToastLayoutMetrics ToLayoutMetrics(bool inputable = false)
 	{
 		// Inputable: use dedicated compact height (not base+extra which left empty space).
