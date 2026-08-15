@@ -32,6 +32,60 @@ public class ToastApiCoverageTests
 	}
 
 	[Fact]
+	public void All_Global_Build_Overloads_Construct()
+	{
+		StaHelper.Run(() =>
+		{
+			using var bmp = new Bitmap(80, 80);
+
+			Assert.NotNull(Toast.MakeText("a"));
+			Assert.NotNull(Toast.MakeText("a", "d"));
+			Assert.NotNull(Toast.MakeText("a", Duration.LENGTH_SHORT));
+			Assert.NotNull(Toast.MakeText("a", Duration.LENGTH_LONG, Animation.FADE));
+			Assert.NotNull(Toast.MakeText("a", "d", Duration.LENGTH_LONG));
+			Assert.NotNull(Toast.MakeText("a", Animation.SLIDE, Duration.LENGTH_SHORT, true));
+			Assert.NotNull(Toast.MakeText("a", Animation.FADE));
+			Assert.NotNull(Toast.MakeText("a", true));
+			Assert.NotNull(Toast.MakeText("a", bmp, Duration.LENGTH_SHORT, Animation.SLIDE));
+			Assert.NotNull(Toast.MakeText("a", bmp, Duration.LENGTH_SHORT, Animation.FADE, true));
+			Assert.NotNull(Toast.MakeText("a", bmp));
+			Assert.NotNull(Toast.MakeText("a", bmp, Duration.LENGTH_LONG));
+			Assert.NotNull(Toast.MakeText("a", ToastTheme.SuccessLight));
+            
+#pragma warning disable CS0618
+			Assert.NotNull(Toast.Build("a"));
+			Assert.NotNull(Toast.Build("a", "d"));
+			Assert.NotNull(Toast.Build("a", Duration.LENGTH_SHORT));
+			Assert.NotNull(Toast.Build("a", Duration.LENGTH_LONG, Animation.FADE));
+			Assert.NotNull(Toast.Build("a", "d", Duration.LENGTH_LONG));
+			Assert.NotNull(Toast.Build("a", Animation.SLIDE, Duration.LENGTH_SHORT, true));
+			Assert.NotNull(Toast.Build("a", Animation.FADE));
+			Assert.NotNull(Toast.Build("a", true));
+			Assert.NotNull(Toast.Build("a", bmp, Duration.LENGTH_SHORT, Animation.SLIDE));
+			Assert.NotNull(Toast.Build("a", bmp, Duration.LENGTH_SHORT, Animation.FADE, true));
+			Assert.NotNull(Toast.Build("a", bmp));
+			Assert.NotNull(Toast.Build("a", bmp, Duration.LENGTH_LONG));
+			Assert.NotNull(Toast.Build("a", ToastTheme.SuccessLight));
+
+			using var form = new Form();
+			Assert.NotNull(Toast.Build(form, "a"));
+			Assert.NotNull(Toast.Build(form, "a", "d"));
+			Assert.NotNull(Toast.Build(form, "a", Duration.LENGTH_SHORT));
+			Assert.NotNull(Toast.Build(form, "a", Duration.LENGTH_LONG, Animation.FADE));
+			Assert.NotNull(Toast.Build(form, "a", "d", Duration.LENGTH_LONG));
+			Assert.NotNull(Toast.Build(form, "a", Animation.SLIDE, Duration.LENGTH_SHORT, true));
+			Assert.NotNull(Toast.Build(form, "a", Animation.FADE));
+			Assert.NotNull(Toast.Build(form, "a", true));
+			Assert.NotNull(Toast.Build(form, "a", bmp, Duration.LENGTH_SHORT, Animation.SLIDE));
+			Assert.NotNull(Toast.Build(form, "a", bmp, Duration.LENGTH_SHORT, Animation.FADE, true));
+			Assert.NotNull(Toast.Build(form, "a", bmp));
+			Assert.NotNull(Toast.Build(form, "a", bmp, Duration.LENGTH_LONG));
+			Assert.NotNull(Toast.Build(form, "a", ToastTheme.SuccessLight));
+#pragma warning restore CS0618
+		});
+	}
+
+	[Fact]
 	public void Show_And_Dismiss_On_Real_Form()
 	{
 		StaHelper.Run(() =>
