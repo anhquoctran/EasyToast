@@ -233,6 +233,17 @@ a:hover { color: var(--cayman-green); }
   background: #f3f6fa;
   color: #444d56;
   font-size: 13px;
+  white-space: nowrap;
+}
+
+.content td:first-child {
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--cayman-blue);
+}
+
+.content td:not(:first-child) {
+  min-width: 160px;
 }
 
 .content code {
