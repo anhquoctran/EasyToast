@@ -761,4 +761,5 @@ public sealed class Toast
 
 	[Obsolete("Use MakeText instead. This method will be removed in the next major version.", false)]
 	public static Toast Build(string caption, ToastTheme theme) => MakeText(caption, theme);
+	#endregion
 }

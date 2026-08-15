@@ -45,6 +45,15 @@ jobs:
           --source https://api.nuget.org/v3/index.json
           --skip-duplicate
 
+      - name: Zip DLLs
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts/zip/net461
+          New-Item -ItemType Directory -Force -Path artifacts/zip/net8.0-windows
+          Copy-Item src/FuzzyToast/bin/Release/net461/FuzzyToast.dll, src/FuzzyToast/bin/Release/net461/FuzzyToast.xml -Destination artifacts/zip/net461
+          Copy-Item src/FuzzyToast/bin/Release/net8.0-windows/FuzzyToast.dll, src/FuzzyToast/bin/Release/net8.0-windows/FuzzyToast.xml -Destination artifacts/zip/net8.0-windows
+          Compress-Archive -Path artifacts/zip/* -DestinationPath artifacts/FuzzyToast.zip
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
@@ -52,3 +61,4 @@ jobs:
           files: |
             artifacts/nuget/*.nupkg
             artifacts/nuget/*.snupkg
+            artifacts/FuzzyToast.zip
