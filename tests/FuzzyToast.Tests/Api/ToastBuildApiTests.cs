@@ -43,4 +43,18 @@ public class ToastBuildApiTests
 		Assert.Equal(ToastTheme.PrimaryLight, t.Theme);
 		Assert.Equal(ToastPosition.TopLeft, t.Position);
 	}
+
+	[Fact]
+	public void Build_Overload_With_Theme()
+	{
+#pragma warning disable CS0618
+		var t1 = Toast.Build("Caption", ToastTheme.ErrorDark);
+#pragma warning restore CS0618
+		Assert.Equal("Caption", t1.Caption);
+		Assert.Equal(ToastTheme.ErrorDark, t1.Theme);
+
+		var t2 = Toast.MakeText("NewCaption", ToastTheme.WarningLight);
+		Assert.Equal("NewCaption", t2.Caption);
+		Assert.Equal(ToastTheme.WarningLight, t2.Theme);
+	}
 }
