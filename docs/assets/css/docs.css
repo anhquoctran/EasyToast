@@ -298,4 +298,50 @@ a:hover { color: var(--cayman-green); }
   .backdrop[hidden] {
     display: none !important;
   }
+
+  /* Responsive tables as cards */
+  .content table, 
+  .content tbody, 
+  .content tr, 
+  .content td {
+    display: block;
+    width: 100%;
+  }
+
+  .content thead {
+    display: none;
+  }
+
+  .content table {
+    background: transparent;
+    border: none;
+    overflow: visible;
+  }
+
+  .content tr {
+    margin-bottom: 16px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .content td {
+    border: none;
+    border-bottom: 1px solid var(--line);
+    min-width: 0 !important;
+    white-space: normal !important;
+    padding: 12px 14px;
+  }
+
+  .content td:last-child {
+    border-bottom: none;
+  }
+
+  .content td:first-child {
+    background: #f8f9fa;
+    border-bottom: 2px solid var(--line);
+    font-size: 15px;
+  }
 }
