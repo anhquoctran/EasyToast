@@ -58,7 +58,7 @@ internal sealed class ThrowingToastView : IToastView
 		remove { }
 	}
 
-	public void Apply(ToastOptions options, ColorScheme scheme, int durationMs, bool pauseOnHover, bool playSound)
+	public void Apply(ToastOptions options, ColorScheme scheme, int durationMs, bool pauseOnHover, bool playSound, string? customSoundFilePath = null)
 	{
 	}
 

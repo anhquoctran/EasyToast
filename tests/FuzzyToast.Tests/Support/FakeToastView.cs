@@ -22,7 +22,7 @@ internal sealed class FakeToastView : IToastView
 	public event EventHandler? Hovered;
 	public event EventHandler<string>? Submitted;
 
-	public void Apply(ToastOptions options, ColorScheme scheme, int durationMs, bool pauseOnHover, bool playSound)
+	public void Apply(ToastOptions options, ColorScheme scheme, int durationMs, bool pauseOnHover, bool playSound, string? customSoundFilePath = null)
 	{
 		AppliedOptions = options;
 		AppliedDurationMs = durationMs;

@@ -91,7 +91,7 @@ internal sealed partial class ToastForm : Form, IToastView
 		}
 	}
 
-	public void Apply(ToastOptions options, ColorScheme scheme, int durationMs, bool pauseOnHover, bool playSound, string? customSoundFilePath)
+	public void Apply(ToastOptions options, ColorScheme scheme, int durationMs, bool pauseOnHover, bool playSound, string? customSoundFilePath = null)
 	{
 		_animation = options.Animation;
 		_closeStyle = options.CloseStyle;
