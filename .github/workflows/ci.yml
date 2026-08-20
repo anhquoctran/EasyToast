@@ -38,6 +38,10 @@ jobs:
         shell: pwsh
         run: ./scripts/test-coverage.ps1
 
+      - name: Run E2E UI Tests
+        run: dotnet test tests/FuzzyToast.E2ETests/FuzzyToast.E2ETests.csproj -c Release
+
+
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4

@@ -7,5 +7,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/FuzzyToast.Tests/FuzzyToast.Tests.csproj" />
+    <Project Path="tests/FuzzyToast.E2ETests/FuzzyToast.E2ETests.csproj" />
   </Folder>
 </Solution>
